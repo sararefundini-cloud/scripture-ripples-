@@ -229,7 +229,33 @@
     background: #1e3a5f; color: #f4ead8; padding: 10px 16px;
     flex: 0 0 auto;
   }
-  .dash-head h1 { margin: 0; font: italic 1.2rem/1.25 Georgia, "Times New Roman", serif; color: #f4ead8; text-shadow: none; letter-spacing: 0.01em; }
+  .dash-head h1 { margin: 0; font: italic 1.2rem/1.25 Georgia, "Times New Roman", serif; color: #f4ead8; text-shadow: none; letter-spacing: 0.01em; flex: 1 1 auto; }
+  .dash-tabs { display: flex; gap: 8px; flex: 0 0 auto; }
+  .dash-tab {
+    margin: 0; padding: 4px 12px; min-height: 36px;
+    font: italic 0.95rem/1 Georgia, "Times New Roman", serif;
+    color: #f4ead8; background: transparent;
+    border: 1px solid #f4ead8; cursor: pointer;
+  }
+  .dash-tab.on { background: #f4ead8; color: #1e3a5f; }
+  .dash-view { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+  #dash-stones-view[hidden], #dash-demand-view[hidden] { display: none !important; }
+  .dash-demand-intro { margin: 0; padding: 12px 16px 4px; font: italic 0.95rem/1.45 Georgia, "Times New Roman", serif; color: #1a1916; max-width: 52rem; }
+  .dash-demand-block {
+    position: relative;
+    margin: 0 16px 12px; padding: 10px 12px 8px;
+    background: #f4ead8; box-shadow: 2px 3px 0 rgba(30, 28, 24, 0.1);
+  }
+  #dash-demand-bars { display: block; width: 100%; }
+  .dash-ask-table { width: 100%; border-collapse: collapse; font: 0.82rem/1.4 Georgia, "Times New Roman", serif; color: #1a1916; }
+  .dash-ask-table th, .dash-ask-table td { text-align: left; vertical-align: top; padding: 8px 8px 8px 0; border-bottom: 1px solid rgba(30,28,24,0.15); }
+  .dash-ask-table th { font: italic 0.88rem/1.2 Georgia, "Times New Roman", serif; font-variant: small-caps; letter-spacing: 0.04em; }
+  .dash-ask-table .ask { width: 36%; font-style: italic; }
+  .dash-quote { margin: 0 0 12px; }
+  .dash-quote blockquote { margin: 0 0 4px; padding: 0 0 0 10px; border-left: 3px solid #1e3a5f; font: italic 0.95rem/1.45 Georgia, "Times New Roman", serif; }
+  .dash-quote a { color: #1e3a5f; }
+  .dash-demand-notes { margin: 0 16px 16px; font: italic 0.8rem/1.45 Georgia, "Times New Roman", serif; color: #3a3228; }
+  .dash-demand-notes a { color: #1e3a5f; }
   .dash-kpis { display: flex; flex-wrap: wrap; gap: 14px; padding: 12px 16px 10px; flex: 0 0 auto; }
   .kpi {
     position: relative;
@@ -301,8 +327,15 @@
   @media (max-width: 720px) {
     .dash-main { flex-direction: column; min-height: 0; height: auto; padding: 0 10px 8px; }
     .dash-kpis { padding: 8px 10px; }
-    .dash-head { padding: 8px 10px; }
+    .dash-head { padding: 8px 10px; flex-wrap: wrap; }
     .dash-head h1 { font-size: 0.98rem; }
+    .dash-demand-block { margin: 0 10px 10px; }
+    .dash-demand-notes { margin: 0 10px 12px; }
+    .dash-ask-table .ask, .dash-ask-table td { display: block; width: auto; }
+    .dash-ask-table thead { display: none; }
+    .dash-ask-table td { border-bottom: none; padding: 2px 0; }
+    .dash-ask-table tr { display: block; padding: 8px 0; border-bottom: 1px solid rgba(30,28,24,0.15); }
+    .dash-ask-table td.ask { font-weight: bold; }
     .dash-right { width: auto; flex: 0 0 auto; }
     .dash-center { min-height: 400px; }
     body.dashboard-mode .dash-center .layout-graph { height: 400px; min-height: 400px; }
@@ -675,8 +708,13 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
 
 <div id="dashboard" hidden>
   <div class="dash-head">
-    <h1>Scripture Ripples — Stones Dashboard</h1>
+    <h1 id="dash-title">Scripture Ripples — Stones Dashboard</h1>
+    <div class="dash-tabs" role="tablist" aria-label="Dashboard view">
+      <button type="button" id="dash-tab-stones" class="dash-tab on" role="tab" aria-selected="true">Stones</button>
+      <button type="button" id="dash-tab-demand" class="dash-tab" role="tab" aria-selected="false">Demand</button>
+    </div>
   </div>
+  <div id="dash-stones-view" class="dash-view">
   <div class="dash-kpis" id="dash-kpis"></div>
   <div class="dash-main">
     <div class="dash-center" id="dash-graph-slot">
@@ -697,6 +735,51 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
     <h2 class="dash-panel-title">Across the canon · Genesis to Revelation</h2>
     <canvas id="dash-arc" width="960" height="200" aria-label="Chronological motif marks and arcs"></canvas>
     <p class="dash-legend">Dots are verses in that motif. Light arcs join consecutive verses of the same motif. Darker arcs are OpenBible.info cross-references.</p>
+  </div>
+  </div>
+  <div id="dash-demand-view" class="dash-view" hidden>
+    <p class="dash-demand-intro">Why this exists — demand. Public comments on posts that share Chris Harrison and Christoph Römhild’s 2007 Bible cross-references chart. Figures below are taken only from that review’s comment spreadsheets.</p>
+    <div class="dash-kpis" id="dash-demand-kpis"></div>
+    <div class="dash-demand-block" id="dash-demand-chart">
+      <h2 class="dash-panel-title">Ask categories</h2>
+      <canvas id="dash-demand-bars" width="640" height="200" aria-label="Ask category counts from the comment spreadsheets"></canvas>
+      <p class="dash-legend">Counts are unique comments in each category, labeled by source. Reddit and X samples are not added together. Reddit had 0 comments classified as an explicit interactive or zoom request.</p>
+    </div>
+    <div class="dash-demand-block" id="dash-demand-ledger">
+      <h2 class="dash-panel-title">Ask → how Scripture Ripples answers it</h2>
+      <table class="dash-ask-table">
+        <thead><tr><th>Ask</th><th>How Scripture Ripples answers it</th></tr></thead>
+        <tbody>
+          <tr><td class="ask">Labels / what was referencing what (Reddit, 8)</td><td>Tap a stone: rings move across the water, and the selected-stone panel shows that motif’s KJV verses and its connected stones.</td></tr>
+          <tr><td class="ask">Zoom / a readable graph (X, 2)</td><td>Zoom-dependent labels, and Focus to isolate one motif.</td></tr>
+          <tr><td class="ask">Organized by theme</td><td>Motif stones: the graph is grouped by theme, not left as an unlabeled rainbow.</td></tr>
+          <tr><td class="ask">The same graph for other books (Reddit 4, X 1)</td><td>Not addressed. Scripture Ripples is a King James Bible motif graph, not Harry Potter, Lord of the Rings, Game of Thrones, or the Qur’an.</td></tr>
+          <tr><td class="ask">Posters or prints (Reddit, 1)</td><td>Not addressed. This is a web graph, not a poster shop.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="dash-demand-block" id="dash-demand-quotes">
+      <h2 class="dash-panel-title">What people wrote</h2>
+      <div class="dash-quote">
+        <blockquote>“Would love if there were some guides to what was referencing what, then again it’s already an enormous image.”</blockquote>
+        <p><a href="https://www.reddit.com/r/Christianity/comments/dut6sv/chris_harrison_along_with_a_lutheran_pastor/f7850vg/">u/Evolations, r/Christianity, 61 points</a></p>
+      </div>
+      <div class="dash-quote">
+        <blockquote>“I would love to see this for Harry Potter, Lord of the rings, and game of thrones”</blockquote>
+        <p><a href="https://www.reddit.com/r/Infographics/comments/1hedznu/the_bibles_internal_crossrefrencing/m22zuqo/">u/StrangeTrashyAlbino, r/Infographics, 112 upvotes</a></p>
+      </div>
+      <div class="dash-quote">
+        <blockquote>“Let’s see the graph in readable form, I want to zoom in.”</blockquote>
+        <p><a href="https://x.com/dirkhazelnut/status/1985555153152258411">@dirkhazelnut, reply on X</a></p>
+      </div>
+    </div>
+    <p class="dash-demand-notes" id="dash-demand-notes">
+      Caveats: these threads are self-selected, and many are old. The X sample is partial — 57 replies were read, and a keyword search was used; that is not a rate of all replies. This demand evidence is separate from the reading-plan baseline.
+      Sources: <a href="https://www.reddit.com/r/Infographics/comments/1hedznu/the_bibles_internal_crossrefrencing/">r/Infographics</a> (2,392 upvotes),
+      <a href="https://www.reddit.com/r/Christianity/comments/dut6sv/chris_harrison_along_with_a_lutheran_pastor/">r/Christianity</a>,
+      <a href="https://x.com/Adam_FaithfulM/status/2029013597221994879">Adam_FaithfulM</a> (578,508 views, 31,795 likes),
+      <a href="https://x.com/jason_howerton/status/1984695828045255088">jason_howerton</a> (992,533 views, 30,263 likes). Comment text and counts are from the review files comments.csv and x_comments.csv.
+    </p>
   </div>
 </div>
 <div id="companion" hidden>
@@ -2223,8 +2306,11 @@ window.__renderCompanion = renderCompanion;
     inkFrame(document.querySelector(".dash-bars-wrap"), 8);
     inkFrame(document.querySelector(".dash-selected"), 11);
     inkFrame(document.querySelector(".dash-bottom"), 14);
-    const kpis = document.querySelectorAll("#dash-kpis .kpi");
+    const kpis = document.querySelectorAll("#dash-kpis .kpi, #dash-demand-kpis .kpi");
     kpis.forEach(function(el, i) { inkFrame(el, 20 + i * 5); });
+    inkFrame(document.getElementById("dash-demand-chart"), 31);
+    inkFrame(document.getElementById("dash-demand-ledger"), 34);
+    inkFrame(document.getElementById("dash-demand-quotes"), 37);
   }
 
   function renderSelected(id) {
@@ -2322,6 +2408,7 @@ window.__renderCompanion = renderCompanion;
       if (layoutEl && slot && layoutEl.parentNode !== slot) slot.appendChild(layoutEl);
       document.body.classList.remove("panel-open");
       if (isNarrow()) openMenu(false);
+      setDashView("stones");
       renderCharts();
       inkFrames();
       setTimeout(function() {
@@ -2337,6 +2424,90 @@ window.__renderCompanion = renderCompanion;
       setTimeout(function() { if (typeof fitGraph === "function") fitGraph(); }, 80);
     }
   }
+
+  const DEMAND = {
+    redditComments: 1071,
+    redditAsks: 18,
+    redditAskPct: "1.7%",
+    redditTopScore: 2392,
+    redditInteractive: 0,
+    xReplies: 57,
+    xAsks: 3,
+    xViews: [578508, 992533],
+    xLikes: [31795, 30263],
+    mapRequests: 0,
+    categories: [
+      { label: "Labels / what refs what (Reddit)", count: 8, source: "reddit" },
+      { label: "Similar product (Reddit)", count: 6, source: "reddit" },
+      { label: "Other books (Reddit)", count: 4, source: "reddit" },
+      { label: "Poster or print (Reddit)", count: 1, source: "reddit" },
+      { label: "Zoom / readable form (X)", count: 2, source: "x" },
+      { label: "Other books (X)", count: 1, source: "x" }
+    ]
+  };
+  let dashView = "stones";
+  function renderDemandKpis() {
+    const root = document.getElementById("dash-demand-kpis");
+    if (!root) return;
+    const tiles = [
+      { v: fmt(DEMAND.xViews[0]) + " \u00b7 " + fmt(DEMAND.xViews[1]), l: "Reach (views on the two largest X posts)", s: "Also " + fmt(DEMAND.redditTopScore) + " upvotes on the largest Reddit share (r/Infographics). Likes on those X posts: " + fmt(DEMAND.xLikes[0]) + " and " + fmt(DEMAND.xLikes[1]) + "." },
+      { v: fmt(DEMAND.redditComments), l: "Reddit comments read", s: "Plus " + fmt(DEMAND.xReplies) + " X replies read, with a keyword search. The X sample is too small for a rate." },
+      { v: fmt(DEMAND.redditAsks), l: "Reddit asks (about " + DEMAND.redditAskPct + ")", s: fmt(DEMAND.redditAsks) + " of " + fmt(DEMAND.redditComments) + " comments counted as product demand. On X, " + fmt(DEMAND.xAsks) + " asks in the " + fmt(DEMAND.xReplies) + " replies read \u2014 too small for a percentage." },
+      { v: fmt(DEMAND.mapRequests), l: "Map or place requests", s: "No comment in this set asked for a Bible atlas or journey map." }
+    ];
+    root.innerHTML = tiles.map(function(t) {
+      return "<div class='kpi'><div class='v'>" + t.v + "</div><div class='l'>" + t.l + "</div><div class='s'>" + t.s + "</div></div>";
+    }).join("");
+  }
+  function renderDemandBars() {
+    const canvas = document.getElementById("dash-demand-bars");
+    if (!canvas) return;
+    const rows = DEMAND.categories;
+    const hNeed = Math.max(180, rows.length * 28 + 16);
+    const fit = fitCanvas(canvas, hNeed);
+    const ctx = fit.ctx, w = fit.w, h = fit.h;
+    ctx.clearRect(0, 0, w, h);
+    const labelSpace = 36;
+    const left = 210, right = 8 + labelSpace, top = 4, row = (h - top) / Math.max(1, rows.length);
+    const maxC = Math.max(1, rows.reduce(function(m, n) { return Math.max(m, n.count || 0); }, 0));
+    const barW = Math.max(20, w - left - right);
+    rows.forEach(function(n, i) {
+      const y = top + i * row;
+      const bw = barW * ((n.count || 0) / maxC);
+      const col = PALETTE[i % PALETTE.length];
+      pebbleBar(ctx, left, y + 4, Math.max(8, bw), row - 8, col, i * 13);
+      ctx.fillStyle = "#1a1916";
+      ctx.font = "italic 12px Georgia, 'Times New Roman', serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(n.label, left - 8, y + row / 2);
+      ctx.textAlign = "left";
+      ctx.fillText(String(n.count || 0), left + Math.max(8, bw) + 6, y + row / 2);
+    });
+  }
+  function setDashView(which) {
+    dashView = (which === "demand") ? "demand" : "stones";
+    const stones = document.getElementById("dash-stones-view");
+    const demand = document.getElementById("dash-demand-view");
+    const tabS = document.getElementById("dash-tab-stones");
+    const tabD = document.getElementById("dash-tab-demand");
+    const title = document.getElementById("dash-title");
+    if (stones) stones.hidden = dashView !== "stones";
+    if (demand) demand.hidden = dashView !== "demand";
+    if (tabS) { tabS.classList.toggle("on", dashView === "stones"); tabS.setAttribute("aria-selected", dashView === "stones" ? "true" : "false"); }
+    if (tabD) { tabD.classList.toggle("on", dashView === "demand"); tabD.setAttribute("aria-selected", dashView === "demand" ? "true" : "false"); }
+    if (title) title.textContent = dashView === "demand" ? "Why this exists \u2014 demand" : "Scripture Ripples \u2014 Stones Dashboard";
+    if (dashView === "demand") {
+      renderDemandKpis();
+      renderDemandBars();
+      inkFrames();
+    } else if (document.body.classList.contains("dashboard-mode")) {
+      renderCharts();
+      inkFrames();
+      setTimeout(function() { if (typeof fitGraph === "function") fitGraph(); }, 80);
+    }
+  }
+  window.__iamSetDashView = setDashView;
 
   const barCanvas = document.getElementById("dash-bars");
   if (barCanvas) barCanvas.addEventListener("click", function(ev) {
@@ -2360,18 +2531,25 @@ window.__renderCompanion = renderCompanion;
     if (typeof window.__iamClosePanel === "function") window.__iamClosePanel();
   });
 
+  const tabStones = document.getElementById("dash-tab-stones");
+  const tabDemand = document.getElementById("dash-tab-demand");
+  if (tabStones) tabStones.addEventListener("click", function() { setDashView("stones"); });
+  if (tabDemand) tabDemand.addEventListener("click", function() { setDashView("demand"); });
   document.getElementById("mode-dashboard").addEventListener("click", function() { setDashboardMode(true); });
   window.__iamSetDashboard = setDashboardMode;
   window.__iamDashHighlight = dashHighlight;
   window.__iamDashState = function() {
-    return { active: document.body.classList.contains("dashboard-mode"), highlight: highlightId, kpis: dashKpis() };
+    return { active: document.body.classList.contains("dashboard-mode"), highlight: highlightId, kpis: dashKpis(), view: dashView, demand: DEMAND };
   };
   window.addEventListener("resize", function() {
     if (!document.body.classList.contains("dashboard-mode")) return;
     if (window.__iamDashResize) clearTimeout(window.__iamDashResize);
     window.__iamDashResize = setTimeout(function() {
-      renderCharts();
-      if (typeof fitGraph === "function") fitGraph();
+      if (dashView === "demand") { renderDemandKpis(); renderDemandBars(); inkFrames(); }
+      else {
+        renderCharts();
+        if (typeof fitGraph === "function") fitGraph();
+      }
     }, 140);
   });
 })();
