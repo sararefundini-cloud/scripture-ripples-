@@ -1,0 +1,86 @@
+node_id,label,kind,verse_count,layer
+Jesus,Jesus,center,,iam
+bread_of_life,I am the bread of life,saying,4,iam
+light_of_the_world,I am the light of the world,saying,2,iam
+the_door,I am the door,saying,2,iam
+the_good_shepherd,I am the good shepherd,saying,2,iam
+resurrection_and_life,"I am the resurrection, and the life",saying,1,iam
+way_truth_life,"I am the way, the truth, and the life",saying,1,iam
+the_true_vine,I am the true vine,saying,2,iam
+before_abraham,"Before Abraham was, I am",saying,1,iam
+Bread,Bread,motif,495,iam
+Light,Light,motif,415,iam
+Sheep,Sheep,motif,651,iam
+Death in General,Death in General,motif,2176,iam
+"Wine, Grapes & Vineyard","Wine, Grapes & Vineyard",motif,430,iam
+Tree,Tree,motif,604,iam
+Way & Path,Way & Path,motif,468,iam
+Rock / Stones,Rock / Stones,stone,244,iam
+God,God,god,0,iam
+Infant Death,Infant Death,motif,33,iam
+Death as a Consequence,Death as a Consequence,motif,210,iam
+Blood,Blood,motif,391,iam
+Bread::manna_heaven,Manna,subgroup,45,iam
+Bread::unleavened_passover,Unleavened / Passover,subgroup,38,iam
+Bread::leaven_corruption,Leaven (warning),subgroup,9,iam
+Bread::shewbread,Shewbread,subgroup,23,iam
+Bread::christ_bread,Christ as Bread,subgroup,18,iam
+Bread::temptation_stone,Bread & stone,subgroup,8,iam
+Death in General::resurrection,Resurrection,subgroup,91,iam
+Rock / Stones::god_rock,God as Rock,subgroup,32,iam
+Rock / Stones::christ_rock,Christ as Rock,subgroup,10,iam
+Rock / Stones::water_from_rock,Water from the rock,subgroup,15,iam
+Rock / Stones::this_rock_peter,This rock (Peter),subgroup,1,iam
+Rock / Stones::foundation,Cornerstone,subgroup,12,iam
+Rock / Stones::stoning,Stoning,subgroup,54,iam
+Rock / Stones::tables_of_stone,Law in stone,subgroup,16,iam
+Way & Path::christ_the_way,Christ as the Way,subgroup,5,iam
+"Wine, Grapes & Vineyard::i_am_the_vine",I am the vine,subgroup,3,iam
+economy::Egypt,Egypt,economy,646,economy
+economy::gold,gold,economy,415,economy
+economy::altar,altar,economy,364,economy
+economy::tabernacle,tabernacle,economy,327,economy
+economy::wilderness,wilderness,economy,294,economy
+economy::silver,silver,economy,282,economy
+economy::light,light,economy,243,economy
+economy::ark,ark,economy,199,economy
+economy::temple,temple,economy,191,economy
+economy::Jordan River,Jordan River,economy,179,economy
+economy::Canaan / good land,Canaan / good land,economy,170,economy
+economy::wood,wood,economy,133,economy
+economy::rock,rock,economy,128,economy
+economy::pillar,pillar,economy,107,economy
+economy::treasure,treasure,economy,90,economy
+economy::house of God,house of God,economy,88,economy
+economy::foundation,foundation,economy,84,economy
+economy::cherubim,cherubim,economy,69,economy
+economy::white,white,economy,66,economy
+economy::holy place,holy place,economy,63,economy
+economy::well,well,economy,58,economy
+economy::red,red,economy,52,economy
+economy::scarlet,scarlet,economy,52,economy
+economy::blue,blue,economy,49,economy
+economy::purple,purple,economy,48,economy
+economy::covering,covering,economy,45,economy
+economy::lampstand,lampstand,economy,43,economy
+economy::boards,boards,economy,41,economy
+economy::building,building,economy,38,economy
+economy::fine linen,fine linen,economy,31,economy
+economy::Red Sea,Red Sea,economy,28,economy
+economy::dwelling place,dwelling place,economy,22,economy
+economy::showbread / bread of life,showbread / bread of life,economy,20,economy
+economy::laver,laver,economy,17,economy
+economy::manna,manna,economy,17,economy
+economy::badgers' skins,badgers' skins,economy,13,economy
+economy::tree of life,tree of life,economy,10,economy
+economy::goats' hair,goats' hair,economy,9,economy
+economy::incense altar,incense altar,economy,9,economy
+economy::earthen vessel,earthen vessel,economy,8,economy
+economy::living water,living water,economy,7,economy
+economy::veil,veil,economy,7,economy
+economy::budded rod,budded rod,economy,6,economy
+economy::outer court,outer court,economy,5,economy
+economy::rams' skins,rams' skins,economy,5,economy
+economy::Holiest of all,Holiest of all,economy,2,economy
+economy::tree of knowledge,tree of knowledge,economy,2,economy
+economy::brass serpent,brass serpent,economy,1,economy

@@ -1,0 +1,188 @@
+source,target,rel,kind,shared,pmi,jaccard,note
+Jesus,bread_of_life,SAYS,structure,,,,
+bread_of_life,Bread,LINKS_TO,word-match,,,,saying to motif
+bread_of_life,Bread,ECHOES,typological,15,,,"curated OT echoes: Exodus 16:4, Exodus 16:15, Exodus 16:31, Exodus 16:33, Exodus 16:35"
+Jesus,light_of_the_world,SAYS,structure,,,,
+light_of_the_world,Light,LINKS_TO,word-match,,,,saying to motif
+light_of_the_world,Light,ECHOES,typological,11,,,"curated OT echoes: Genesis 1:3, Psalms 18:28, Psalms 27:1, Psalms 36:9, Isaiah 9:2"
+Jesus,the_door,SAYS,structure,,,,
+the_door,Sheep,LINKS_TO,word-match,,,,saying to motif
+the_door,Sheep,ECHOES,typological,4,,,"curated OT echoes: Genesis 28:17, Psalms 24:7, Psalms 24:9, Psalms 118:20"
+Jesus,the_good_shepherd,SAYS,structure,,,,
+the_good_shepherd,Sheep,LINKS_TO,word-match,,,,saying to motif
+the_good_shepherd,Sheep,ECHOES,typological,10,,,"curated OT echoes: Genesis 49:24, Psalms 23:1, Psalms 80:1, Isaiah 40:11, Jeremiah 23:4"
+Jesus,resurrection_and_life,SAYS,structure,,,,
+resurrection_and_life,Death in General,LINKS_TO,word-match,,,,saying to motif
+resurrection_and_life,Death in General,ECHOES,typological,9,,,"curated OT echoes: Deuteronomy 32:39, 1 Samuel 2:6, Job 19:25, Psalms 16:10, Isaiah 26:19"
+Jesus,way_truth_life,SAYS,structure,,,,
+way_truth_life,Way & Path,LINKS_TO,word-match,,,,saying to motif
+way_truth_life,Way & Path,ECHOES,typological,9,,,"curated OT echoes: Deuteronomy 32:4, Psalms 16:11, Psalms 31:5, Isaiah 30:21, Isaiah 35:8"
+Jesus,the_true_vine,SAYS,structure,,,,
+the_true_vine,"Wine, Grapes & Vineyard",LINKS_TO,word-match,,,,saying to motif
+the_true_vine,Tree,LINKS_TO,word-match,,,,saying to motif
+the_true_vine,"Wine, Grapes & Vineyard",ECHOES,typological,9,,,"curated OT echoes: Psalms 80:8, Psalms 80:14, Psalms 80:15, Isaiah 5:1, Isaiah 5:7"
+Jesus,before_abraham,SAYS,structure,,,,
+before_abraham,God,LINKS_TO,word-match,,,,saying to motif
+before_abraham,God,ECHOES,typological,10,,,"curated OT echoes: Exodus 3:14, Deuteronomy 32:39, Isaiah 41:4, Isaiah 43:10, Isaiah 43:13"
+God,Rock / Stones,LINKS_TO,typological,32,,,God as Rock / Stone
+before_abraham,Rock / Stones,LINKS_TO,typological,10,,,"Christ as Rock typological, incl. 1 Cor 10:4"
+Death in General,Death as a Consequence,OVERLAPS,word-match,131,3.16,0.0581,131 shared verses
+Death in General,Blood,OVERLAPS,word-match,87,1.67,0.0351,87 shared verses
+"Wine, Grapes & Vineyard",Tree,OVERLAPS,word-match,70,3.07,0.0726,70 shared verses
+Death in General,Rock / Stones,OVERLAPS,word-match,43,1.33,0.0181,43 shared verses
+Bread,"Wine, Grapes & Vineyard",OVERLAPS,word-match,36,2.40,0.0405,36 shared verses
+Sheep,Death in General,OVERLAPS,word-match,35,-0.38,0.0125,35 shared verses
+Death in General,Tree,OVERLAPS,word-match,33,-0.36,0.0120,33 shared verses
+Sheep,"Wine, Grapes & Vineyard",OVERLAPS,word-match,29,1.69,0.0276,29 shared verses
+Death in General,Way & Path,OVERLAPS,word-match,29,-0.18,0.0111,29 shared verses
+Bread,Sheep,OVERLAPS,word-match,26,1.33,0.0232,26 shared verses
+Death as a Consequence,Blood,OVERLAPS,word-match,23,3.12,0.0398,23 shared verses
+Bread,Death in General,OVERLAPS,word-match,23,-0.59,0.0087,23 shared verses
+Death in General,"Wine, Grapes & Vineyard",OVERLAPS,word-match,22,-0.45,0.0085,22 shared verses
+Sheep,Blood,OVERLAPS,word-match,19,1.22,0.0186,19 shared verses
+Light,Death in General,OVERLAPS,word-match,17,-0.77,0.0066,17 shared verses
+Death in General,Infant Death,OVERLAPS,word-match,16,2.79,0.0073,16 shared verses
+Light,Tree,OVERLAPS,word-match,15,0.90,0.0149,15 shared verses
+Bread,Rock / Stones,OVERLAPS,word-match,13,1.74,0.0179,13 shared verses
+Sheep,Tree,OVERLAPS,word-match,12,-0.08,0.0097,12 shared verses
+"Wine, Grapes & Vineyard",Blood,OVERLAPS,word-match,11,1.02,0.0136,11 shared verses
+Light,Way & Path,OVERLAPS,word-match,11,0.82,0.0126,11 shared verses
+Tree,Death as a Consequence,OVERLAPS,word-match,8,0.97,0.0099,8 shared verses
+Bread,Tree,OVERLAPS,word-match,8,-0.26,0.0073,8 shared verses
+Rock / Stones,Death as a Consequence,OVERLAPS,word-match,7,2.09,0.0157,7 shared verses
+Tree,Rock / Stones,OVERLAPS,word-match,7,0.56,0.0083,7 shared verses
+Bread,Blood,OVERLAPS,word-match,5,-0.32,0.0057,5 shared verses
+Tree,Blood,OVERLAPS,word-match,5,-0.60,0.0051,5 shared verses
+Sheep,Way & Path,OVERLAPS,word-match,5,-0.97,0.0045,5 shared verses
+Way & Path,Blood,OVERLAPS,word-match,4,-0.56,0.0047,4 shared verses
+Bread,Light,OVERLAPS,word-match,4,-0.72,0.0044,4 shared verses
+Way & Path,Death as a Consequence,OVERLAPS,word-match,3,-0.07,0.0044,3 shared verses
+Tree,Way & Path,OVERLAPS,word-match,3,-1.60,0.0028,3 shared verses
+Sheep,Rock / Stones,OVERLAPS,word-match,2,-1.35,0.0022,2 shared verses
+Rock / Stones,Blood,OVERLAPS,word-match,1,-1.62,0.0016,1 shared verses
+Light,Rock / Stones,OVERLAPS,word-match,1,-1.70,0.0015,1 shared verses
+"Wine, Grapes & Vineyard",Rock / Stones,OVERLAPS,word-match,1,-1.75,0.0015,1 shared verses
+Way & Path,Rock / Stones,OVERLAPS,word-match,1,-1.88,0.0014,1 shared verses
+Bread,Bread::manna_heaven,HAS_GROUP,structure,,,,
+Bread,Bread::unleavened_passover,HAS_GROUP,structure,,,,
+Bread,Bread::leaven_corruption,HAS_GROUP,structure,,,,
+Bread,Bread::shewbread,HAS_GROUP,structure,,,,
+Bread,Bread::christ_bread,HAS_GROUP,structure,,,,
+Bread,Bread::temptation_stone,HAS_GROUP,structure,,,,
+Death in General,Death in General::resurrection,HAS_GROUP,structure,,,,
+Rock / Stones,Rock / Stones::god_rock,HAS_GROUP,structure,,,,
+Rock / Stones,Rock / Stones::christ_rock,HAS_GROUP,structure,,,,
+Rock / Stones,Rock / Stones::water_from_rock,HAS_GROUP,structure,,,,
+Rock / Stones,Rock / Stones::this_rock_peter,HAS_GROUP,structure,,,,
+Rock / Stones,Rock / Stones::foundation,HAS_GROUP,structure,,,,
+Rock / Stones,Rock / Stones::stoning,HAS_GROUP,structure,,,,
+Rock / Stones,Rock / Stones::tables_of_stone,HAS_GROUP,structure,,,,
+Way & Path,Way & Path::christ_the_way,HAS_GROUP,structure,,,,
+"Wine, Grapes & Vineyard","Wine, Grapes & Vineyard::i_am_the_vine",HAS_GROUP,structure,,,,
+bread_of_life,Bread,CROSS_REF,openbible,47,,,"OpenBible.info CC-BY: 47 rows (47 votes>0) touch 33 motif verses; direct 131, 2-hop 4048"
+light_of_the_world,Light,CROSS_REF,openbible,81,,,"OpenBible.info CC-BY: 81 rows (81 votes>0) touch 56 motif verses; direct 93, 2-hop 3392"
+the_door,Sheep,CROSS_REF,openbible,24,,,"OpenBible.info CC-BY: 24 rows (24 votes>0) touch 19 motif verses; direct 61, 2-hop 2455"
+the_good_shepherd,Sheep,CROSS_REF,openbible,52,,,"OpenBible.info CC-BY: 52 rows (52 votes>0) touch 35 motif verses; direct 86, 2-hop 3701"
+resurrection_and_life,Death in General,CROSS_REF,openbible,50,,,"OpenBible.info CC-BY: 50 rows (50 votes>0) touch 53 motif verses; direct 135, 2-hop 3540"
+way_truth_life,Way & Path,CROSS_REF,openbible,20,,,"OpenBible.info CC-BY: 20 rows (20 votes>0) touch 17 motif verses; direct 144, 2-hop 5069"
+the_true_vine,"Wine, Grapes & Vineyard",CROSS_REF,openbible,28,,,"OpenBible.info CC-BY: 28 rows (28 votes>0) touch 28 motif verses; direct 152, 2-hop 5060"
+the_true_vine,Tree,CROSS_REF,openbible,26,,,"OpenBible.info CC-BY: 26 rows (26 votes>0) touch 27 motif verses; direct 152, 2-hop 5060"
+before_abraham,God,CROSS_REF,openbible,5,,,"OpenBible.info CC-BY: 5 rows (5 votes>0) touch 3 motif verses; direct 58, 2-hop 2266"
+Bread,Bread,CROSS_REF,openbible,1357,,,OpenBible.info CC-BY: 1357 rows (1351 votes>0) between Bread and Bread
+Bread,Light,CROSS_REF,openbible,177,,,OpenBible.info CC-BY: 177 rows (173 votes>0) between Bread and Light
+Bread,Sheep,CROSS_REF,openbible,466,,,OpenBible.info CC-BY: 466 rows (464 votes>0) between Bread and Sheep
+Bread,Death in General,CROSS_REF,openbible,829,,,OpenBible.info CC-BY: 829 rows (824 votes>0) between Bread and Death in General
+Bread,Way & Path,CROSS_REF,openbible,152,,,OpenBible.info CC-BY: 152 rows (152 votes>0) between Bread and Way & Path
+Bread,"Wine, Grapes & Vineyard",CROSS_REF,openbible,492,,,"OpenBible.info CC-BY: 492 rows (491 votes>0) between Bread and Wine, Grapes & Vineyard"
+Bread,Tree,CROSS_REF,openbible,302,,,OpenBible.info CC-BY: 302 rows (299 votes>0) between Bread and Tree
+Bread,Rock / Stones,CROSS_REF,openbible,161,,,OpenBible.info CC-BY: 161 rows (160 votes>0) between Bread and Rock / Stones
+Bread,Infant Death,CROSS_REF,openbible,10,,,OpenBible.info CC-BY: 10 rows (10 votes>0) between Bread and Infant Death
+Bread,Death as a Consequence,CROSS_REF,openbible,95,,,OpenBible.info CC-BY: 95 rows (95 votes>0) between Bread and Death as a Consequence
+Bread,Blood,CROSS_REF,openbible,229,,,OpenBible.info CC-BY: 229 rows (228 votes>0) between Bread and Blood
+Bread,Rock / Stones::stoning,CROSS_REF,openbible,20,,,OpenBible.info CC-BY: 20 rows (20 votes>0) between Bread and Rock / Stones::stoning
+Bread,Rock / Stones::tables_of_stone,CROSS_REF,openbible,31,,,OpenBible.info CC-BY: 31 rows (31 votes>0) between Bread and Rock / Stones::tables_of_stone
+Light,Light,CROSS_REF,openbible,1822,,,OpenBible.info CC-BY: 1822 rows (1817 votes>0) between Light and Light
+Light,Sheep,CROSS_REF,openbible,342,,,OpenBible.info CC-BY: 342 rows (341 votes>0) between Light and Sheep
+Light,Death in General,CROSS_REF,openbible,1035,,,OpenBible.info CC-BY: 1035 rows (1029 votes>0) between Light and Death in General
+Light,Way & Path,CROSS_REF,openbible,523,,,OpenBible.info CC-BY: 523 rows (522 votes>0) between Light and Way & Path
+Light,"Wine, Grapes & Vineyard",CROSS_REF,openbible,184,,,"OpenBible.info CC-BY: 184 rows (181 votes>0) between Light and Wine, Grapes & Vineyard"
+Light,Tree,CROSS_REF,openbible,389,,,OpenBible.info CC-BY: 389 rows (385 votes>0) between Light and Tree
+Light,God,CROSS_REF,openbible,7,,,OpenBible.info CC-BY: 7 rows (7 votes>0) between Light and God
+Light,Rock / Stones,CROSS_REF,openbible,98,,,OpenBible.info CC-BY: 98 rows (98 votes>0) between Light and Rock / Stones
+Light,Infant Death,CROSS_REF,openbible,5,,,OpenBible.info CC-BY: 5 rows (5 votes>0) between Light and Infant Death
+Light,Death as a Consequence,CROSS_REF,openbible,67,,,OpenBible.info CC-BY: 67 rows (66 votes>0) between Light and Death as a Consequence
+Light,Blood,CROSS_REF,openbible,252,,,OpenBible.info CC-BY: 252 rows (249 votes>0) between Light and Blood
+Light,Rock / Stones::stoning,CROSS_REF,openbible,18,,,OpenBible.info CC-BY: 18 rows (18 votes>0) between Light and Rock / Stones::stoning
+Light,Rock / Stones::tables_of_stone,CROSS_REF,openbible,8,,,OpenBible.info CC-BY: 8 rows (8 votes>0) between Light and Rock / Stones::tables_of_stone
+Sheep,Sheep,CROSS_REF,openbible,1924,,,OpenBible.info CC-BY: 1924 rows (1921 votes>0) between Sheep and Sheep
+Sheep,Death in General,CROSS_REF,openbible,1335,,,OpenBible.info CC-BY: 1335 rows (1323 votes>0) between Sheep and Death in General
+Sheep,Way & Path,CROSS_REF,openbible,346,,,OpenBible.info CC-BY: 346 rows (344 votes>0) between Sheep and Way & Path
+Sheep,"Wine, Grapes & Vineyard",CROSS_REF,openbible,529,,,"OpenBible.info CC-BY: 529 rows (521 votes>0) between Sheep and Wine, Grapes & Vineyard"
+Sheep,Tree,CROSS_REF,openbible,436,,,OpenBible.info CC-BY: 436 rows (434 votes>0) between Sheep and Tree
+Sheep,God,CROSS_REF,openbible,12,,,OpenBible.info CC-BY: 12 rows (12 votes>0) between Sheep and God
+Sheep,Rock / Stones,CROSS_REF,openbible,146,,,OpenBible.info CC-BY: 146 rows (146 votes>0) between Sheep and Rock / Stones
+Sheep,Infant Death,CROSS_REF,openbible,28,,,OpenBible.info CC-BY: 28 rows (28 votes>0) between Sheep and Infant Death
+Sheep,Death as a Consequence,CROSS_REF,openbible,107,,,OpenBible.info CC-BY: 107 rows (107 votes>0) between Sheep and Death as a Consequence
+Sheep,Blood,CROSS_REF,openbible,630,,,OpenBible.info CC-BY: 630 rows (628 votes>0) between Sheep and Blood
+Sheep,Rock / Stones::stoning,CROSS_REF,openbible,21,,,OpenBible.info CC-BY: 21 rows (21 votes>0) between Sheep and Rock / Stones::stoning
+Sheep,Rock / Stones::tables_of_stone,CROSS_REF,openbible,3,,,OpenBible.info CC-BY: 3 rows (3 votes>0) between Sheep and Rock / Stones::tables_of_stone
+Death in General,Death in General,CROSS_REF,openbible,7502,,,OpenBible.info CC-BY: 7502 rows (7453 votes>0) between Death in General and Death in General
+Death in General,Way & Path,CROSS_REF,openbible,1211,,,OpenBible.info CC-BY: 1211 rows (1197 votes>0) between Death in General and Way & Path
+Death in General,"Wine, Grapes & Vineyard",CROSS_REF,openbible,814,,,"OpenBible.info CC-BY: 814 rows (801 votes>0) between Death in General and Wine, Grapes & Vineyard"
+Death in General,Tree,CROSS_REF,openbible,1138,,,OpenBible.info CC-BY: 1138 rows (1127 votes>0) between Death in General and Tree
+Death in General,God,CROSS_REF,openbible,62,,,OpenBible.info CC-BY: 62 rows (62 votes>0) between Death in General and God
+Death in General,Rock / Stones,CROSS_REF,openbible,901,,,OpenBible.info CC-BY: 901 rows (896 votes>0) between Death in General and Rock / Stones
+Death in General,Infant Death,CROSS_REF,openbible,168,,,OpenBible.info CC-BY: 168 rows (168 votes>0) between Death in General and Infant Death
+Death in General,Death as a Consequence,CROSS_REF,openbible,1226,,,OpenBible.info CC-BY: 1226 rows (1216 votes>0) between Death in General and Death as a Consequence
+Death in General,Blood,CROSS_REF,openbible,2273,,,OpenBible.info CC-BY: 2273 rows (2247 votes>0) between Death in General and Blood
+Death in General,Rock / Stones::stoning,CROSS_REF,openbible,397,,,OpenBible.info CC-BY: 397 rows (396 votes>0) between Death in General and Rock / Stones::stoning
+Death in General,Rock / Stones::tables_of_stone,CROSS_REF,openbible,27,,,OpenBible.info CC-BY: 27 rows (27 votes>0) between Death in General and Rock / Stones::tables_of_stone
+Way & Path,Way & Path,CROSS_REF,openbible,1491,,,OpenBible.info CC-BY: 1491 rows (1486 votes>0) between Way & Path and Way & Path
+Way & Path,"Wine, Grapes & Vineyard",CROSS_REF,openbible,231,,,"OpenBible.info CC-BY: 231 rows (228 votes>0) between Way & Path and Wine, Grapes & Vineyard"
+Way & Path,Tree,CROSS_REF,openbible,317,,,OpenBible.info CC-BY: 317 rows (314 votes>0) between Way & Path and Tree
+Way & Path,God,CROSS_REF,openbible,12,,,OpenBible.info CC-BY: 12 rows (12 votes>0) between Way & Path and God
+Way & Path,Rock / Stones,CROSS_REF,openbible,176,,,OpenBible.info CC-BY: 176 rows (174 votes>0) between Way & Path and Rock / Stones
+Way & Path,Infant Death,CROSS_REF,openbible,10,,,OpenBible.info CC-BY: 10 rows (10 votes>0) between Way & Path and Infant Death
+Way & Path,Death as a Consequence,CROSS_REF,openbible,117,,,OpenBible.info CC-BY: 117 rows (115 votes>0) between Way & Path and Death as a Consequence
+Way & Path,Blood,CROSS_REF,openbible,281,,,OpenBible.info CC-BY: 281 rows (277 votes>0) between Way & Path and Blood
+Way & Path,Rock / Stones::stoning,CROSS_REF,openbible,39,,,OpenBible.info CC-BY: 39 rows (39 votes>0) between Way & Path and Rock / Stones::stoning
+Way & Path,Rock / Stones::tables_of_stone,CROSS_REF,openbible,3,,,OpenBible.info CC-BY: 3 rows (3 votes>0) between Way & Path and Rock / Stones::tables_of_stone
+"Wine, Grapes & Vineyard","Wine, Grapes & Vineyard",CROSS_REF,openbible,1310,,,"OpenBible.info CC-BY: 1310 rows (1299 votes>0) between Wine, Grapes & Vineyard and Wine, Grapes & Vineyard"
+"Wine, Grapes & Vineyard",Tree,CROSS_REF,openbible,774,,,"OpenBible.info CC-BY: 774 rows (768 votes>0) between Wine, Grapes & Vineyard and Tree"
+"Wine, Grapes & Vineyard",Rock / Stones,CROSS_REF,openbible,86,,,"OpenBible.info CC-BY: 86 rows (86 votes>0) between Wine, Grapes & Vineyard and Rock / Stones"
+"Wine, Grapes & Vineyard",Infant Death,CROSS_REF,openbible,12,,,"OpenBible.info CC-BY: 12 rows (12 votes>0) between Wine, Grapes & Vineyard and Infant Death"
+"Wine, Grapes & Vineyard",Death as a Consequence,CROSS_REF,openbible,48,,,"OpenBible.info CC-BY: 48 rows (48 votes>0) between Wine, Grapes & Vineyard and Death as a Consequence"
+"Wine, Grapes & Vineyard",Blood,CROSS_REF,openbible,280,,,"OpenBible.info CC-BY: 280 rows (279 votes>0) between Wine, Grapes & Vineyard and Blood"
+"Wine, Grapes & Vineyard",Rock / Stones::stoning,CROSS_REF,openbible,33,,,"OpenBible.info CC-BY: 33 rows (32 votes>0) between Wine, Grapes & Vineyard and Rock / Stones::stoning"
+Tree,Tree,CROSS_REF,openbible,1788,,,OpenBible.info CC-BY: 1788 rows (1781 votes>0) between Tree and Tree
+Tree,God,CROSS_REF,openbible,2,,,OpenBible.info CC-BY: 2 rows (2 votes>0) between Tree and God
+Tree,Rock / Stones,CROSS_REF,openbible,197,,,OpenBible.info CC-BY: 197 rows (196 votes>0) between Tree and Rock / Stones
+Tree,Infant Death,CROSS_REF,openbible,15,,,OpenBible.info CC-BY: 15 rows (15 votes>0) between Tree and Infant Death
+Tree,Death as a Consequence,CROSS_REF,openbible,139,,,OpenBible.info CC-BY: 139 rows (138 votes>0) between Tree and Death as a Consequence
+Tree,Blood,CROSS_REF,openbible,257,,,OpenBible.info CC-BY: 257 rows (253 votes>0) between Tree and Blood
+Tree,Rock / Stones::stoning,CROSS_REF,openbible,16,,,OpenBible.info CC-BY: 16 rows (16 votes>0) between Tree and Rock / Stones::stoning
+Tree,Rock / Stones::tables_of_stone,CROSS_REF,openbible,13,,,OpenBible.info CC-BY: 13 rows (13 votes>0) between Tree and Rock / Stones::tables_of_stone
+God,God,CROSS_REF,openbible,21,,,OpenBible.info CC-BY: 21 rows (21 votes>0) between God and God
+God,Rock / Stones,CROSS_REF,openbible,10,,,OpenBible.info CC-BY: 10 rows (10 votes>0) between God and Rock / Stones
+God,Infant Death,CROSS_REF,openbible,1,,,OpenBible.info CC-BY: 1 rows (1 votes>0) between God and Infant Death
+God,Death as a Consequence,CROSS_REF,openbible,4,,,OpenBible.info CC-BY: 4 rows (4 votes>0) between God and Death as a Consequence
+God,Blood,CROSS_REF,openbible,4,,,OpenBible.info CC-BY: 4 rows (4 votes>0) between God and Blood
+God,Rock / Stones::stoning,CROSS_REF,openbible,1,,,OpenBible.info CC-BY: 1 rows (1 votes>0) between God and Rock / Stones::stoning
+Rock / Stones,Rock / Stones,CROSS_REF,openbible,778,,,OpenBible.info CC-BY: 778 rows (777 votes>0) between Rock / Stones and Rock / Stones
+Rock / Stones,Infant Death,CROSS_REF,openbible,1,,,OpenBible.info CC-BY: 1 rows (1 votes>0) between Rock / Stones and Infant Death
+Rock / Stones,Death as a Consequence,CROSS_REF,openbible,142,,,OpenBible.info CC-BY: 142 rows (139 votes>0) between Rock / Stones and Death as a Consequence
+Rock / Stones,Blood,CROSS_REF,openbible,148,,,OpenBible.info CC-BY: 148 rows (143 votes>0) between Rock / Stones and Blood
+Rock / Stones,Rock / Stones::stoning,CROSS_REF,openbible,175,,,OpenBible.info CC-BY: 175 rows (175 votes>0) between Rock / Stones and Rock / Stones::stoning
+Rock / Stones,Rock / Stones::tables_of_stone,CROSS_REF,openbible,58,,,OpenBible.info CC-BY: 58 rows (58 votes>0) between Rock / Stones and Rock / Stones::tables_of_stone
+Infant Death,Infant Death,CROSS_REF,openbible,84,,,OpenBible.info CC-BY: 84 rows (84 votes>0) between Infant Death and Infant Death
+Infant Death,Death as a Consequence,CROSS_REF,openbible,36,,,OpenBible.info CC-BY: 36 rows (36 votes>0) between Infant Death and Death as a Consequence
+Infant Death,Blood,CROSS_REF,openbible,41,,,OpenBible.info CC-BY: 41 rows (41 votes>0) between Infant Death and Blood
+Infant Death,Rock / Stones::stoning,CROSS_REF,openbible,1,,,OpenBible.info CC-BY: 1 rows (1 votes>0) between Infant Death and Rock / Stones::stoning
+Death as a Consequence,Death as a Consequence,CROSS_REF,openbible,377,,,OpenBible.info CC-BY: 377 rows (373 votes>0) between Death as a Consequence and Death as a Consequence
+Death as a Consequence,Blood,CROSS_REF,openbible,345,,,OpenBible.info CC-BY: 345 rows (338 votes>0) between Death as a Consequence and Blood
+Death as a Consequence,Rock / Stones::stoning,CROSS_REF,openbible,103,,,OpenBible.info CC-BY: 103 rows (102 votes>0) between Death as a Consequence and Rock / Stones::stoning
+Blood,Blood,CROSS_REF,openbible,1658,,,OpenBible.info CC-BY: 1658 rows (1640 votes>0) between Blood and Blood
+Blood,Rock / Stones::stoning,CROSS_REF,openbible,86,,,OpenBible.info CC-BY: 86 rows (85 votes>0) between Blood and Rock / Stones::stoning
+Blood,Rock / Stones::tables_of_stone,CROSS_REF,openbible,3,,,OpenBible.info CC-BY: 3 rows (3 votes>0) between Blood and Rock / Stones::tables_of_stone
+Rock / Stones::stoning,Rock / Stones::stoning,CROSS_REF,openbible,162,,,OpenBible.info CC-BY: 162 rows (161 votes>0) between Rock / Stones::stoning and Rock / Stones::stoning
+Rock / Stones::tables_of_stone,Rock / Stones::tables_of_stone,CROSS_REF,openbible,42,,,OpenBible.info CC-BY: 42 rows (42 votes>0) between Rock / Stones::tables_of_stone and Rock / Stones::tables_of_stone

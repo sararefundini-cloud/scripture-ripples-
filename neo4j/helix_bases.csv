@@ -1,0 +1,17 @@
+gene_id,base_id,keyword,verse_count,shared,rel
+samson,lion,lion,4,true,HAS_BASE
+samson,philistines,Philistines,26,true,HAS_BASE
+samson,eyes,eyes,2,true,HAS_BASE
+samson,avenge,avenge / avenged,2,true,HAS_BASE
+samson,hand,hand,16,true,HAS_BASE
+samson,slew,slew / slain,5,true,HAS_BASE
+samson,lord,Lord,21,true,HAS_BASE
+david,lion,lion,3,true,HAS_BASE
+david,philistines,Philistines,50,true,HAS_BASE
+david,eyes,eyes,6,true,HAS_BASE
+david,avenge,avenge / avenged,5,true,HAS_BASE
+david,anointed,anointed,8,false,HAS_BASE
+david,spare,spare,1,false,HAS_BASE
+david,hand,hand,52,true,HAS_BASE
+david,slew,slew / slain,19,true,HAS_BASE
+david,lord,Lord,83,true,HAS_BASE
