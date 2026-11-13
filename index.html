@@ -247,7 +247,7 @@
   .kpi svg.ink-border, .ink-frame > svg.ink-border {
     position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
   }
-  .dash-main { display: flex; gap: 12px; padding: 0 16px 10px; flex: 1 1 auto; min-height: 280px; }
+  .dash-main { display: flex; gap: 12px; padding: 0 16px 10px; flex: 0 0 auto; align-items: stretch; min-height: 0; height: 468px; }
   .dash-center {
     position: relative;
     flex: 1 1 auto; min-width: 0; min-height: 280px; display: flex; flex-direction: column;
@@ -256,20 +256,50 @@
   .dash-center .dash-panel-title { background: #1e3a5f; color: #f4ead8; margin: 0; padding: 6px 10px; }
   .dash-center .layout-graph { flex: 1 1 auto; height: 420px; min-height: 420px; width: 100%; }
   body.dashboard-mode .dash-center #graph { flex: 1 1 auto; min-height: 360px; }
-  .dash-right, .dash-bottom {
+  body.dashboard-mode aside#panel { display: none !important; }
+  body.dashboard-mode #graph { flex: 1 1 auto; width: 100%; max-width: none; }
+  .dash-right {
+    flex: 0 0 300px; width: 300px;
+    display: flex; flex-direction: column; gap: 12px;
+    min-width: 0; min-height: 0;
+    background: transparent; border: none; padding: 0; box-shadow: none;
+  }
+  .dash-bars-wrap, .dash-selected, .dash-bottom {
     position: relative;
     background: #f4ead8; border: none; border-radius: 0; padding: 10px 12px 8px;
     box-shadow: 2px 3px 0 rgba(30, 28, 24, 0.1);
   }
-  .dash-right { flex: 0 0 300px; width: 300px; display: flex; flex-direction: column; min-height: 0; }
+  .dash-bars-wrap { flex: 0 0 auto; overflow: hidden; }
   .dash-bottom { margin: 0 16px 12px; flex: 0 0 auto; background: #7eb4e4; }
   .dash-panel-title { margin: 0 0 8px; font: italic 0.88rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: 0.04em; font-variant: small-caps; text-transform: none; color: #1a1916; }
   .dash-bottom .dash-panel-title { color: #1a1916; }
   #dash-bars, #dash-arc { display: block; width: 100%; }
-  #dash-bars { height: 260px; }
   #dash-arc { height: 200px; }
+
+  .dash-clear-focus {
+    float: right; margin: 0; padding: 2px 8px; min-height: 28px;
+    font: italic 0.8rem Georgia, "Times New Roman", serif; color: #f4ead8;
+    background: transparent; border: 1px solid #f4ead8; cursor: pointer;
+  }
+  .dash-selected { flex: 1 1 auto; min-height: 160px; margin: 0; display: flex; flex-direction: column; overflow: hidden; }
+  #dash-selected-body { flex: 1 1 auto; overflow: auto; min-height: 0; font: 0.82rem/1.4 Georgia, "Times New Roman", serif; color: #1a1916; }
+  #dash-selected-body .ledger { margin: 8px 0 12px; }
+  #dash-selected-body .ledger-row { grid-template-columns: 1fr; }
+  #dash-selected-body h3 { margin: 0 0 4px; font: italic 1.05rem Georgia, "Times New Roman", serif; }
+  #dash-selected-body .count { margin: 0 0 8px; font-style: italic; color: #3a3228; }
+  #dash-selected-body .dash-ex { margin: 0 0 8px; padding-bottom: 6px; border-bottom: 1px solid rgba(30,28,24,0.15); }
+  #dash-selected-body .dash-ex .t { font-style: italic; margin: 0 0 4px; }
+  #dash-selected-body .conn-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
+  #dash-selected-body button.dash-conn {
+    font: italic 0.8rem Georgia, "Times New Roman", serif; min-height: 36px; padding: 4px 8px;
+    border: 1px solid #3a3228; background: #f4ead8; color: #1a1916; cursor: pointer;
+  }
+  #dash-selected-body .kjv { margin: 0 0 8px; }
+  #dash-selected-body .kjv .ref { font-style: italic; font-weight: bold; }
+  .dash-legend { margin: 6px 2px 2px; font: italic 0.75rem/1.35 Georgia, "Times New Roman", serif; color: #1a1916; }
+
   @media (max-width: 720px) {
-    .dash-main { flex-direction: column; min-height: 0; padding: 0 10px 8px; }
+    .dash-main { flex-direction: column; min-height: 0; height: auto; padding: 0 10px 8px; }
     .dash-kpis { padding: 8px 10px; }
     .dash-head { padding: 8px 10px; }
     .dash-head h1 { font-size: 0.98rem; }
@@ -278,7 +308,8 @@
     body.dashboard-mode .dash-center .layout-graph { height: 400px; min-height: 400px; }
     body.dashboard-mode .dash-center #graph { min-height: 320px; }
     .dash-bottom { margin: 0 10px 10px; }
-    #dash-bars { height: 200px; }
+    .dash-selected { min-height: 200px; }
+    #dash-selected-body { max-height: 50vh; }
     #dash-arc { height: 210px; }
     #mode-dashboard { width: auto; }
   }
@@ -649,16 +680,23 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
   <div class="dash-kpis" id="dash-kpis"></div>
   <div class="dash-main">
     <div class="dash-center" id="dash-graph-slot">
-      <h2 class="dash-panel-title">Stone and water graph</h2>
+      <h2 class="dash-panel-title">Stone and water graph <button type="button" id="dash-clear-focus" class="dash-clear-focus" hidden>Clear focus</button></h2>
     </div>
     <div class="dash-right">
-      <h2 class="dash-panel-title">Verses per stone motif</h2>
-      <canvas id="dash-bars" width="280" height="260" aria-label="Verse counts per stone motif"></canvas>
+      <div class="dash-bars-wrap" id="dash-bars-wrap">
+        <h2 class="dash-panel-title">Verses per stone motif</h2>
+        <canvas id="dash-bars" width="280" height="212" aria-label="Verse counts per stone motif"></canvas>
+      </div>
+      <div id="dash-selected" class="dash-selected">
+        <h2 class="dash-panel-title">Selected stone</h2>
+        <div id="dash-selected-body"><p class="hint">Tap a stone on the graph, or a bar above, to read it here.</p></div>
+      </div>
     </div>
   </div>
   <div class="dash-bottom">
     <h2 class="dash-panel-title">Across the canon · Genesis to Revelation</h2>
     <canvas id="dash-arc" width="960" height="200" aria-label="Chronological motif marks and arcs"></canvas>
+    <p class="dash-legend">Dots are verses in that motif. Light arcs join consecutive verses of the same motif. Darker arcs are OpenBible.info cross-references.</p>
   </div>
 </div>
 <div id="companion" hidden>
@@ -879,6 +917,7 @@ function appendStoningCards(rec) {
 
 function renderPanel(id, query, opts) {
   opts = opts || {};
+  if (document.body.classList.contains("dashboard-mode")) return;
   const rec = DATA.verses && DATA.verses[id];
   if (!DATA.verses) { panelBody().innerHTML = "<p class='hint'>Loading verse text…</p>"; return; }
   if (!rec) { panelBody().innerHTML = "<p class='hint'>No verses stored for this node.</p>"; return; }
@@ -923,6 +962,7 @@ function renderPanel(id, query, opts) {
 }
 
 function renderEdge(edge) {
+  if (document.body.classList.contains("dashboard-mode")) return;
   let html = "<div class='edge-card'><h2 style='margin-top:0'>" + escapeHtml(edge.rel || "Edge") + "</h2>";
   html += "<dl>";
   html += "<dt>Kind</dt><dd>" + escapeHtml(edge.kind || "") + "</dd>";
@@ -1349,6 +1389,74 @@ function relayoutLabels(ctx, fontSize) {
   labelCache = { offsets: offsets, fontSize: fontSize };
 }
 
+
+function neighborSet(id) {
+  const keep = {};
+  if (!id) return keep;
+  keep[id] = true;
+  (DATA.edges || []).forEach(function(e) {
+    if (e.from === id) keep[e.to] = true;
+    else if (e.to === id) keep[e.from] = true;
+  });
+  const rec = ((GRAPH.explained_by || {})[id]) || {};
+  (rec.slices || []).forEach(function(sl) {
+    (sl.node_ids || []).forEach(function(nid) { keep[nid] = true; });
+  });
+  return keep;
+}
+function labelAllowSet() {
+  const fit = window.__iamFitScale || 1;
+  let scale = 1;
+  try { scale = network.getScale() || 1; } catch (err) {}
+  const zoomed = scale >= fit * 1.45;
+  const focused = selected ? neighborSet(selected) : null;
+  if (zoomed && !focused) return null;
+  const allow = {};
+  if (!zoomed) {
+    const vis = [];
+    nodesDS.forEach(function(n) { if (n && !n.hidden) vis.push(n); });
+    vis.sort(function(a, b) { return (b.count || 0) - (a.count || 0); });
+    vis.slice(0, 10).forEach(function(n) { allow[n.id] = true; });
+    vis.forEach(function(n) {
+      if (n.kind === "stone" || n.kind === "god" || n.kind === "center" || n.parent === "Rock / Stones") allow[n.id] = true;
+    });
+    if (selected) {
+      allow[selected] = true;
+      Object.keys(neighborSet(selected)).forEach(function(id) { allow[id] = true; });
+    }
+  } else {
+    nodesDS.forEach(function(n) { if (n && !n.hidden) allow[n.id] = true; });
+  }
+  if (focused) {
+    Object.keys(allow).forEach(function(id) { if (!focused[id]) delete allow[id]; });
+    Object.keys(focused).forEach(function(id) { allow[id] = true; });
+  }
+  return allow;
+}
+function applyFocus(id) {
+  const keep = id ? neighborSet(id) : null;
+  window.__iamFocusOn = !!id;
+  window.__iamFocusOrigin = id || null;
+  const nUp = [], eUp = [];
+  nodesDS.forEach(function(n) {
+    if (!n || n.hidden) return;
+    nUp.push({ id: n.id, opacity: (!keep || keep[n.id]) ? 1 : 0.15 });
+  });
+  edgesDS.forEach(function(e) {
+    if (!e || e.hidden) return;
+    const on = !keep || (keep[e.from] && keep[e.to]);
+    eUp.push({ id: e.id, opacity: on ? 1 : 0.15 });
+  });
+  if (nUp.length) nodesDS.update(nUp);
+  if (eUp.length) edgesDS.update(eUp);
+  const btn = document.getElementById("dash-clear-focus");
+  if (btn) btn.hidden = !id;
+  try { network.redraw(); } catch (err) {}
+}
+window.__iamFocusState = function() {
+  return { on: !!window.__iamFocusOn, origin: window.__iamFocusOrigin || null, keep: window.__iamFocusOrigin ? neighborSet(window.__iamFocusOrigin) : {} };
+};
+network.on("zoom", function() { try { network.redraw(); } catch (err) {} });
 network.on("afterDrawing", function(ctx) {
   const fontSize = isNarrow() ? 14 : 15;
   const padY = 5, radius = 8;
@@ -1361,9 +1469,11 @@ network.on("afterDrawing", function(ctx) {
   const boxes = [];
   const ids = Object.keys(labelCache.offsets);
   const pos = network.getPositions(ids);
+  const allow = (typeof labelAllowSet === "function") ? labelAllowSet() : null;
   ids.forEach(function(id) {
     const rec = nodesDS.get(id);
     if (!rec || rec.hidden) return;
+    if (allow && !allow[id]) return;
     const p = pos[id];
     if (!p) return;
     const o = labelCache.offsets[id];
@@ -1390,7 +1500,10 @@ function fitGraph() {
   if (!network) return;
   // Extra padding so parchment labels below the stones stay in view.
   const padding = isNarrow() ? 56 : 96;
-  try { network.fit({ animation: false, padding: padding }); } catch (err) {}
+  try {
+    network.fit({ animation: false, padding: padding });
+    window.__iamFitScale = network.getScale() || 1;
+  } catch (err) {}
 }
 
 let selected = null;
@@ -1775,6 +1888,7 @@ function closePanel() {
   stopDrop();
   selected = null;
   if (typeof window.__iamDashHighlight === "function") window.__iamDashHighlight(null);
+  if (typeof applyFocus === "function") applyFocus(null);
   try { network.unselectAll(); } catch (err) {}
   panelBody().innerHTML = DEFAULT_HINT;
   document.body.classList.remove("panel-open");
@@ -1804,13 +1918,15 @@ document.addEventListener("keydown", function(e) {
   }, { passive: true });
 })();
 new MutationObserver(function() {
-  const open = !!panelBody().querySelector(":not(.hint)") || !!selected;
+  const open = (!!panelBody().querySelector(":not(.hint)") || !!selected)
+    && !document.body.classList.contains("dashboard-mode");
   document.body.classList.toggle("panel-open", open);
 }).observe(document.getElementById("panel-body"), { childList: true });
 window.__iamSelect = function(id) {
   if (!id) { closePanel(); return; }
   selected = id;
   if (typeof window.__iamDashHighlight === "function") window.__iamDashHighlight(id);
+  if (typeof applyFocus === "function") applyFocus(id);
   try { network.selectNodes([id]); } catch (err) {}
   startDrop(id);
 };
@@ -1875,10 +1991,10 @@ window.__renderCompanion = renderCompanion;
   function renderKpis() {
     const k = dashKpis();
     const tiles = [
-      { v: fmt(k.stoning), l: "Stoning verses", s: "Use-group of Rock / Stones" },
-      { v: fmt(k.rock), l: "Rock / Stones verses", s: "All stone-language verses" },
-      { v: fmt(k.death), l: "Death in General", s: "Motif verse count" },
-      { v: fmt(k.explained), l: "Stoning verses explained", s: fmt(k.total) + " − " + fmt(k.remainder) + " = " + fmt(k.explained) }
+      { v: fmt(k.stoning), l: "Stoning verses", s: "KJV verses with stoning language" },
+      { v: fmt(k.rock), l: "Rock / Stones verses", s: "KJV verses in the Rock / Stones motif" },
+      { v: fmt(k.death), l: "Death in General", s: "KJV verses in the Death in General motif" },
+      { v: fmt(k.explained), l: "Stoning verses explained", s: "Stoning verses that also appear in an explaining motif (" + fmt(k.total) + " minus " + fmt(k.remainder) + " that do not)" }
     ];
     const root = document.getElementById("dash-kpis");
     root.innerHTML = tiles.map(function(t) {
@@ -2022,7 +2138,7 @@ window.__renderCompanion = renderCompanion;
     const capInter = 40;
     (DATA.edges || []).forEach(function(e) {
       if (inter >= capInter) return;
-      if (e.kind !== "openbible" && e.kind !== "typological") return;
+      if (e.kind !== "openbible") return;
       const a = ids[e.from], b = ids[e.to];
       if (!a || !b || a === b) return;
       const on = !highlightId || highlightId === a.n.id || highlightId === b.n.id || highlightId === "Rock / Stones";
@@ -2104,16 +2220,80 @@ window.__renderCompanion = renderCompanion;
   }
   function inkFrames() {
     inkFrame(document.querySelector(".dash-center"), 3);
-    inkFrame(document.querySelector(".dash-right"), 8);
+    inkFrame(document.querySelector(".dash-bars-wrap"), 8);
+    inkFrame(document.querySelector(".dash-selected"), 11);
     inkFrame(document.querySelector(".dash-bottom"), 14);
     const kpis = document.querySelectorAll("#dash-kpis .kpi");
     kpis.forEach(function(el, i) { inkFrame(el, 20 + i * 5); });
   }
+
+  function renderSelected(id) {
+    const body = document.getElementById("dash-selected-body");
+    if (!body) return;
+    if (!id) {
+      body.innerHTML = "<p class='hint'>Tap a stone on the graph, or a bar above, to read it here.</p>";
+      return;
+    }
+    const rec = (DATA.nodes || []).filter(function(n) { return n.id === id; })[0] || {};
+    const name = shortLabel(rec) || id;
+    const count = rec.count != null ? rec.count : "";
+    let html = "<h3>" + escapeHtml(name) + "</h3>";
+    if (count !== "") html += "<p class='count'>" + fmt(count) + " verse" + (count === 1 ? "" : "s") + "</p>";
+    const explainedRec = (typeof explainedRecord === "function") ? explainedRecord(id) : ((GRAPH.explained_by || {})[id]);
+    if (explainedRec && explainedRec.show_stoning_cards && typeof renderLedger === "function") {
+      html += renderLedger();
+    }
+    const ex = explainedRec || ((GRAPH.explained_by || {})[id]) || null;
+    if (ex && ex.slices && ex.slices.length) {
+      html += "<p class='t'>Explained by</p>";
+      ex.slices.forEach(function(sl) {
+        html += "<div class='dash-ex'><div class='t'>" + escapeHtml(sl.title || "") + "</div>";
+        if (sl.observation) html += "<p><span class='tag-text'>Observation</span> " + escapeHtml(sl.observation) + "</p>";
+        if (sl.interpretation) html += "<p><span class='tag-inf'>Interpretation</span> " + escapeHtml(sl.interpretation) + "</p>";
+        html += "</div>";
+      });
+    }
+    const keep = (typeof neighborSet === "function") ? neighborSet(id) : {};
+    const conns = [];
+    Object.keys(keep).forEach(function(nid) {
+      if (nid === id) return;
+      const n = nodesDS.get(nid);
+      if (!n || n.hidden) return;
+      conns.push({ id: nid, name: shortLabel(n) });
+    });
+    conns.sort(function(a, b) { return a.name.localeCompare(b.name); });
+    if (conns.length) {
+      html += "<p class='t'>Connected stones</p><div class='conn-list'>";
+      conns.forEach(function(c) {
+        html += "<button type='button' class='dash-conn' data-id='" + escapeHtml(c.id) + "'>" + escapeHtml(c.name) + "</button>";
+      });
+      html += "</div>";
+    }
+    const vrec = DATA.verses && DATA.verses[id];
+    const verses = [];
+    const seen = {};
+    if (vrec) (vrec.subgroups || []).forEach(function(g) {
+      (g.verses || []).forEach(function(v) {
+        if (!v || !v.verse_id || seen[v.verse_id] || verses.length >= 5) return;
+        seen[v.verse_id] = true;
+        verses.push(v);
+      });
+    });
+    if (verses.length) {
+      html += "<p class='t'>KJV verses</p>";
+      verses.forEach(function(v) {
+        html += "<div class='kjv'><div class='ref'>" + escapeHtml(v.ref || v.verse_id) + "</div><div>" + escapeHtml(v.text || "") + "</div></div>";
+      });
+    }
+    body.innerHTML = html;
+  }
   function dashHighlight(id) {
     highlightId = id || null;
+    renderSelected(id);
     if (!document.body.classList.contains("dashboard-mode")) return;
     renderBars();
     renderArc();
+    inkFrames();
   }
   function setDashboardMode(on) {
     on = !!on;
@@ -2140,6 +2320,7 @@ window.__renderCompanion = renderCompanion;
     }
     if (on) {
       if (layoutEl && slot && layoutEl.parentNode !== slot) slot.appendChild(layoutEl);
+      document.body.classList.remove("panel-open");
       if (isNarrow()) openMenu(false);
       renderCharts();
       inkFrames();
@@ -2150,9 +2331,35 @@ window.__renderCompanion = renderCompanion;
       }, 80);
     } else {
       if (layoutEl && homeParent && layoutEl.parentNode !== homeParent) homeParent.appendChild(layoutEl);
+      if (selected && typeof renderPanel === "function") {
+        renderPanel(selected, document.getElementById("search").value);
+      }
       setTimeout(function() { if (typeof fitGraph === "function") fitGraph(); }, 80);
     }
   }
+
+  const barCanvas = document.getElementById("dash-bars");
+  if (barCanvas) barCanvas.addEventListener("click", function(ev) {
+    const motifs = stoneMotifs();
+    const rect = barCanvas.getBoundingClientRect();
+    const y = ev.clientY - rect.top;
+    const hNeed = Math.max(180, motifs.length * 28 + 16);
+    const row = (hNeed - 4) / Math.max(1, motifs.length);
+    const i = Math.floor((y - 4) / row);
+    if (i >= 0 && i < motifs.length && typeof window.__iamSelect === "function") window.__iamSelect(motifs[i].id);
+  });
+  const selBody = document.getElementById("dash-selected-body");
+  if (selBody) selBody.addEventListener("click", function(ev) {
+    const btn = ev.target.closest("button.dash-conn");
+    if (btn && btn.getAttribute("data-id") && typeof window.__iamSelect === "function") window.__iamSelect(btn.getAttribute("data-id"));
+  });
+  const clearF = document.getElementById("dash-clear-focus");
+  if (clearF) clearF.addEventListener("click", function(ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (typeof window.__iamClosePanel === "function") window.__iamClosePanel();
+  });
+
   document.getElementById("mode-dashboard").addEventListener("click", function() { setDashboardMode(true); });
   window.__iamSetDashboard = setDashboardMode;
   window.__iamDashHighlight = dashHighlight;
