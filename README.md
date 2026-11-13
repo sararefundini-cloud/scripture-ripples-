@@ -9,9 +9,11 @@ Scripture Ripples is an interactive map of the Bible (KJV). Each motif is a ston
 ## What's inside
 - **I am & stones:** Jesus' "I am" sayings, each with every verse in its motif (bread, light, sheep, way, vine, death and resurrection), plus Rock / Stones and God as its own node.
 - **Explained by:** Death, Infant Death, and Stoning are linked to the motifs that explain them (sin and the Law, blood and sacrifice, Passover, the Rock). Whatever stays unexplained is listed honestly.
-- **Reading companion, Stonings:** every stoning passage, with what the Law said, lawful use or misuse, the Rock and refuge, and where it points to Jesus.
+- **Reading companion, Stonings:** a ledger of the debt, the bigger debt, who pays, and the payment, then every stoning passage with its law details, lawful use or misuse, the Rock and refuge, and where it points to Jesus.
 - **Economy of God:** a 48-term symbolic lexicon.
-- **Helix, Samson to David:** each story is a gene and the keywords are its bases. Samson's story ends with a large blast radius (about 3000 on the roof, Judges 16:27); David has the same strength and the same enemy and de-escalates, sparing Saul (1 Samuel 24, 26).
+
+## Next phase
+Each Bible story will become a "throw" dropped onto the motif rocks it touches. Ring size will be the blast radius. The first turn is Samson at Gaza (about 3000 on the roof, Judges 16:27; he slew more at his death than in his life, Judges 16:30) against David sparing Saul (1 Samuel 24 and 26; 0 deaths at the sparing).
 
 ## Method
 - Every claim is labeled **TEXT** (in the verse), **INFERENCE** (a reading), or **TYPOLOGY** (a traditional connection).
