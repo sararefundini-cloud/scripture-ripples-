@@ -86,6 +86,18 @@
   }
   .sheet-handle { display: none; }
   .sheet-peek { display: none; }
+  aside#panel { position: relative; }
+  #panel-close {
+    display: none; position: absolute; top: 4px; right: 4px; z-index: 6;
+    width: 44px; height: 44px; min-width: 44px; min-height: var(--tap);
+    margin: 0; padding: 0; border: 1px solid #c5d4d0;
+    border-radius: 50%; background: #fff; color: #1c2a2e;
+    font: 600 1.4rem/1 system-ui, sans-serif;
+    cursor: pointer; touch-action: manipulation;
+    align-items: center; justify-content: center;
+  }
+  body.panel-open #panel-close { display: inline-flex; }
+  #panel-close:focus-visible { outline: 2px solid #2a8ee8; outline-offset: 2px; }
   aside h2 { margin: 0 0 6px; font-size: 1.15rem; }
   aside .blurb { color: #4a585c; font-size: 0.9rem; margin: 0 0 12px; }
   details { margin: 0 0 8px; border: 1px solid #d4ddd8; border-radius: 6px; padding: 4px 8px; background: #fff; }
@@ -534,6 +546,7 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
   <div id="graph"></div>
   <aside id="panel">
     <div class="sheet-handle" id="sheet-handle" role="button" tabindex="0" aria-label="Resize verse panel"><span></span><p class="sheet-peek">Tap a stone to read verses</p></div>
+    <button type="button" id="panel-close" aria-label="Close panel" title="Close (Esc)">&times;</button>
     <div id="panel-body">
       <p class="hint">Tap a stone to see its verses. Tap an edge for overlap, typological, or OpenBible.info cross-reference counts.</p>
     </div>
@@ -559,6 +572,11 @@ const DATA = { nodes: GRAPH.nodes, edges: GRAPH.edges, verses: null };
 const SHEET_STEPS = ["70px", "46dvh", "75dvh"];
 let sheetStep = 0;
 const isNarrow = function() { return window.matchMedia("(max-width: 720px)").matches; };
+// Phones / touch / low-core devices: static water, no idle animation loops, cheaper edges.
+const LOW_POWER = window.matchMedia("(pointer: coarse)").matches
+  || window.matchMedia("(max-width: 820px)").matches
+  || ((navigator.hardwareConcurrency || 8) <= 4);
+window.__iamLowPower = LOW_POWER;
 
 function setSheet(step) {
   sheetStep = Math.max(0, Math.min(SHEET_STEPS.length - 1, step));
@@ -582,7 +600,11 @@ function openMenu(open) {
 document.getElementById("menu-btn").addEventListener("click", function() { openMenu(true); });
 document.getElementById("menu-close").addEventListener("click", function() { openMenu(false); });
 document.getElementById("backdrop").addEventListener("click", function() { openMenu(false); });
-document.getElementById("sheet-handle").addEventListener("click", function() { setSheet((sheetStep + 1) % SHEET_STEPS.length); });
+let sheetSwiped = false;
+document.getElementById("sheet-handle").addEventListener("click", function() {
+  if (sheetSwiped) { sheetSwiped = false; return; }
+  setSheet((sheetStep + 1) % SHEET_STEPS.length);
+});
 document.getElementById("sheet-handle").addEventListener("keydown", function(e) {
   if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSheet((sheetStep + 1) % SHEET_STEPS.length); }
 });
@@ -593,7 +615,7 @@ document.getElementById("sheet-handle").addEventListener("keydown", function(e) 
   // none and, under reduced motion, is painted once.
   const canvas = document.getElementById("water");
   const ctx = canvas.getContext("2d", { alpha: false });
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || LOW_POWER;
   // Saturated pool azure #1676d2 → #2a8ee8. Sharp thin caustic lines only.
   const DEEP = [22, 118, 210];
   const LITE = [42, 142, 232];
@@ -634,7 +656,7 @@ document.getElementById("sheet-handle").addEventListener("keydown", function(e) 
   function paint(time) {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     if (w < 2 || h < 2) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+    const dpr = LOW_POWER ? 1 : Math.min(window.devicePixelRatio || 1, 1.25);
     const cw = Math.max(1, Math.floor(w * dpr));
     const ch = Math.max(1, Math.floor(h * dpr));
     if (canvas.width !== cw || canvas.height !== ch) {
@@ -674,7 +696,7 @@ document.getElementById("sheet-handle").addEventListener("keydown", function(e) 
     ctx.drawImage(buf, 0, 0, w, h);
   }
   function frame(now) {
-    if (reduce) return;
+    if (reduce || document.hidden) { raf = 0; return; }
     if (now - last >= 55) {
       last = now;
       t = now / 1000;
@@ -682,12 +704,26 @@ document.getElementById("sheet-handle").addEventListener("keydown", function(e) 
     }
     raf = requestAnimationFrame(frame);
   }
-  function onResize() { paint(t); }
+  let resizeTimer = 0;
+  function onResize() {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() { paint(t); }, 120);
+  }
   paint(0);
   if (!reduce) raf = requestAnimationFrame(frame);
   window.addEventListener("resize", onResize);
+  // Desktop: pause the shimmer while the tab is hidden; resume when visible.
+  document.addEventListener("visibilitychange", function() {
+    if (reduce) return;
+    if (document.hidden) {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    } else if (!raf) {
+      raf = requestAnimationFrame(frame);
+    }
+  });
   window.__iamWaterState = function() {
-    return { reduced: reduce, w: canvas.width, h: canvas.height, animated: !reduce && raf !== 0 };
+    return { reduced: reduce, lowPower: LOW_POWER, w: canvas.width, h: canvas.height, animated: !reduce && raf !== 0 };
   };
 })();
 
@@ -898,8 +934,8 @@ const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, {
     stabilization: { enabled: true, iterations: isNarrow() ? 180 : 260, fit: true }
   },
   interaction: { hover: true, tooltipDelay: 80, navigationButtons: !isNarrow(), keyboard: !isNarrow(), zoomView: true, dragView: true, dragNodes: true, zoomSpeed: 0.6 },
-  edges: { smooth: { type: "continuous", roundness: 0.25 }, arrows: { to: { enabled: true, scaleFactor: 0.35 } }, selectionWidth: 2 },
-  nodes: { shape: "image", borderWidth: 0, font: { size: 0, color: "rgba(0,0,0,0)", strokeWidth: 0, background: "transparent" } }
+  edges: { smooth: LOW_POWER ? false : { type: "continuous", roundness: 0.25 }, shadow: false, arrows: { to: { enabled: true, scaleFactor: 0.35 } }, selectionWidth: 2 },
+  nodes: { shape: "image", shadow: false, borderWidth: 0, font: { size: 0, color: "rgba(0,0,0,0)", strokeWidth: 0, background: "transparent" } }
 });
 window.__iamNetwork = network;
 
@@ -1019,6 +1055,7 @@ function markLabelsDirty() { labelDirty = true; }
 function freezeLayout() {
   physicsOn = false;
   window.__iamPhysicsFrozen = true;
+  try { if (network.stopSimulation) network.stopSimulation(); } catch (err) {}
   try { network.setOptions({ physics: { enabled: false } }); } catch (err) {}
   const updates = [];
   const ids = nodesDS.getIds();
@@ -1274,7 +1311,10 @@ network.on("click", function(params) {
     if (params.edges && params.edges.length) {
       const edge = edgesDS.get(params.edges[0]);
       if (edge) renderEdge(edge);
+      return;
     }
+    // Tap on empty water closes the open rock.
+    if (selected) closePanel();
   } catch (err) {
     console.error(err);
     panelBody().innerHTML = "<p class='hint'>The verse panel could not be opened. Try another stone, or use search.</p>";
@@ -1407,6 +1447,11 @@ document.getElementById("layer").addEventListener("change", function() {
 window.__IAM_READY = false;
 function markReady() {
   if (window.__IAM_READY) return;
+  if (!window.__iamPhysicsFrozen) {
+    try { network.stopSimulation(); } catch (err) {}
+    freezeLayout();
+    fitGraph();
+  }
   window.__IAM_READY = true;
   document.body.classList.add("ready");
 }
@@ -1418,7 +1463,14 @@ network.once("stabilized", function() {
     if (DATA.verses) markReady();
   }, 220);
 });
-setTimeout(function() { fitGraph(); if (DATA.verses) markReady(); }, 8000);
+setTimeout(function() {
+  if (!window.__iamPhysicsFrozen) {
+    try { if (network.stopSimulation) network.stopSimulation(); } catch (err) {}
+    freezeLayout();
+  }
+  fitGraph();
+  if (DATA.verses) markReady();
+}, 8000);
 window.addEventListener("resize", function() {
   if (window.__iamFitTimer) clearTimeout(window.__iamFitTimer);
   window.__iamFitTimer = setTimeout(fitGraph, 150);
@@ -1609,9 +1661,45 @@ document.getElementById("companion-results").addEventListener("click", function(
     try { network.focus(id, { scale: 1.15, animation: true }); } catch (err) { fitGraph(); }
   }, 80);
 });
+const DEFAULT_HINT = "<p class='hint'>Tap a stone to see its verses. Tap an edge for overlap, typological, or OpenBible.info cross-reference counts.</p>";
+function closePanel() {
+  stopDrop();
+  selected = null;
+  try { network.unselectAll(); } catch (err) {}
+  panelBody().innerHTML = DEFAULT_HINT;
+  document.body.classList.remove("panel-open");
+  if (isNarrow()) setSheet(0);
+  try { network.redraw(); } catch (err) {}
+}
+window.__iamClosePanel = closePanel;
+document.getElementById("panel-close").addEventListener("click", function(ev) { ev.stopPropagation(); closePanel(); });
+document.addEventListener("keydown", function(e) {
+  if (e.key !== "Escape") return;
+  if (document.getElementById("toolbar").classList.contains("open")) return;
+  if (selected || document.body.classList.contains("panel-open")) closePanel();
+});
+(function sheetSwipe() {
+  const panel = document.getElementById("panel");
+  let y0 = null, scrolled = false;
+  panel.addEventListener("touchstart", function(e) {
+    if (!isNarrow() || e.touches.length !== 1) { y0 = null; return; }
+    y0 = e.touches[0].clientY;
+    scrolled = panel.scrollTop > 2;
+  }, { passive: true });
+  panel.addEventListener("touchend", function(e) {
+    if (y0 === null || scrolled) { y0 = null; return; }
+    const dy = (e.changedTouches[0] && e.changedTouches[0].clientY) - y0;
+    y0 = null;
+    if (dy > 60) { sheetSwiped = true; closePanel(); }
+  }, { passive: true });
+})();
+new MutationObserver(function() {
+  const open = !!panelBody().querySelector(":not(.hint)") || !!selected;
+  document.body.classList.toggle("panel-open", open);
+}).observe(document.getElementById("panel-body"), { childList: true });
 window.__iamSelect = function(id) {
-  selected = id || null;
-  if (!id) { stopDrop(); return; }
+  if (!id) { closePanel(); return; }
+  selected = id;
   try { network.selectNodes([id]); } catch (err) {}
   startDrop(id);
 };
