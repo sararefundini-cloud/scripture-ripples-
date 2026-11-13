@@ -13,14 +13,14 @@
     --glass-2: rgba(12, 36, 46, 0.88);
     --panel: rgba(247, 250, 248, 0.94);
     --panel-ink: #1c2a2e;
-    --accent: #8ed4ce;
+    --accent: #4a6278;
     --tap: 44px;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; color: var(--ink); font-family: Georgia, "Times New Roman", serif; }
   body { display: flex; flex-direction: column; }
   body {
-    background: linear-gradient(180deg, #1a7fd6 0%, #2b91e4 55%, #3aa0ee 100%);
+    background: #7eb4e4;
     overflow: hidden;
   }
   #water {
@@ -51,7 +51,7 @@
     padding: 0 12px;
     border: 1px solid var(--line);
     border-radius: 10px;
-    background: rgba(142, 212, 206, 0.12);
+    background: rgba(74, 98, 120, 0.14);
     color: var(--ink);
     font: 600 0.95rem system-ui, sans-serif;
   }
@@ -106,7 +106,7 @@
   .verse .ref { font-weight: bold; }
   .hint { color: #4a585c; font-size: 0.88rem; }
   mark { background: #d8f0c8; }
-  .edge-card { background: #eef6f4; border: 1px solid #cde4de; border-radius: 8px; padding: 10px 12px; margin: 0 0 12px; }
+  .edge-card { background: #f4ead8; border: 1px solid #c4b8a4; border-radius: 8px; padding: 10px 12px; margin: 0 0 12px; }
   .edge-card dt { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: #4a585c; margin-top: 6px; }
   .edge-card dd { margin: 2px 0 0; }
   .vis-navigation { z-index: 2; }
@@ -183,19 +183,105 @@
   @media (prefers-reduced-motion: reduce) {
     /* Keep a visible static caustic frame; do not flatten to a plain gradient. */
   }
-  #mode-companion, #mode-graph {
-    font: 600 0.92rem system-ui, sans-serif;
+
+  #mode-dashboard { display: inline-flex; align-items: center; }
+  #mode-graph { display: none; align-items: center; }
+  body.companion-mode #mode-companion { display: none; }
+  body.companion-mode #mode-graph { display: inline-flex; }
+  #mode-companion, #mode-graph, #mode-dashboard {
+    font: 600 0.92rem Georgia, "Times New Roman", serif;
     min-height: var(--tap);
     padding: 0 12px;
     border: 1px solid var(--line);
-    border-radius: 10px;
-    background: rgba(142, 212, 206, 0.16);
+    border-radius: 2px;
+    background: rgba(30, 36, 48, 0.35);
     color: var(--ink);
     cursor: pointer;
+    border-radius: 2px;
   }
-  body.companion-mode #mode-companion { display: none; }
-  body.companion-mode #mode-graph { display: inline-flex; }
-  #mode-graph { display: none; align-items: center; }
+  body.companion-mode #mode-dashboard,
+  body.dashboard-mode #mode-dashboard,
+  body.dashboard-mode #mode-companion { display: none; }
+  body.dashboard-mode #mode-graph { display: inline-flex; }
+  body.dashboard-mode { overflow: auto; height: auto; min-height: 100%; }
+  body.dashboard-mode #dashboard { flex: 1 0 auto; overflow: visible; }
+  body.dashboard-mode .lead, body.dashboard-mode .legend, body.dashboard-mode .lead-short { display: none; }
+  body.dashboard-mode .toolbar-graph { display: none; }
+  body.dashboard-mode #companion { display: none; }
+  #graph-home { display: contents; }
+  body.dashboard-mode #graph-home { display: none; }
+  #dashboard {
+    display: none;
+    position: relative;
+    z-index: 1;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+    background: transparent;
+    overflow: auto;
+    color: #0b1e33;
+    font-family: system-ui, sans-serif;
+  }
+  body.dashboard-mode #dashboard { display: flex; }
+  #dashboard { font-family: Georgia, "Times New Roman", serif; color: #1a1916; }
+  .dash-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: #1e3a5f; color: #f4ead8; padding: 10px 16px;
+    flex: 0 0 auto;
+  }
+  .dash-head h1 { margin: 0; font: italic 1.2rem/1.25 Georgia, "Times New Roman", serif; color: #f4ead8; text-shadow: none; letter-spacing: 0.01em; }
+  .dash-kpis { display: flex; flex-wrap: wrap; gap: 14px; padding: 12px 16px 10px; flex: 0 0 auto; }
+  .kpi {
+    position: relative;
+    flex: 1 1 140px; background: #f4ead8; border: none;
+    border-radius: 0; padding: 12px 14px 10px;
+    box-shadow: 2px 3px 0 rgba(30, 28, 24, 0.12);
+  }
+  .kpi:nth-child(1) { transform: rotate(-0.5deg); }
+  .kpi:nth-child(2) { transform: rotate(0.4deg); }
+  .kpi:nth-child(3) { transform: rotate(-0.25deg); }
+  .kpi:nth-child(4) { transform: rotate(0.55deg); }
+  .kpi .v { font: italic 700 1.7rem/1.05 Georgia, "Palatino Linotype", "Times New Roman", serif; color: #1a1916; letter-spacing: 0.01em; }
+  .kpi .l { margin: 5px 0 0; font: italic 0.78rem/1.3 Georgia, "Times New Roman", serif; letter-spacing: 0.02em; text-transform: none; color: #3a3228; }
+  .kpi .s { margin: 2px 0 0; font: 0.75rem/1.3 Georgia, "Times New Roman", serif; color: #5a5046; }
+  .kpi svg.ink-border, .ink-frame > svg.ink-border {
+    position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+  }
+  .dash-main { display: flex; gap: 12px; padding: 0 16px 10px; flex: 1 1 auto; min-height: 280px; }
+  .dash-center {
+    position: relative;
+    flex: 1 1 auto; min-width: 0; min-height: 280px; display: flex; flex-direction: column;
+    border: none; border-radius: 0; overflow: hidden; background: transparent;
+  }
+  .dash-center .dash-panel-title { background: #1e3a5f; color: #f4ead8; margin: 0; padding: 6px 10px; }
+  .dash-center .layout-graph { flex: 1 1 auto; height: 420px; min-height: 420px; width: 100%; }
+  body.dashboard-mode .dash-center #graph { flex: 1 1 auto; min-height: 360px; }
+  .dash-right, .dash-bottom {
+    position: relative;
+    background: #f4ead8; border: none; border-radius: 0; padding: 10px 12px 8px;
+    box-shadow: 2px 3px 0 rgba(30, 28, 24, 0.1);
+  }
+  .dash-right { flex: 0 0 300px; width: 300px; display: flex; flex-direction: column; min-height: 0; }
+  .dash-bottom { margin: 0 16px 12px; flex: 0 0 auto; background: #7eb4e4; }
+  .dash-panel-title { margin: 0 0 8px; font: italic 0.88rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: 0.04em; font-variant: small-caps; text-transform: none; color: #1a1916; }
+  .dash-bottom .dash-panel-title { color: #1a1916; }
+  #dash-bars, #dash-arc { display: block; width: 100%; }
+  #dash-bars { height: 260px; }
+  #dash-arc { height: 200px; }
+  @media (max-width: 720px) {
+    .dash-main { flex-direction: column; min-height: 0; padding: 0 10px 8px; }
+    .dash-kpis { padding: 8px 10px; }
+    .dash-head { padding: 8px 10px; }
+    .dash-head h1 { font-size: 0.98rem; }
+    .dash-right { width: auto; flex: 0 0 auto; }
+    .dash-center { min-height: 400px; }
+    body.dashboard-mode .dash-center .layout-graph { height: 400px; min-height: 400px; }
+    body.dashboard-mode .dash-center #graph { min-height: 320px; }
+    .dash-bottom { margin: 0 10px 10px; }
+    #dash-bars { height: 200px; }
+    #dash-arc { height: 210px; }
+    #mode-dashboard { width: auto; }
+  }
   body.companion-mode .layout-graph { display: none; }
   body.companion-mode .toolbar-graph { display: none; }
   body.companion-mode #companion { display: block; }
@@ -287,7 +373,7 @@
     padding: 0 12px;
     border: 1px solid #c5d4d0;
     border-radius: 8px;
-    background: #eef6f4;
+    background: #f4ead8;
     color: var(--panel-ink);
     cursor: pointer;
   }
@@ -298,13 +384,13 @@
     border: 1px solid #d4ddd8; border-radius: 8px;
     padding: 10px 12px; margin: 0 0 10px; background: #fff;
   }
-  .slice.just-arrived { box-shadow: 0 0 0 2px rgba(142, 212, 206, 0.7); }
+  .slice.just-arrived { box-shadow: 0 0 0 2px rgba(70, 96, 122, 0.7); }
   .slice-meta { font: 0.82rem system-ui, sans-serif; color: #4a585c; margin: 0 0 8px; }
   .tag-obs, .tag-interp, .tag {
     display: inline-block; font: 600 0.7rem system-ui, sans-serif;
     text-transform: uppercase; letter-spacing: 0.04em; margin-right: 6px;
   }
-  .tag-obs { color: #1d4a38; }
+  .tag-obs { color: #1e3a5f; }
   .tag-interp { color: #6a3a16; }
   .obs, .interp { margin: 0 0 8px; font-size: 0.92rem; line-height: 1.4; }
   .remainder { background: #f7f1e8; }
@@ -317,7 +403,7 @@
     display: block; width: 100%; text-align: left;
     font: 600 0.9rem system-ui, sans-serif; min-height: 44px;
     padding: 8px 10px; margin: 0 0 6px;
-    border: 1px solid #c5d4d0; border-radius: 8px; background: #eef6f4; cursor: pointer;
+    border: 1px solid #c4b8a4; border-radius: 2px; background: #f4ead8; cursor: pointer;
   }
   #companion-empty { color: var(--ink); text-shadow: 0 1px 2px #021016; }
   @media (max-width: 720px) {
@@ -339,7 +425,7 @@
     display: inline-block; font: 600 0.7rem system-ui, sans-serif;
     text-transform: uppercase; letter-spacing: 0.04em; margin-right: 6px;
   }
-  .tag-text { color: #1d4a38; }
+  .tag-text { color: #1e3a5f; }
   .tag-inf { color: #6a3a16; }
   .helix-matrix {
     width: 100%; border-collapse: collapse; margin: 0 0 10px;
@@ -443,6 +529,7 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
   <div class="header-row">
     <button type="button" id="menu-btn" aria-expanded="false" aria-controls="toolbar">Menu</button>
     <h1>Jesus “I am” sayings — full motif nodes</h1>
+    <button type="button" id="mode-dashboard">Dashboard</button>
     <button type="button" id="mode-companion">Reading companion: Stonings</button>
     <button type="button" id="mode-graph">Back to the graph</button>
   </div>
@@ -542,6 +629,7 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
     <input type="search" id="search" placeholder="e.g. John 6:35 or manna" enterkeyhint="search">
   </label>
 </div>
+<div id="graph-home">
 <div class="layout layout-graph">
   <div id="graph"></div>
   <aside id="panel">
@@ -551,6 +639,27 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
       <p class="hint">Tap a stone to see its verses. Tap an edge for overlap, typological, or OpenBible.info cross-reference counts.</p>
     </div>
   </aside>
+</div>
+</div>
+
+<div id="dashboard" hidden>
+  <div class="dash-head">
+    <h1>Scripture Ripples — Stones Dashboard</h1>
+  </div>
+  <div class="dash-kpis" id="dash-kpis"></div>
+  <div class="dash-main">
+    <div class="dash-center" id="dash-graph-slot">
+      <h2 class="dash-panel-title">Stone and water graph</h2>
+    </div>
+    <div class="dash-right">
+      <h2 class="dash-panel-title">Verses per stone motif</h2>
+      <canvas id="dash-bars" width="280" height="260" aria-label="Verse counts per stone motif"></canvas>
+    </div>
+  </div>
+  <div class="dash-bottom">
+    <h2 class="dash-panel-title">Across the canon · Genesis to Revelation</h2>
+    <canvas id="dash-arc" width="960" height="200" aria-label="Chronological motif marks and arcs"></canvas>
+  </div>
 </div>
 <div id="companion" hidden>
   <div id="companion-inner">
@@ -610,50 +719,13 @@ document.getElementById("sheet-handle").addEventListener("keydown", function(e) 
 });
 
 (function water() {
-  // Procedural swimming-pool caustics (not a stock image). Ripples around
-  // stones are still drawn in vis beforeDrawing. This canvas is pointer-events
-  // none and, under reduced motion, is painted once.
+  // Flat true-blue water (hue ~210). Painted once on every device. No
+  // gradient, pools, or caustics. Ripples are drawn in vis beforeDrawing.
   const canvas = document.getElementById("water");
   const ctx = canvas.getContext("2d", { alpha: false });
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || LOW_POWER;
-  // Saturated pool azure #1676d2 → #2a8ee8. Sharp thin caustic lines only.
-  const DEEP = [22, 118, 210];
-  const LITE = [42, 142, 232];
-  const CYAN = [176, 242, 255];
-  const HOT = [255, 255, 255];
-  function lerp(a, b, u) {
-    const t = u < 0 ? 0 : (u > 1 ? 1 : u);
-    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
-  }
-  // Ridged noise: a bright line only where |field| is under a tight threshold.
-  function ridge(n, thresh) {
-    const a = Math.abs(n);
-    if (a >= thresh) return 0;
-    const u = 1 - a / thresh;
-    return u * u;
-  }
-  function caustic(x, y, t) {
-    // Two layered sine-distorted fields. Mostly-vertical zero-crossings are
-    // warped sideways into a horizontally rippled net, like sunlight on a pool.
-    const d1 = Math.sin(y * 10.8 + t * 0.42) * 0.07
-      + Math.sin(y * 22.0 - t * 0.29) * 0.034
-      + Math.sin(x * 7.2 + y * 6.4 + t * 0.18) * 0.016;
-    const d2 = Math.sin(y * 8.6 - t * 0.36) * 0.06
-      + Math.sin(y * 18.4 + t * 0.24) * 0.028
-      + Math.sin(x * 6.5 - y * 5.8 + t * 0.15) * 0.014;
-    const dy = Math.sin(x * 9.2 + t * 0.2) * 0.022
-      + Math.sin(x * 16.0 - t * 0.16) * 0.01;
-    const n1 = Math.sin((x + d1) * 54.0 + 0.4 * Math.sin(y * 5.1 + t * 0.11));
-    const n2 = Math.sin((x + d2) * 37.0 + 1.65 + 0.5 * Math.sin(y * 3.8 - t * 0.09));
-    const n3 = Math.sin((y + dy) * 17.5 + 0.75 * Math.sin((x + d1) * 11.0 + t * 0.08));
-    const r1 = ridge(n1, 0.10);
-    const r2 = ridge(n2, 0.09);
-    const r3 = ridge(n3, 0.07) * 0.7;
-    // Crossings flare to a white core, as real caustics do.
-    return Math.min(1, r1 + r2 + r3 + r1 * r2 * 1.6);
-  }
-  let t = 0, raf = 0, last = 0, buf = null, bctx = null, img = null;
-  function paint(time) {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const BLUE = "#7eb4e4";
+  function paint() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     if (w < 2 || h < 2) return;
     const dpr = LOW_POWER ? 1 : Math.min(window.devicePixelRatio || 1, 1.25);
@@ -664,66 +736,18 @@ document.getElementById("sheet-handle").addEventListener("keydown", function(e) 
       canvas.height = ch;
     }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const scale = 2;
-    const bw = Math.max(1, Math.floor(w / scale));
-    const bh = Math.max(1, Math.floor(h / scale));
-    if (!buf || buf.width !== bw || buf.height !== bh) {
-      buf = document.createElement("canvas");
-      buf.width = bw; buf.height = bh;
-      bctx = buf.getContext("2d");
-      img = bctx.createImageData(bw, bh);
-    }
-    const data = img.data;
-    for (let j = 0; j < bh; j++) {
-      const v = j / Math.max(1, bh - 1);
-      const base = lerp(DEEP, LITE, v);
-      for (let i = 0; i < bw; i++) {
-        const u = i / Math.max(1, bw - 1);
-        const k = caustic(u, v, time);
-        const o = (j * bw + i) * 4;
-        let col = base;
-        if (k > 0.04) col = lerp(col, CYAN, Math.min(1, (k - 0.04) / 0.28) * 0.45);
-        if (k > 0.28) col = lerp(col, CYAN, Math.min(1, (k - 0.28) / 0.34));
-        if (k > 0.58) col = lerp(col, HOT, Math.min(1, (k - 0.58) / 0.42));
-        data[o] = col[0];
-        data[o + 1] = col[1];
-        data[o + 2] = col[2];
-        data[o + 3] = 255;
-      }
-    }
-    bctx.putImageData(img, 0, 0);
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(buf, 0, 0, w, h);
-  }
-  function frame(now) {
-    if (reduce || document.hidden) { raf = 0; return; }
-    if (now - last >= 55) {
-      last = now;
-      t = now / 1000;
-      paint(t);
-    }
-    raf = requestAnimationFrame(frame);
+    ctx.fillStyle = BLUE;
+    ctx.fillRect(0, 0, w, h);
   }
   let resizeTimer = 0;
   function onResize() {
     if (resizeTimer) clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function() { paint(t); }, 120);
+    resizeTimer = setTimeout(paint, 120);
   }
-  paint(0);
-  if (!reduce) raf = requestAnimationFrame(frame);
+  paint();
   window.addEventListener("resize", onResize);
-  // Desktop: pause the shimmer while the tab is hidden; resume when visible.
-  document.addEventListener("visibilitychange", function() {
-    if (reduce) return;
-    if (document.hidden) {
-      if (raf) cancelAnimationFrame(raf);
-      raf = 0;
-    } else if (!raf) {
-      raf = requestAnimationFrame(frame);
-    }
-  });
   window.__iamWaterState = function() {
-    return { reduced: reduce, lowPower: LOW_POWER, w: canvas.width, h: canvas.height, animated: !reduce && raf !== 0 };
+    return { reduced: reduceMotion, lowPower: !!window.__iamLowPower, w: canvas.width, h: canvas.height, animated: false };
   };
 })();
 
@@ -934,10 +958,22 @@ const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, {
     stabilization: { enabled: true, iterations: isNarrow() ? 180 : 260, fit: true }
   },
   interaction: { hover: true, tooltipDelay: 80, navigationButtons: !isNarrow(), keyboard: !isNarrow(), zoomView: true, dragView: true, dragNodes: true, zoomSpeed: 0.6 },
-  edges: { smooth: LOW_POWER ? false : { type: "continuous", roundness: 0.25 }, shadow: false, arrows: { to: { enabled: true, scaleFactor: 0.35 } }, selectionWidth: 2 },
+  edges: { smooth: LOW_POWER ? false : { type: "continuous", roundness: 0.25 }, shadow: false, color: { color: "rgba(186, 216, 224, 0.55)", highlight: "rgba(230, 246, 252, 0.9)", hover: "rgba(220, 240, 248, 0.8)" }, arrows: { to: { enabled: true, scaleFactor: 0.35 } }, selectionWidth: 2 },
   nodes: { shape: "image", shadow: false, borderWidth: 0, font: { size: 0, color: "rgba(0,0,0,0)", strokeWidth: 0, background: "transparent" } }
 });
 window.__iamNetwork = network;
+
+const SLATE_EDGE = { color: "rgba(70, 96, 122, 0.7)", highlight: "rgba(40, 62, 88, 0.95)", hover: "rgba(40, 62, 88, 0.85)" };
+try {
+  network.setOptions({ edges: { color: SLATE_EDGE } });
+  const ids = edgesDS.getIds();
+  edgesDS.update(ids.map(function(id) { return { id: id, color: SLATE_EDGE }; }));
+} catch (err) {}
+(function restyleNav() {
+  const s = document.createElement("style");
+  s.textContent = "div.vis-network div.vis-navigation div.vis-button{background-color:#e8eef2!important;border:1px solid #3a4a58!important;box-shadow:none!important;filter:grayscale(1) contrast(1.2) brightness(0.45);}div.vis-network div.vis-navigation div.vis-button:hover{box-shadow:0 0 0 2px rgba(45,55,70,.4)!important;}div.vis-network div.vis-navigation div.vis-button:active{box-shadow:0 0 0 2px rgba(45,55,70,.7)!important;}";
+  document.head.appendChild(s);
+})();
 
 const reduceRippleAnim = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const EXPLAINED = GRAPH.explained_by || {};
@@ -945,6 +981,9 @@ let dropAnim = null;
 let dropRaf = 0;
 
 function stopDrop() {
+  if (dropAnim && dropAnim.originId && dropAnim.baseSize) {
+    try { nodesDS.update({ id: dropAnim.originId, size: dropAnim.baseSize }); } catch (err) {}
+  }
   dropAnim = null;
   if (dropRaf) {
     cancelAnimationFrame(dropRaf);
@@ -996,6 +1035,19 @@ function startDrop(nid) {
   if (!info.origin) return;
   const maxDist = info.partners.reduce(function(m, p) { return Math.max(m, p.dist); }, 80);
   const wmax = info.partners.reduce(function(m, p) { return Math.max(m, p.weight || 1); }, 1) || 1;
+  const rec0 = nodesDS.get(nid);
+  const baseSize = (rec0 && rec0.size) || 24;
+  const droplets = [];
+  if (!reduceRippleAnim) {
+    const nDrop = isNarrow() ? 6 : 8;
+    for (let i = 0; i < nDrop; i++) {
+      droplets.push({
+        angle: (i / nDrop) * Math.PI * 2 + (i % 2 ? 0.11 : -0.07),
+        speed: (isNarrow() ? 42 : 58) + (i % 3) * 16 + (i * 5) % 10,
+        r: 4.2 + (i % 3) * 1.4
+      });
+    }
+  }
   dropAnim = {
     originId: nid,
     x: info.origin.x,
@@ -1006,7 +1058,10 @@ function startDrop(nid) {
     wmax: wmax,
     radius: reduceRippleAnim ? maxDist : 0,
     remainderShown: false,
-    finished: false
+    finished: false,
+    baseSize: baseSize,
+    dipping: !reduceRippleAnim,
+    droplets: droplets
   };
   if (reduceRippleAnim || !info.partners.length) {
     info.partners.forEach(function(p) { p.arrived = true; p.glowUntil = performance.now() + 4000; });
@@ -1020,6 +1075,16 @@ function startDrop(nid) {
     if (!dropAnim || dropAnim.originId !== nid) return;
     const speed = Math.max(0.28, dropAnim.maxDist / 1800);
     dropAnim.radius = (ts - dropAnim.start) * speed;
+    const elapsed = ts - dropAnim.start;
+    if (dropAnim.dipping) {
+      if (elapsed < 150) {
+        const s = 1 - 0.15 * Math.sin(Math.PI * elapsed / 150);
+        try { nodesDS.update({ id: nid, size: dropAnim.baseSize * s }); } catch (err) {}
+      } else {
+        try { nodesDS.update({ id: nid, size: dropAnim.baseSize }); } catch (err) {}
+        dropAnim.dipping = false;
+      }
+    }
     dropAnim.partners.forEach(function(p) {
       if (!p.arrived && dropAnim.radius >= p.dist) {
         p.arrived = true;
@@ -1113,54 +1178,95 @@ network.on("beforeDrawing", function(ctx) {
   const d = dropAnim;
   if (!d || !isFinite(d.x) || !isFinite(d.y)) return;
   ctx.save();
-  const lags = [0, d.maxDist * 0.09, d.maxDist * 0.18];
-  lags.forEach(function(lag, i) {
-    const r = d.finished && reduceRippleAnim
-      ? (d.maxDist * (0.35 + i * 0.22))
-      : (d.radius - lag);
-    if (!(r > 8)) return;
-    const fade = reduceRippleAnim ? 0.28 : Math.max(0, 1 - r / (d.maxDist + 420));
-    if (fade < 0.02) return;
-    // Ring strength follows the strongest overlap; later rings are slightly lighter.
-    const strength = 0.55 + 0.45 * Math.min(1, (d.wmax || 1) / 80);
-    ctx.beginPath();
-    ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(230, 248, 255, " + (0.48 * fade * (1 - i * 0.12) * strength) + ")";
-    ctx.lineWidth = ((isNarrow() ? 1.3 : 1.7) + 3.2 * strength * fade) * (1 - i * 0.15);
-    ctx.stroke();
-  });
   const now = performance.now();
+  const elapsed = now - d.start;
+  function strokeRing(x, y, rad, width, a) {
+    ctx.beginPath();
+    ctx.arc(x, y, rad, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(30, 70, 110, " + (0.62 * a) + ")";
+    ctx.lineWidth = width + 2.6;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, y, rad, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255, 255, 255, " + (0.98 * a) + ")";
+    ctx.lineWidth = width;
+    ctx.stroke();
+  }
+  // White splash with a darker-blue outline, ~600ms, only during the drop.
+  if (!reduceRippleAnim && d.droplets && elapsed < 600) {
+    const u = Math.min(1, elapsed / 600);
+    const fade = 1 - u;
+    const ease = 1 - (1 - u) * (1 - u);
+    d.droplets.forEach(function(drop) {
+      const dist = drop.speed * ease;
+      const x = d.x + Math.cos(drop.angle) * dist;
+      const y = d.y + Math.sin(drop.angle) * dist;
+      const rr = drop.r * (0.55 + 0.45 * fade);
+      ctx.beginPath();
+      ctx.arc(x, y, rr + 1.4, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(30, 70, 110, " + (0.55 * fade) + ")";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x, y, rr, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, " + (0.98 * fade) + ")";
+      ctx.fill();
+    });
+  }
+  if (reduceRippleAnim) {
+    // One static ring under reduced motion.
+    const r = Math.max(36, d.maxDist * 0.32);
+    strokeRing(d.x, d.y, r, isNarrow() ? 2 : 2.4, 0.85);
+  } else {
+    // 3 concentric rings: thicker/brighter at first, thinning and fading as they grow.
+    const gap = Math.max(26, Math.min(54, d.maxDist * 0.08));
+    [0, 1, 2].forEach(function(i) {
+      const r = d.radius - i * gap;
+      if (!(r > 8)) return;
+      const fade = Math.max(0, 1 - r / (d.maxDist + 420));
+      if (fade < 0.03) return;
+      const first = i === 0 ? 1.35 : 1;
+      const thick = (((isNarrow() ? 4.0 : 5.2) * fade) + 0.8) * first;
+      const alpha = Math.min(1, (i === 0 ? 1 : 0.82) * fade * (1 - i * 0.1));
+      strokeRing(d.x, d.y, r, thick * (1 - i * 0.08), alpha);
+    });
+  }
   d.partners.forEach(function(p) {
     if (!p.arrived) return;
     const pos = network.getPositions([p.id])[p.id];
     const rec = nodesDS.get(p.id);
     if (!pos || !rec) return;
     const w = (p.weight || 1) / (d.wmax || 1);
-    let alpha = 0.18 + 0.4 * w;
-    if (p.glowUntil && now < p.glowUntil) alpha = 0.5 + 0.45 * w;
+    let alpha = 0.22 + 0.45 * w;
+    if (p.glowUntil && now < p.glowUntil) alpha = 0.55 + 0.4 * w;
     const glowR = Math.max(0.5, (rec.size || 24) * 1.38);
     ctx.beginPath();
     ctx.arc(pos.x, pos.y, glowR, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(200, 255, 230, " + alpha + ")";
-    ctx.lineWidth = 2 + 6 * w;
+    ctx.strokeStyle = "rgba(30, 70, 110, " + (alpha * 0.7) + ")";
+    ctx.lineWidth = 3.4 + 6 * w;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, glowR, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255, 255, 255, " + alpha + ")";
+    ctx.lineWidth = 2 + 5 * w;
     ctx.stroke();
     ctx.beginPath();
     ctx.arc(pos.x, pos.y, Math.max(0.5, (rec.size || 24) * 1.15), 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(180, 245, 220, " + (alpha * 0.28) + ")";
+    ctx.fillStyle = "rgba(255, 255, 255, " + (alpha * 0.22) + ")";
     ctx.fill();
     if (p.glowUntil && now < p.glowUntil) {
       const phase = 1 - (p.glowUntil - now) / 1600;
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, Math.max(0.5, (rec.size || 24) * (1.2 + Math.max(0, phase) * 0.85)), 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(230, 255, 245, " + (0.4 * (1 - phase)) + ")";
-      ctx.lineWidth = 1.5 + 3 * w;
+      ctx.strokeStyle = "rgba(30, 70, 110, " + (0.4 * (1 - phase)) + ")";
+      ctx.lineWidth = 3 + 3 * w;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, Math.max(0.5, (rec.size || 24) * (1.2 + Math.max(0, phase) * 0.85)), 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(255, 255, 255, " + (0.55 * (1 - phase)) + ")";
+      ctx.lineWidth = 1.5 + 2.5 * w;
       ctx.stroke();
     }
   });
-  ctx.beginPath();
-  ctx.arc(d.x, d.y, 8, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(255,255,255,0.2)";
-  ctx.fill();
   ctx.restore();
 });
 
@@ -1590,6 +1696,9 @@ function renderCompanion(query) {
   document.getElementById("companion-results").innerHTML = html;
 }
 function setCompanionMode(on, query) {
+  if (on && document.body.classList.contains("dashboard-mode") && typeof window.__iamSetDashboard === "function") {
+    window.__iamSetDashboard(false);
+  }
   document.body.classList.toggle("companion-mode", !!on);
   document.getElementById("companion").hidden = !on;
   const btnC = document.getElementById("mode-companion");
@@ -1615,7 +1724,7 @@ function appendCompanionLink(nodeId) {
   const btn = document.createElement("button");
   btn.type = "button";
   btn.textContent = "Open in Reading companion: Stonings";
-  btn.style.cssText = "font:600 0.9rem system-ui,sans-serif;min-height:44px;padding:0 12px;border-radius:8px;border:1px solid #c5d4d0;background:#eef6f4;cursor:pointer";
+  btn.style.cssText = "font:600 0.9rem Georgia,\"Times New Roman\",serif;min-height:44px;padding:0 12px;border-radius:2px;border:1px solid #c4b8a4;background:#f4ead8;cursor:pointer";
   btn.addEventListener("click", function() {
     const rec = nodesDS.get(nodeId);
     const q = rec && rec.label ? rec.label.split("\n")[0] : "";
@@ -1647,7 +1756,7 @@ document.getElementById("companion-intro").textContent = STONING.intro;
   if (mount) mount.innerHTML = renderLedger();
 })();
 document.getElementById("mode-companion").addEventListener("click", function() { setCompanionMode(true); });
-document.getElementById("mode-graph").addEventListener("click", function() { setCompanionMode(false); });
+document.getElementById("mode-graph").addEventListener("click", function() { setCompanionMode(false); if (typeof window.__iamSetDashboard === "function") window.__iamSetDashboard(false); });
 document.getElementById("companion-search").addEventListener("input", function(ev) { renderCompanion(ev.target.value); });
 document.getElementById("companion-results").addEventListener("click", function(ev) {
   const btn = ev.target.closest("button[data-node]");
@@ -1665,6 +1774,7 @@ const DEFAULT_HINT = "<p class='hint'>Tap a stone to see its verses. Tap an edge
 function closePanel() {
   stopDrop();
   selected = null;
+  if (typeof window.__iamDashHighlight === "function") window.__iamDashHighlight(null);
   try { network.unselectAll(); } catch (err) {}
   panelBody().innerHTML = DEFAULT_HINT;
   document.body.classList.remove("panel-open");
@@ -1700,6 +1810,7 @@ new MutationObserver(function() {
 window.__iamSelect = function(id) {
   if (!id) { closePanel(); return; }
   selected = id;
+  if (typeof window.__iamDashHighlight === "function") window.__iamDashHighlight(id);
   try { network.selectNodes([id]); } catch (err) {}
   startDrop(id);
 };
@@ -1723,6 +1834,341 @@ window.__iamSetLayer = function(v) {
 
 window.__setCompanionMode = setCompanionMode;
 window.__renderCompanion = renderCompanion;
+
+(function dashboard() {
+  const CANON = ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther","Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi","Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"];
+  const BOOK_INDEX = {};
+  CANON.forEach(function(b, i) { BOOK_INDEX[b] = i; });
+  BOOK_INDEX.Psalm = BOOK_INDEX.Psalms;
+  BOOK_INDEX["Song of Songs"] = BOOK_INDEX["Song of Solomon"];
+  const PALETTE = ["#1e3a5f","#6e6a64","#c4a35a","#8b3a3a","#4a6278","#a65d2e","#3d4a58","#7a7064"];
+  let highlightId = null;
+  let homeParent = null;
+  let layoutEl = null;
+
+  function fmt(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  function stoneMotifs() {
+    return (DATA.nodes || []).filter(function(n) {
+      return n.layer === "iam" && n.parent === "Rock / Stones";
+    }).sort(function(a, b) { return (b.count || 0) - (a.count || 0); });
+  }
+  function shortLabel(n) {
+    return String(n.label || n.id).split("\n")[0];
+  }
+  function dashKpis() {
+    function countOf(id) {
+      for (let i = 0; i < DATA.nodes.length; i++) {
+        if (DATA.nodes[i].id === id) return DATA.nodes[i].count || 0;
+      }
+      return 0;
+    }
+    const stoning = (STONING && STONING.stoning_count) || countOf("Rock / Stones::stoning");
+    const rock = countOf("Rock / Stones");
+    const death = countOf("Death in General");
+    const rec = ((GRAPH.explained_by || {})["Rock / Stones::stoning"]) || {};
+    const rem = (rec.remainder && rec.remainder.count != null) ? rec.remainder.count : 0;
+    const total = (rec.remainder && rec.remainder.total != null) ? rec.remainder.total : (rec.total || stoning);
+    return { stoning: stoning, rock: rock, death: death, explained: Math.max(0, total - rem), remainder: rem, total: total };
+  }
+  function renderKpis() {
+    const k = dashKpis();
+    const tiles = [
+      { v: fmt(k.stoning), l: "Stoning verses", s: "Use-group of Rock / Stones" },
+      { v: fmt(k.rock), l: "Rock / Stones verses", s: "All stone-language verses" },
+      { v: fmt(k.death), l: "Death in General", s: "Motif verse count" },
+      { v: fmt(k.explained), l: "Stoning verses explained", s: fmt(k.total) + " − " + fmt(k.remainder) + " = " + fmt(k.explained) }
+    ];
+    const root = document.getElementById("dash-kpis");
+    root.innerHTML = tiles.map(function(t) {
+      return "<div class='kpi'><div class='v'>" + t.v + "</div><div class='l'>" + t.l + "</div><div class='s'>" + t.s + "</div></div>";
+    }).join("");
+    return k;
+  }
+  function fitCanvas(canvas, cssH) {
+    const dpr = (window.__iamLowPower ? 1 : Math.min(window.devicePixelRatio || 1, 1.5));
+    const w = Math.max(80, canvas.clientWidth || canvas.parentElement.clientWidth || 280);
+    const h = cssH || canvas.clientHeight || 200;
+    canvas.style.height = h + "px";
+    canvas.width = Math.max(1, Math.floor(w * dpr));
+    canvas.height = Math.max(1, Math.floor(h * dpr));
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+  function pebbleBar(ctx, x, y, w, h, color, seed) {
+    const n = Math.max(3, Math.round(w / Math.max(8, h * 0.68)));
+    const step = w / n;
+    ctx.fillStyle = color;
+    ctx.strokeStyle = "rgba(30, 28, 24, 0.5)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i < n; i++) {
+      const cx = x + (i + 0.5) * step;
+      const cy = y + h / 2 + Math.sin((seed + i) * 1.7) * 1.1;
+      const rx = step * (0.52 + (i % 3) * 0.05);
+      const ry = h * (0.36 + (i % 2) * 0.07);
+      ctx.beginPath();
+      if (ctx.ellipse) ctx.ellipse(cx, cy, rx, ry, (i % 2 ? -0.18 : 0.14), 0, Math.PI * 2);
+      else ctx.arc(cx, cy, Math.min(rx, ry), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+  function renderBars() {
+    const canvas = document.getElementById("dash-bars");
+    const motifs = stoneMotifs();
+    const hNeed = Math.max(180, motifs.length * 28 + 16);
+    const fit = fitCanvas(canvas, hNeed);
+    const ctx = fit.ctx, w = fit.w, h = fit.h;
+    ctx.clearRect(0, 0, w, h);
+    const labelSpace = 36;
+    const left = 118, right = 8 + labelSpace, top = 4, row = (h - top) / Math.max(1, motifs.length);
+    const maxC = Math.max(1, motifs.reduce(function(m, n) { return Math.max(m, n.count || 0); }, 0));
+    const barW = Math.max(20, w - left - right);
+    motifs.forEach(function(n, i) {
+      const y = top + i * row;
+      const bw = barW * ((n.count || 0) / maxC);
+      const on = !highlightId || highlightId === n.id || highlightId === "Rock / Stones";
+      const col = on ? PALETTE[i % PALETTE.length] : "rgba(140,150,160,0.4)";
+      pebbleBar(ctx, left, y + 4, Math.max(8, bw), row - 8, col, i * 11);
+      ctx.fillStyle = on ? "#1a1916" : "#8a847c";
+      ctx.font = "italic 12px Georgia, 'Times New Roman', serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(shortLabel(n), left - 8, y + row / 2);
+      ctx.textAlign = "left";
+      ctx.fillText(String(n.count || 0), left + Math.max(8, bw) + 6, y + row / 2);
+    });
+  }
+  function parseVid(vid) {
+    const parts = String(vid).split(".");
+    if (parts.length < 3) return null;
+    const vs = +parts.pop(), ch = +parts.pop();
+    const book = parts.join(".");
+    const bi = BOOK_INDEX[book];
+    if (bi == null || !isFinite(ch) || !isFinite(vs)) return null;
+    return bi + Math.min(0.96, (Math.max(1, ch) - 1) / 40 + Math.max(0, vs) / 2000);
+  }
+  function motifVerses(id) {
+    const rec = DATA.verses && DATA.verses[id];
+    if (!rec) return [];
+    const out = [];
+    (rec.subgroups || []).forEach(function(g) {
+      (g.verses || []).forEach(function(v) {
+        const x = parseVid(v.verse_id);
+        if (x != null) out.push(x);
+      });
+    });
+    out.sort(function(a, b) { return a - b; });
+    return out;
+  }
+  function renderArc() {
+    const canvas = document.getElementById("dash-arc");
+    const motifs = stoneMotifs();
+    const fit = fitCanvas(canvas, isNarrow() ? 210 : 200);
+    const ctx = fit.ctx, w = fit.w, h = fit.h;
+    ctx.fillStyle = "#7eb4e4";
+    ctx.fillRect(0, 0, w, h);
+    const left = 118, right = 10, top = 18, bottom = 22;
+    const innerW = Math.max(40, w - left - right);
+    const nBook = CANON.length;
+    function xOf(canonX) { return left + (canonX / nBook) * innerW; }
+    ctx.fillStyle = "#1a1916";
+    ctx.font = "small-caps 11px Georgia, 'Times New Roman', serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    const ticks = isNarrow() ? [0, 18, 39, 65] : [0, 18, 22, 39, 43, 65];
+    ticks.forEach(function(i) {
+      const x = xOf(i);
+      ctx.strokeStyle = "rgba(30, 28, 24, 0.2)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, h - bottom + 2); ctx.stroke();
+      ctx.fillStyle = "#1a1916";
+      const label = CANON[i];
+      if (i === 0) { ctx.textAlign = "left"; ctx.fillText(label, x, h - bottom + 4); }
+      else if (i === 65) { ctx.textAlign = "right"; ctx.fillText(label, x, h - bottom + 4); }
+      else { ctx.textAlign = "center"; ctx.fillText(label, x, h - bottom + 4); }
+    });
+    const rowH = (h - top - bottom) / Math.max(1, motifs.length);
+    const rows = motifs.map(function(n, i) {
+      return { n: n, xs: motifVerses(n.id), color: PALETTE[i % PALETTE.length], y: top + i * rowH + rowH * 0.55, i: i };
+    });
+    // Intra-motif consecutive arcs, capped per row.
+    const capEach = 48;
+    rows.forEach(function(row) {
+      const on = !highlightId || highlightId === row.n.id || highlightId === "Rock / Stones";
+      const xs = row.xs;
+      const nArc = Math.min(xs.length - 1, capEach);
+      ctx.strokeStyle = on ? "#1a1916" : "rgba(30,28,24,0.2)";
+      ctx.globalAlpha = on ? 0.35 : 0.12;
+      ctx.lineWidth = 1;
+      for (let i = 0; i < nArc; i++) {
+        const x0 = xOf(xs[i]), x1 = xOf(xs[i + 1]);
+        const mid = (x0 + x1) / 2;
+        const lift = Math.min(rowH * 0.85, Math.max(4, (x1 - x0) * 0.35));
+        ctx.beginPath();
+        ctx.moveTo(x0, row.y);
+        ctx.quadraticCurveTo(mid, row.y - lift, x1, row.y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    });
+    // OpenBible (and typological) links among stone motifs — one arc per edge, capped.
+    const ids = {};
+    rows.forEach(function(r) { ids[r.n.id] = r; });
+    ids["Rock / Stones"] = ids["Rock / Stones"] || null;
+    let inter = 0;
+    const capInter = 40;
+    (DATA.edges || []).forEach(function(e) {
+      if (inter >= capInter) return;
+      if (e.kind !== "openbible" && e.kind !== "typological") return;
+      const a = ids[e.from], b = ids[e.to];
+      if (!a || !b || a === b) return;
+      const on = !highlightId || highlightId === a.n.id || highlightId === b.n.id || highlightId === "Rock / Stones";
+      const med = function(row) { return row.xs.length ? row.xs[Math.floor(row.xs.length / 2)] : 0; };
+      const x0 = xOf(med(a)), x1 = xOf(med(b));
+      const mid = (x0 + x1) / 2;
+      const lift = Math.min(h * 0.28, Math.abs(x1 - x0) * 0.25 + 12);
+      ctx.strokeStyle = on ? "rgba(30,28,24,0.45)" : "rgba(30,28,24,0.12)";
+      ctx.globalAlpha = on ? 0.35 : 0.1;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x0, a.y);
+      ctx.quadraticCurveTo(mid, Math.min(a.y, b.y) - lift, x1, b.y);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      inter += 1;
+    });
+    // Marks
+    rows.forEach(function(row) {
+      const on = !highlightId || highlightId === row.n.id || highlightId === "Rock / Stones";
+      ctx.fillStyle = on ? row.color : "rgba(140,150,160,0.35)";
+      const r = on ? 2.3 : 1.6;
+      row.xs.forEach(function(cx) {
+        ctx.beginPath();
+        ctx.arc(xOf(cx), row.y, r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.fillStyle = on ? "#1a1916" : "#5a5046";
+      ctx.font = "italic 11px Georgia, 'Times New Roman', serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(shortLabel(row.n), left - 8, row.y);
+    });
+  }
+  function renderCharts() {
+    renderKpis();
+    renderBars();
+    renderArc();
+    inkFrames();
+  }
+
+  function wobblePath(w, h, seed) {
+    const inset = 2;
+    const pts = [];
+    function edge(x0, y0, x1, y1, n) {
+      const nx = y1 - y0, ny = x0 - x1;
+      const len = Math.hypot(nx, ny) || 1;
+      for (let i = 0; i < n; i++) {
+        const t = i / n;
+        const x = x0 + (x1 - x0) * t, y = y0 + (y1 - y0) * t;
+        const wob = Math.sin((seed + i) * 1.8) * 1.3 + Math.sin((seed + i) * 3.3) * 0.55;
+        pts.push((x + nx / len * wob).toFixed(1) + " " + (y + ny / len * wob).toFixed(1));
+      }
+    }
+    edge(inset, inset, w - inset, inset, 9);
+    edge(w - inset, inset, w - inset, h - inset, 7);
+    edge(w - inset, h - inset, inset, h - inset, 9);
+    edge(inset, h - inset, inset, inset, 7);
+    return "M " + pts[0] + " L " + pts.slice(1).join(" L ") + " Z";
+  }
+  function inkFrame(el, seed) {
+    if (!el) return;
+    el.classList.add("ink-frame");
+    let svg = el.querySelector("svg.ink-border");
+    if (!svg) {
+      svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("class", "ink-border");
+      svg.setAttribute("aria-hidden", "true");
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "#1a1916");
+      path.setAttribute("stroke-width", "1.6");
+      svg.appendChild(path);
+      el.insertBefore(svg, el.firstChild);
+    }
+    const w = Math.max(8, el.clientWidth), h = Math.max(8, el.clientHeight);
+    svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+    svg.querySelector("path").setAttribute("d", wobblePath(w, h, seed));
+  }
+  function inkFrames() {
+    inkFrame(document.querySelector(".dash-center"), 3);
+    inkFrame(document.querySelector(".dash-right"), 8);
+    inkFrame(document.querySelector(".dash-bottom"), 14);
+    const kpis = document.querySelectorAll("#dash-kpis .kpi");
+    kpis.forEach(function(el, i) { inkFrame(el, 20 + i * 5); });
+  }
+  function dashHighlight(id) {
+    highlightId = id || null;
+    if (!document.body.classList.contains("dashboard-mode")) return;
+    renderBars();
+    renderArc();
+  }
+  function setDashboardMode(on) {
+    on = !!on;
+    if (on && typeof window.__exitHelix === "function" && document.body.classList.contains("helix-mode")) {
+      window.__exitHelix();
+    }
+    if (on && document.body.classList.contains("companion-mode")) {
+      setCompanionMode(false);
+    }
+    layoutEl = document.querySelector(".layout-graph");
+    homeParent = document.getElementById("graph-home");
+    const slot = document.getElementById("dash-graph-slot");
+    const dash = document.getElementById("dashboard");
+    document.body.classList.toggle("dashboard-mode", on);
+    dash.hidden = !on;
+    const pageH = document.querySelector("header h1");
+    if (pageH) {
+      if (on) {
+        if (!pageH.getAttribute("data-orig")) pageH.setAttribute("data-orig", pageH.textContent);
+        pageH.textContent = "Scripture Ripples";
+      } else if (pageH.getAttribute("data-orig")) {
+        pageH.textContent = pageH.getAttribute("data-orig");
+      }
+    }
+    if (on) {
+      if (layoutEl && slot && layoutEl.parentNode !== slot) slot.appendChild(layoutEl);
+      if (isNarrow()) openMenu(false);
+      renderCharts();
+      inkFrames();
+      setTimeout(function() {
+        renderCharts();
+        inkFrames();
+        if (typeof fitGraph === "function") fitGraph();
+      }, 80);
+    } else {
+      if (layoutEl && homeParent && layoutEl.parentNode !== homeParent) homeParent.appendChild(layoutEl);
+      setTimeout(function() { if (typeof fitGraph === "function") fitGraph(); }, 80);
+    }
+  }
+  document.getElementById("mode-dashboard").addEventListener("click", function() { setDashboardMode(true); });
+  window.__iamSetDashboard = setDashboardMode;
+  window.__iamDashHighlight = dashHighlight;
+  window.__iamDashState = function() {
+    return { active: document.body.classList.contains("dashboard-mode"), highlight: highlightId, kpis: dashKpis() };
+  };
+  window.addEventListener("resize", function() {
+    if (!document.body.classList.contains("dashboard-mode")) return;
+    if (window.__iamDashResize) clearTimeout(window.__iamDashResize);
+    window.__iamDashResize = setTimeout(function() {
+      renderCharts();
+      if (typeof fitGraph === "function") fitGraph();
+    }, 140);
+  });
+})();
+
 const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn here as a helix. Each story is a gene. Keywords in this project's KJV are the bases, the small parts of each gene. A rung is a base that appears in both genes. Ring size is the blast radius stated in the text.","pair_note":"No verse in these ranges names Samson and David as a pair. Shared bases are shared KJV words. OpenBible.info lists 28 cross-reference rows (26 unique undirected links; 28 with votes>0) between Judges 13–16 and 1 Samuel 16–26.","xref":{"source":"OpenBible.info","license":"CC-BY","rows":28,"votes_gt0_rows":28,"unique_undirected":26,"note":"OpenBible.info lists 28 cross-reference rows (26 unique undirected links; 28 with votes>0) between Judges 13–16 and 1 Samuel 16–26."},"bases":[{"id":"lion","label":"lion","samson":4,"david":3,"shared":true},{"id":"philistines","label":"Philistines","samson":26,"david":50,"shared":true},{"id":"eyes","label":"eyes","samson":2,"david":6,"shared":true},{"id":"avenge","label":"avenge / avenged","samson":2,"david":5,"shared":true},{"id":"anointed","label":"anointed","samson":0,"david":8,"shared":false},{"id":"spare","label":"spare","samson":0,"david":1,"shared":false},{"id":"hand","label":"hand","samson":16,"david":52,"shared":true},{"id":"slew","label":"slew / slain","samson":5,"david":19,"shared":true},{"id":"lord","label":"Lord","samson":21,"david":83,"shared":true}],"absent":[{"id":"LORD","label":"LORD","missing_in":"both-as-all-caps","note":"The all-caps form LORD does not appear in this project's verses.csv; the text uses Lord. Counts below use Lord.","samson":0,"david":0},{"id":"anointed","label":"anointed","missing_in":"samson","note":"anointed does not appear in Judges 13–16.","samson":0,"david":8},{"id":"spare","label":"spare","missing_in":"samson","note":"spare does not appear in Judges 13–16.","samson":0,"david":1}],"cautions":["The word eyes appears in both ranges, but not always in the same sense. Samson has his eyes put out (Judges 16:21, 16:28). In the David range, eyes or eye is also used in other ways (for example 1 Samuel 24:10, mine eye spared thee)."],"genes":[{"id":"samson","name":"Samson","range_label":"Judges 13–16","verse_count":96,"blast":3000,"blast_label":"about 3000 on the roof, Judges 16:27; total dead not numbered","quotes":[{"ref":"Judges 14:5","verse_id":"Judges.14.5","text":"Then went Samson down, and his father and his mother, to Timnath, and came to the vineyards of Timnath: and, behold, a young lion roared against him.","label":"TEXT"},{"ref":"Judges 16:21","verse_id":"Judges.16.21","text":"But the Philistines took him, and put out his eyes, and brought him down to Gaza, and bound him with fetters of brass; and he did grind in the prison house.","label":"TEXT"},{"ref":"Judges 16:27","verse_id":"Judges.16.27","text":"Now the house was full of men and women; and all the lords of the Philistines were there; and there were upon the roof about three thousand men and women, that beheld while Samson made sport.","label":"TEXT"},{"ref":"Judges 16:28","verse_id":"Judges.16.28","text":"And Samson called unto the Lord, and said, O Lord God, remember me, I pray thee, and strengthen me, I pray thee, only this once, O God, that I may be at once avenged of the Philistines for my two eyes.","label":"TEXT"},{"ref":"Judges 16:30","verse_id":"Judges.16.30","text":"And Samson said, Let me die with the Philistines. And he bowed himself with all his might; and the house fell upon the lords, and upon all the people that were therein. So the dead which he slew at his death were more than they which he slew in his life.","label":"TEXT"}],"inference":"These verses show a last prayer to be avenged and a large number dead when the house falls. The text does not use the word repent, and this layer does not claim that Samson repents.","matrix_note":"Sara's matrix — draft scores for her review","matrix":[{"axis":"Trigger","score":3,"claim":"TEXT","reason":"The Philistines put out his eyes (Judges 16:21), and he asks to be avenged for them (Judges 16:28)."},{"axis":"Scale","score":3,"claim":"TEXT","reason":"About three thousand men and women were on the roof (Judges 16:27). The total dead are not numbered."},{"axis":"Exchange","score":3,"claim":"TEXT","reason":"He says, Let me die with the Philistines (Judges 16:30)."},{"axis":"Pivot","score":2,"claim":"TEXT","reason":"The last recorded act is a prayer for strength to be avenged (Judges 16:28). The score is a draft; the verses do not name a change of heart."},{"axis":"Outcome","score":3,"claim":"TEXT","reason":"The dead which he slew at his death were more than they which he slew in his life (Judges 16:30)."}],"bases":[{"id":"lion","label":"lion","count":4,"shared":true},{"id":"philistines","label":"Philistines","count":26,"shared":true},{"id":"eyes","label":"eyes","count":2,"shared":true},{"id":"avenge","label":"avenge / avenged","count":2,"shared":true},{"id":"hand","label":"hand","count":16,"shared":true},{"id":"slew","label":"slew / slain","count":5,"shared":true},{"id":"lord","label":"Lord","count":21,"shared":true}]},{"id":"david","name":"David","range_label":"1 Samuel 16–26","verse_count":335,"blast":0,"blast_label":"0 deaths at the sparing (TEXT)","quotes":[{"ref":"1 Samuel 17:36","verse_id":"1 Samuel.17.36","text":"Thy servant slew both the lion and the bear: and this uncircumcised Philistine shall be as one of them, seeing he hath defied the armies of the living God.","label":"TEXT"},{"ref":"1 Samuel 24:10","verse_id":"1 Samuel.24.10","text":"Behold, this day thine eyes have seen how that the Lord had delivered thee to day into mine hand in the cave: and some bade me kill thee: but mine eye spared thee; and I said, I will not put forth mine hand against my lord; for he is the Lord’s anointed.","label":"TEXT"},{"ref":"1 Samuel 25:33","verse_id":"1 Samuel.25.33","text":"And blessed be thy advice, and blessed be thou, which hast kept me this day from coming to shed blood, and from avenging myself with mine own hand.","label":"TEXT"},{"ref":"1 Samuel 26:11","verse_id":"1 Samuel.26.11","text":"The Lord forbid that I should stretch forth mine hand against the Lord’s anointed: but, I pray thee, take thou now the spear that is at his bolster, and the cruse of water, and let us go.","label":"TEXT"}],"inference":"In the cave and the camp David does not kill Saul, and Abigail keeps him from avenging himself. The blast radius at those sparing scenes is 0 deaths. Calling this a de-escalation from Samson's end is an inference from that contrast, not a word the verses use.","matrix_note":"Sara's matrix — draft scores for her review","matrix":[{"axis":"Trigger","score":3,"claim":"TEXT","reason":"Saul is delivered into David's hand in the cave (1 Samuel 24:10) and again in the camp (1 Samuel 26:11, 26:23)."},{"axis":"Scale","score":0,"claim":"TEXT","reason":"0 deaths at the sparing. He withholds the killing blow; the text of these scenes does not number any slain there."},{"axis":"Exchange","score":2,"claim":"TEXT","reason":"He will not stretch forth his hand against the Lord's anointed (1 Samuel 26:11). Draft score."},{"axis":"Pivot","score":3,"claim":"TEXT","reason":"Abigail keeps him from coming to shed blood, and from avenging myself with mine own hand (1 Samuel 25:33). He also refuses in the cave and the camp. Draft score."},{"axis":"Outcome","score":1,"claim":"INFERENCE","reason":"He does not put forth his hand against Saul. The word de-escalation is an inference from the 0-death sparing scenes."}],"bases":[{"id":"lion","label":"lion","count":3,"shared":true},{"id":"philistines","label":"Philistines","count":50,"shared":true},{"id":"eyes","label":"eyes","count":6,"shared":true},{"id":"avenge","label":"avenge / avenged","count":5,"shared":true},{"id":"anointed","label":"anointed","count":8,"shared":false},{"id":"spare","label":"spare","count":1,"shared":false},{"id":"hand","label":"hand","count":52,"shared":true},{"id":"slew","label":"slew / slain","count":19,"shared":true},{"id":"lord","label":"Lord","count":83,"shared":true}]}]};
 /* Helix: Samson → David. Data comes from HELIX, built from verses.csv. */
 (function () {
