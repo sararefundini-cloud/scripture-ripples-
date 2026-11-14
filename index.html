@@ -545,6 +545,43 @@
   @media (max-width: 720px) {
     .ledger-row { grid-template-columns: 1fr; }
   }
+
+  #graph .edge-key {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    z-index: 4;
+    max-width: 12.75rem;
+    padding: 6px 8px 7px;
+    background: #f4ead8;
+    color: #1a1916;
+    border: 1px solid #1a1916;
+    box-shadow: 2px 3px 0 rgba(30, 28, 24, 0.12);
+    font: italic 0.72rem/1.25 Georgia, "Times New Roman", serif;
+    pointer-events: none;
+  }
+  .edge-key .edge-key-title {
+    margin: 0 0 4px;
+    font: italic 0.78rem/1.2 Georgia, "Times New Roman", serif;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+  }
+  .edge-key ul { list-style: none; margin: 0; padding: 0; }
+  .edge-key li { display: flex; align-items: center; gap: 7px; margin: 0 0 3px; }
+  .edge-key li:last-child { margin-bottom: 0; }
+  .edge-key .swatches { flex: 0 0 auto; display: flex; flex-direction: column; gap: 2px; }
+  .edge-key svg { display: block; }
+  body.helix-mode .edge-key { display: none; }
+  @media (max-width: 720px) {
+    #graph .edge-key {
+      left: 6px;
+      bottom: 6px;
+      max-width: min(11.5rem, calc(100% - 12px));
+      padding: 5px 6px 6px;
+      font-size: 0.68rem;
+    }
+    .edge-key .edge-key-title { font-size: 0.72rem; margin-bottom: 3px; }
+  }
 </style>
 <script>
 /**
@@ -696,6 +733,27 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
 <div id="graph-home">
 <div class="layout layout-graph">
   <div id="graph"></div>
+  <div class="edge-key" id="edge-key" aria-label="Line key">
+    <p class="edge-key-title">Line key</p>
+    <ul>
+      <li>
+        <span class="swatches"><svg width="40" height="10" viewBox="0 0 40 10" aria-hidden="true"><line x1="1" y1="5.0" x2="31" y2="5.0" stroke="rgba(70,96,122,0.85)" stroke-width="1.6" fill="none"/><polygon points="31,1.9 39,5.0 31,8.1" fill="rgba(70,96,122,0.85)"/></svg><svg width="40" height="10" viewBox="0 0 40 10" aria-hidden="true"><line x1="1" y1="5.0" x2="31" y2="5.0" stroke="rgba(70,96,122,0.85)" stroke-width="1.4" fill="none" stroke-dasharray="5 5"/><polygon points="31,1.9 39,5.0 31,8.1" fill="rgba(70,96,122,0.85)"/></svg></span>
+        <span>Word-match / overlap</span>
+      </li>
+      <li>
+        <span class="swatches"><svg width="40" height="11" viewBox="0 0 40 11" aria-hidden="true"><line x1="1" y1="5.5" x2="31" y2="5.5" stroke="rgba(70,96,122,0.85)" stroke-width="1.8" fill="none" stroke-dasharray="8 3 2 3"/><polygon points="31,2.4 39,5.5 31,8.6" fill="rgba(70,96,122,0.85)"/></svg></span>
+        <span>OpenBible.info</span>
+      </li>
+      <li>
+        <span class="swatches"><svg width="40" height="11" viewBox="0 0 40 11" aria-hidden="true"><line x1="1" y1="5.5" x2="31" y2="5.5" stroke="rgba(70,96,122,0.85)" stroke-width="1.8" fill="none" stroke-dasharray="3 5"/><polygon points="31,2.4 39,5.5 31,8.6" fill="rgba(70,96,122,0.85)"/></svg></span>
+        <span>Typological</span>
+      </li>
+      <li>
+        <span class="swatches"><svg width="40" height="11" viewBox="0 0 40 11" aria-hidden="true"><line x1="1" y1="5.5" x2="31" y2="5.5" stroke="rgba(70,96,122,0.85)" stroke-width="1" fill="none"/><polygon points="31,2.4 39,5.5 31,8.6" fill="rgba(70,96,122,0.85)"/></svg></span>
+        <span>Structure</span>
+      </li>
+    </ul>
+  </div>
   <aside id="panel">
     <div class="sheet-handle" id="sheet-handle" role="button" tabindex="0" aria-label="Resize verse panel"><span></span><p class="sheet-peek">Tap a stone to read verses</p></div>
     <button type="button" id="panel-close" aria-label="Close panel" title="Close (Esc)">&times;</button>
@@ -1063,6 +1121,68 @@ if (typeof vis === "undefined") {
   document.getElementById("panel-body").innerHTML = "<p class='hint'>The chart library did not load. This page is a single self-contained file; try opening it in Chrome, Firefox, or Safari.</p>";
   throw new Error("vis is undefined");
 }
+
+function wrapLabel(ctx, text, maxWidth) {
+  const lines = [];
+  String(text || "").split("\n").forEach(function(para) {
+    if (/^\d+\s+verses?\s*$/i.test(para.trim())) {
+      lines.push(para.trim());
+      return;
+    }
+    const words = para.split(/\s+/).filter(Boolean);
+    let line = "";
+    words.forEach(function(w) {
+      const trial = line ? line + " " + w : w;
+      if (!line || ctx.measureText(trial).width <= maxWidth) line = trial;
+      else { lines.push(line); line = w; }
+    });
+    if (line) lines.push(line);
+  });
+  return lines.length ? lines : [""];
+}
+(function sizeStonesForLabels() {
+  const fontSize = isNarrow() ? 13 : 16;
+  const lineH = Math.round(fontSize * 1.2);
+  const ctx = document.createElement("canvas").getContext("2d");
+  ctx.font = "600 " + fontSize + "px Georgia, 'Times New Roman', serif";
+  const fitW = 1.32;
+  const fitH = 1.16;
+  function fits(label, size) {
+    const maxW = Math.max(24, size * fitW);
+    const maxH = Math.max(20, size * fitH);
+    const lines = wrapLabel(ctx, label, maxW);
+    let tw = 0;
+    lines.forEach(function(ln) { tw = Math.max(tw, ctx.measureText(ln).width); });
+    const th = lines.length * lineH;
+    const pad = 5;
+    return tw + pad <= maxW + 0.5 && th + pad <= maxH + 0.5;
+  }
+  function needed(label, minSize) {
+    if (fits(label, minSize)) return minSize;
+    let lo = minSize, hi = Math.max(minSize + 8, 48);
+    while (!fits(label, hi) && hi < 160) hi += 16;
+    for (let i = 0; i < 18; i++) {
+      const mid = (lo + hi) / 2;
+      if (fits(label, mid)) hi = mid;
+      else lo = mid;
+    }
+    return Math.ceil(hi * 10) / 10;
+  }
+  let maxSize = 0;
+  let god = null;
+  DATA.nodes.forEach(function(n) {
+    const minSize = n.size || 14;
+    n.size = needed(n.label || n.id, minSize);
+    n.baseLabelSize = n.size;
+    if (n.id === "God") god = n;
+    if (n.size > maxSize) maxSize = n.size;
+  });
+  if (god && god.size < maxSize + 4) {
+    god.size = Math.round((maxSize + 4) * 10) / 10;
+    god.baseLabelSize = god.size;
+  }
+  window.__iamLabelFontSize = fontSize;
+})();
 const container = document.getElementById("graph");
 const nodesDS = new vis.DataSet(DATA.nodes);
 const edgesDS = new vis.DataSet(DATA.edges);
@@ -1072,19 +1192,24 @@ const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, {
     enabled: true,
     solver: "barnesHut",
     barnesHut: {
-      gravitationalConstant: -9000,
-      springLength: 180,
-      springConstant: 0.04,
-      damping: 0.32,
+      gravitationalConstant: -10000,
+      springLength: 200,
+      springConstant: 0.035,
+      damping: 0.36,
       avoidOverlap: 1
     },
-    stabilization: { enabled: true, iterations: isNarrow() ? 180 : 260, fit: true }
+    stabilization: { enabled: true, iterations: isNarrow() ? 260 : 360, fit: true }
   },
   interaction: { hover: true, tooltipDelay: 80, navigationButtons: !isNarrow(), keyboard: !isNarrow(), zoomView: true, dragView: true, dragNodes: true, zoomSpeed: 0.6 },
   edges: { smooth: LOW_POWER ? false : { type: "continuous", roundness: 0.25 }, shadow: false, color: { color: "rgba(186, 216, 224, 0.55)", highlight: "rgba(230, 246, 252, 0.9)", hover: "rgba(220, 240, 248, 0.8)" }, arrows: { to: { enabled: true, scaleFactor: 0.35 } }, selectionWidth: 2 },
   nodes: { shape: "image", shadow: false, borderWidth: 0, font: { size: 0, color: "rgba(0,0,0,0)", strokeWidth: 0, background: "transparent" } }
 });
 window.__iamNetwork = network;
+(function placeEdgeKey() {
+  const key = document.getElementById("edge-key");
+  const graph = document.getElementById("graph");
+  if (key && graph && key.parentNode !== graph) graph.appendChild(key);
+})();
 
 const SLATE_EDGE = { color: "rgba(70, 96, 122, 0.7)", highlight: "rgba(40, 62, 88, 0.95)", hover: "rgba(40, 62, 88, 0.85)" };
 try {
@@ -1240,11 +1365,111 @@ let labelDirty = true;
 let labelCache = { offsets: {}, fontSize: 0 };
 let economyLaidOut = false;
 function markLabelsDirty() { labelDirty = true; }
+function separateOverlaps() {
+  const nodes = [];
+  nodesDS.forEach(function(n) {
+    if (!n || n.hidden) return;
+    const p = network.getPositions([n.id])[n.id];
+    if (!p) return;
+    const r = n.baseLabelSize || n.size || 24;
+    nodes.push({ id: n.id, x: p.x, y: p.y, r: r });
+  });
+  if (nodes.length < 2) return;
+  let cx = 0, cy = 0;
+  nodes.forEach(function(n) { cx += n.x; cy += n.y; });
+  cx /= nodes.length;
+  cy /= nodes.length;
+  const gap = 6;
+  for (let iter = 0; iter < 100; iter++) {
+    let moved = false;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        const minDist = a.r + b.r + gap;
+        if (dist >= minDist) continue;
+        if (dist < 0.001) {
+          const ang = (i * 17 + j * 13) * 0.2;
+          dx = Math.cos(ang);
+          dy = Math.sin(ang);
+          dist = 0.001;
+        }
+        const push = (minDist - dist) / 2;
+        const ux = dx / dist, uy = dy / dist;
+        a.x -= ux * push;
+        a.y -= uy * push;
+        b.x += ux * push;
+        b.y += uy * push;
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  let cx2 = 0, cy2 = 0;
+  nodes.forEach(function(n) { cx2 += n.x; cy2 += n.y; });
+  cx2 /= nodes.length;
+  cy2 /= nodes.length;
+  const ox = cx - cx2, oy = cy - cy2;
+  const updates = nodes.map(function(n) {
+    return { id: n.id, x: n.x + ox, y: n.y + oy };
+  });
+  if (updates.length) nodesDS.update(updates);
+}
+function compactLayout() {
+  separateOverlaps();
+  const visible = [];
+  nodesDS.forEach(function(n) {
+    if (!n || n.hidden) return;
+    visible.push(n.id);
+  });
+  if (visible.length < 2) return;
+  function extent() {
+    const pos = network.getPositions(visible);
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    visible.forEach(function(id) {
+      const p = pos[id];
+      if (!p) return;
+      const rec = nodesDS.get(id);
+      const r = (rec && (rec.baseLabelSize || rec.size)) || 24;
+      minX = Math.min(minX, p.x - r);
+      minY = Math.min(minY, p.y - r);
+      maxX = Math.max(maxX, p.x + r);
+      maxY = Math.max(maxY, p.y + r);
+    });
+    return { w: maxX - minX, h: maxY - minY, area: (maxX - minX) * (maxY - minY) };
+  }
+  let box = extent();
+  for (let round = 0; round < 36; round++) {
+    const pos = network.getPositions(visible);
+    let cx = 0, cy = 0, n = 0;
+    visible.forEach(function(id) {
+      const p = pos[id];
+      if (!p) return;
+      cx += p.x; cy += p.y; n += 1;
+    });
+    if (!n) break;
+    cx /= n; cy /= n;
+    const shrink = 0.05;
+    const updates = [];
+    visible.forEach(function(id) {
+      const p = pos[id];
+      if (!p) return;
+      updates.push({ id: id, x: p.x + (cx - p.x) * shrink, y: p.y + (cy - p.y) * shrink });
+    });
+    if (updates.length) nodesDS.update(updates);
+    separateOverlaps();
+    const next = extent();
+    if (!(next.area < box.area * 0.997)) break;
+    box = next;
+  }
+}
 function freezeLayout() {
   physicsOn = false;
   window.__iamPhysicsFrozen = true;
   try { if (network.stopSimulation) network.stopSimulation(); } catch (err) {}
   try { network.setOptions({ physics: { enabled: false } }); } catch (err) {}
+  try { compactLayout(); } catch (err) {}
   const updates = [];
   const ids = nodesDS.getIds();
   const pos = network.getPositions(ids);
@@ -1394,20 +1619,6 @@ network.on("beforeDrawing", function(ctx) {
 });
 
 
-function wrapLabel(ctx, text, maxWidth) {
-  const lines = [];
-  String(text || "").split("\n").forEach(function(para) {
-    const words = para.split(/\s+/).filter(Boolean);
-    let line = "";
-    words.forEach(function(w) {
-      const trial = line ? line + " " + w : w;
-      if (!line || ctx.measureText(trial).width <= maxWidth) line = trial;
-      else { lines.push(line); line = w; }
-    });
-    if (line) lines.push(line);
-  });
-  return lines.length ? lines : [""];
-}
 function roundedRect(ctx, x, y, w, h, r) {
   const rr = Math.min(r, w / 2, h / 2);
   ctx.beginPath();
@@ -1422,52 +1633,22 @@ function boxesOverlap(a, b, gap) {
   return !(a.x + a.w + gap < b.x || b.x + b.w + gap < a.x || a.y + a.h + gap < b.y || b.y + b.h + gap < a.y);
 }
 function relayoutLabels(ctx, fontSize) {
-  const maxW = isNarrow() ? 128 : 158;
+  const lineH = Math.round(fontSize * 1.2);
   ctx.font = "600 " + fontSize + "px Georgia, 'Times New Roman', serif";
-  const lineH = Math.round(fontSize * 1.25);
-  const padX = 8, padY = 5;
-  const stones = [];
-  const boxes = [];
-  const ids = [];
+  const offsets = {};
   DATA.nodes.forEach(function(n) {
     const rec = nodesDS.get(n.id);
     if (!rec || rec.hidden) return;
     const pos = network.getPositions([n.id])[n.id];
     if (!pos) return;
-    ids.push(n.id);
-    let bb = null;
-    try { bb = network.getBoundingBox(n.id); } catch (err) {}
-    if (bb) stones.push({ id: n.id, x: bb.left, y: bb.top, w: bb.right - bb.left, h: bb.bottom - bb.top });
+    const size = rec.baseLabelSize || rec.size || n.size || 24;
+    const maxW = Math.max(24, size * 1.32);
     const lines = wrapLabel(ctx, n.label || "", maxW);
     let tw = 0;
     lines.forEach(function(ln) { tw = Math.max(tw, ctx.measureText(ln).width); });
-    const w = tw + padX * 2;
-    const h = lines.length * lineH + padY * 2;
-    const bottom = bb ? bb.bottom : (pos.y + (n.size || 30));
-    boxes.push({ id: n.id, lines: lines, x: pos.x - w / 2, y: bottom + 5, w: w, h: h, cx: pos.x, px: pos.x, py: pos.y });
-  });
-  for (let iter = 0; iter < 18; iter++) {
-    boxes.forEach(function(b) {
-      stones.forEach(function(s) {
-        if (s.id === b.id) return;
-        if (boxesOverlap(b, s, 3)) b.y = Math.max(b.y, s.y + s.h + 5);
-      });
-    });
-    for (let i = 0; i < boxes.length; i++) {
-      for (let j = i + 1; j < boxes.length; j++) {
-        const a = boxes[i], c = boxes[j];
-        if (!boxesOverlap(a, c, 3)) continue;
-        if (a.y <= c.y) c.y = a.y + a.h + 4;
-        else a.y = c.y + c.h + 4;
-        const nudge = 6;
-        if (a.cx <= c.cx) { c.x += nudge; a.x -= nudge / 2; }
-        else { a.x += nudge; c.x -= nudge / 2; }
-      }
-    }
-  }
-  const offsets = {};
-  boxes.forEach(function(b) {
-    offsets[b.id] = { x: b.x - b.px, y: b.y - b.py, w: b.w, h: b.h, lines: b.lines };
+    const w = tw;
+    const h = lines.length * lineH;
+    offsets[n.id] = { x: -w / 2, y: -h / 2, w: w, h: h, lines: lines, lineH: lineH };
   });
   labelCache = { offsets: offsets, fontSize: fontSize };
 }
@@ -1488,33 +1669,8 @@ function neighborSet(id) {
   return keep;
 }
 function labelAllowSet() {
-  const fit = window.__iamFitScale || 1;
-  let scale = 1;
-  try { scale = network.getScale() || 1; } catch (err) {}
-  const zoomed = scale >= fit * 1.45;
-  const focused = selected ? neighborSet(selected) : null;
-  if (zoomed && !focused) return null;
-  const allow = {};
-  if (!zoomed) {
-    const vis = [];
-    nodesDS.forEach(function(n) { if (n && !n.hidden) vis.push(n); });
-    vis.sort(function(a, b) { return (b.count || 0) - (a.count || 0); });
-    vis.slice(0, 10).forEach(function(n) { allow[n.id] = true; });
-    vis.forEach(function(n) {
-      if (n.kind === "stone" || n.kind === "god" || n.kind === "center" || n.parent === "Rock / Stones") allow[n.id] = true;
-    });
-    if (selected) {
-      allow[selected] = true;
-      Object.keys(neighborSet(selected)).forEach(function(id) { allow[id] = true; });
-    }
-  } else {
-    nodesDS.forEach(function(n) { if (n && !n.hidden) allow[n.id] = true; });
-  }
-  if (focused) {
-    Object.keys(allow).forEach(function(id) { if (!focused[id]) delete allow[id]; });
-    Object.keys(focused).forEach(function(id) { allow[id] = true; });
-  }
-  return allow;
+  // Every visible rock keeps its name at every zoom, including the default fit.
+  return null;
 }
 function applyFocus(id) {
   const keep = id ? neighborSet(id) : null;
@@ -1541,9 +1697,8 @@ window.__iamFocusState = function() {
 };
 network.on("zoom", function() { try { network.redraw(); } catch (err) {} });
 network.on("afterDrawing", function(ctx) {
-  const fontSize = isNarrow() ? 14 : 15;
-  const padY = 5, radius = 8;
-  const lineH = Math.round(fontSize * 1.25);
+  const fontSize = window.__iamLabelFontSize || (isNarrow() ? 13 : 16);
+  const lineH = Math.round(fontSize * 1.2);
   ctx.font = "600 " + fontSize + "px Georgia, 'Times New Roman', serif";
   if (labelDirty || labelCache.fontSize !== fontSize) {
     relayoutLabels(ctx, fontSize);
@@ -1560,33 +1715,127 @@ network.on("afterDrawing", function(ctx) {
     const p = pos[id];
     if (!p) return;
     const o = labelCache.offsets[id];
-    boxes.push({ id: id, lines: o.lines, x: p.x + o.x, y: p.y + o.y, w: o.w, h: o.h });
+    boxes.push({ id: id, lines: o.lines, x: p.x + o.x, y: p.y + o.y, w: o.w, h: o.h, lineH: o.lineH || lineH });
   });
   window.__iamLabelBoxes = boxes;
   boxes.forEach(function(b) {
-    ctx.fillStyle = "rgba(247, 243, 232, 0.98)";
-    ctx.strokeStyle = "rgba(40, 32, 24, 0.3)";
-    ctx.lineWidth = 1;
-    roundedRect(ctx, b.x, b.y, b.w, b.h, radius);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = "#14110d";
+    const lh = b.lineH || lineH;
     ctx.textAlign = "center";
-    ctx.textBaseline = "top";
+    ctx.textBaseline = "middle";
+    ctx.lineJoin = "round";
+    ctx.miterLimit = 2;
+    ctx.strokeStyle = "rgba(247, 243, 232, 0.9)";
+    ctx.lineWidth = 2.4;
+    ctx.fillStyle = "#14110d";
     b.lines.forEach(function(ln, i) {
-      ctx.fillText(ln, b.x + b.w / 2, b.y + padY + i * lineH);
+      const y = b.y + lh / 2 + i * lh;
+      ctx.strokeText(ln, b.x + b.w / 2, y);
+      ctx.fillText(ln, b.x + b.w / 2, y);
     });
   });
 });
 
+function sizeRocksToTags(fontSize) {
+  const halo = 5;
+  const lineH = Math.round(fontSize * 1.2);
+  const ctx = document.createElement("canvas").getContext("2d");
+  ctx.font = "600 " + fontSize + "px Georgia, 'Times New Roman', serif";
+  let changed = false;
+  const updates = [];
+  let maxSize = 0, god = null;
+  DATA.nodes.forEach(function(n) {
+    const rec = nodesDS.get(n.id);
+    if (!rec) return;
+    const cur = rec.baseLabelSize || rec.size || n.size || 24;
+    function tagDims(size) {
+      const maxW = Math.max(24, size * 1.32);
+      const lines = wrapLabel(ctx, n.label || n.id, maxW);
+      let tw = 0;
+      lines.forEach(function(ln) { tw = Math.max(tw, ctx.measureText(ln).width); });
+      return { w: tw, h: lines.length * lineH };
+    }
+    function tagFits(size) {
+      const t = tagDims(size);
+      return t.w + halo <= size * 1.32 + 0.5 && t.h + halo <= size * 1.16 + 0.5;
+    }
+    let size = cur;
+    if (!tagFits(size)) {
+      let lo = size, hi = Math.max(size + 8, 48);
+      while (!tagFits(hi) && hi < 220) hi += 16;
+      for (let i = 0; i < 16; i++) {
+        const mid = (lo + hi) / 2;
+        if (tagFits(mid)) hi = mid;
+        else lo = mid;
+      }
+      size = Math.ceil(hi * 10) / 10;
+    }
+    if (n.id === "God") god = { n: n, rec: rec, size: size };
+    if (size > maxSize) maxSize = size;
+    if (size > cur + 0.2) {
+      n.size = size;
+      n.baseLabelSize = size;
+      updates.push({ id: n.id, size: size, baseLabelSize: size });
+      changed = true;
+    }
+  });
+  if (god && god.size < maxSize + 4) {
+    const gs = Math.round((maxSize + 4) * 10) / 10;
+    god.n.size = gs;
+    god.n.baseLabelSize = gs;
+    updates.push({ id: "God", size: gs, baseLabelSize: gs });
+    changed = true;
+  }
+  if (updates.length) nodesDS.update(updates);
+  return changed;
+}
+function refixNodePositions() {
+  const ids = nodesDS.getIds();
+  const pos = network.getPositions(ids);
+  const updates = [];
+  ids.forEach(function(id) {
+    const p = pos[id];
+    if (!p) return;
+    updates.push({ id: id, x: p.x, y: p.y, fixed: { x: true, y: true }, physics: false });
+  });
+  if (updates.length) nodesDS.update(updates);
+}
 function fitGraph() {
   if (!network) return;
-  // Extra padding so parchment labels below the stones stay in view.
-  const padding = isNarrow() ? 56 : 96;
+  const padding = isNarrow() ? 20 : 24;
   try {
-    network.fit({ animation: false, padding: padding });
-    window.__iamFitScale = network.getScale() || 1;
-  } catch (err) {}
+    if (!window.__iamLabelsSettled && !window.__iamRefining) {
+      window.__iamRefining = true;
+      const target = isNarrow() ? 10.5 : 12;
+      const maxFont = isNarrow() ? 28 : 30;
+      for (let i = 0; i < 3; i++) {
+        network.fit({ animation: false, padding: padding });
+        const scale = network.getScale() || 1;
+        window.__iamFitScale = scale;
+        const nextFont = Math.min(maxFont, Math.max(isNarrow() ? 13 : 16, Math.round(target / scale)));
+        window.__iamLabelFontSize = nextFont;
+        window.__iamFontScreen = nextFont * scale;
+        const grew = sizeRocksToTags(nextFont);
+        if (!grew) break;
+        compactLayout();
+        refixNodePositions();
+      }
+      network.fit({ animation: false, padding: padding });
+      const finalScale = network.getScale() || 1;
+      window.__iamFitScale = finalScale;
+      const finalFont = Math.min(maxFont, Math.max(isNarrow() ? 13 : 16, Math.round(target / finalScale)));
+      window.__iamLabelFontSize = finalFont;
+      window.__iamFontScreen = finalFont * finalScale;
+      window.__iamLabelsSettled = true;
+      window.__iamRefining = false;
+      markLabelsDirty();
+    } else {
+      network.fit({ animation: false, padding: padding });
+      window.__iamFitScale = network.getScale() || 1;
+      window.__iamFontScreen = (window.__iamLabelFontSize || 16) * window.__iamFitScale;
+    }
+  } catch (err) {
+    window.__iamRefining = false;
+  }
 }
 
 let selected = null;
