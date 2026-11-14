@@ -1856,7 +1856,11 @@ network.on("click", function(params) {
     if (nid) {
       selected = nid;
       try { network.selectNodes([nid]); } catch (err) {}
-      startDrop(nid);
+      if (typeof window.__iamSetDashboard === "function") {
+        window.__iamSetDashboard(true, nid);
+      } else {
+        startDrop(nid);
+      }
       return;
     }
     if (params.edges && params.edges.length) {
@@ -2036,6 +2040,7 @@ inflateVerses().then(function() {
     panelHint.textContent = "Tap a stone to see its verses. Tap an edge for overlap, typological, or OpenBible.info cross-reference counts.";
   }
   if (!network.physics || !network.physics.physicsEnabled) markReady();
+  if (typeof window.__iamDashRender === "function") window.__iamDashRender();
 }).catch(function(err) {
   panelBody().innerHTML = "<p class='hint'>Verse text could not be decompressed in this browser. Try a current Chrome, Firefox, or Safari.</p>";
   console.error(err);
@@ -2291,45 +2296,138 @@ window.__renderCompanion = renderCompanion;
   BOOK_INDEX["Song of Songs"] = BOOK_INDEX["Song of Solomon"];
   const PALETTE = ["#1e3a5f","#6e6a64","#c4a35a","#8b3a3a","#4a6278","#a65d2e","#3d4a58","#7a7064"];
   let highlightId = null;
+  let dashFocusId = null;
+  let dashView = "stones";
   let homeParent = null;
   let layoutEl = null;
 
   function fmt(n) {
     return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
-  function stoneMotifs() {
-    return (DATA.nodes || []).filter(function(n) {
-      return n.layer === "iam" && n.parent === "Rock / Stones";
-    }).sort(function(a, b) { return (b.count || 0) - (a.count || 0); });
+  function nodeById(id) {
+    if (!id) return null;
+    const nodes = DATA.nodes || [];
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].id === id) return nodes[i];
+    }
+    return null;
   }
   function shortLabel(n) {
-    return String(n.label || n.id).split("\n")[0];
+    return String((n && n.label) || (n && n.id) || "").split("\n")[0];
+  }
+  function focusName() {
+    const n = nodeById(dashFocusId);
+    return n ? shortLabel(n) : "";
+  }
+  function childMotifs(id) {
+    if (!id) return [];
+    return (DATA.nodes || []).filter(function(n) {
+      return n.parent === id;
+    }).sort(function(a, b) { return (b.count || 0) - (a.count || 0); });
+  }
+  function stoneMotifs() {
+    return childMotifs(dashFocusId);
+  }
+  function sharedNum(v) {
+    if (v === "" || v == null) return null;
+    const n = +v;
+    return isFinite(n) ? n : null;
+  }
+  function connectionBars(id) {
+    const best = {};
+    (DATA.edges || []).forEach(function(e) {
+      if (!id || (e.from !== id && e.to !== id)) return;
+      if (e.kind === "structure") return;
+      const other = e.from === id ? e.to : e.from;
+      const sh = sharedNum(e.shared);
+      if (sh == null) return;
+      if (!best[other] || sh > best[other].count) {
+        const rec = nodeById(other) || { id: other, label: other };
+        best[other] = { id: other, label: rec.label, count: sh };
+      }
+    });
+    return Object.keys(best).map(function(k) { return best[k]; })
+      .sort(function(a, b) { return (b.count || 0) - (a.count || 0); });
+  }
+  function barRows() {
+    const kids = stoneMotifs();
+    if (kids.length) return { rows: kids, title: "Use-groups" };
+    const conns = dashFocusId ? connectionBars(dashFocusId) : [];
+    if (conns.length) return { rows: conns, title: "Shared verses with connected stones" };
+    return { rows: [], title: "" };
+  }
+  function arcMotifs() {
+    const rows = [];
+    const focus = nodeById(dashFocusId);
+    if (focus) rows.push(focus);
+    childMotifs(dashFocusId).forEach(function(n) { rows.push(n); });
+    return rows;
+  }
+  function setWidget(el, on, msg) {
+    if (!el) return;
+    let note = el.querySelector(".dash-nodata");
+    if (on) {
+      el.hidden = false;
+      if (note) note.parentNode.removeChild(note);
+      return;
+    }
+    el.hidden = false;
+    if (!note) {
+      note = document.createElement("p");
+      note.className = "hint dash-nodata";
+      el.appendChild(note);
+    }
+    note.textContent = msg || "no data";
   }
   function dashKpis() {
-    function countOf(id) {
-      for (let i = 0; i < DATA.nodes.length; i++) {
-        if (DATA.nodes[i].id === id) return DATA.nodes[i].count || 0;
-      }
-      return 0;
+    const rec = nodeById(dashFocusId);
+    if (!rec) {
+      return { count: null, groups: 0, connections: 0, openbible: 0, typological: 0, explained: null, remainder: null, total: null, name: "" };
     }
-    const stoning = (STONING && STONING.stoning_count) || countOf("Rock / Stones::stoning");
-    const rock = countOf("Rock / Stones");
-    const death = countOf("Death in General");
-    const rec = ((GRAPH.explained_by || {})["Rock / Stones::stoning"]) || {};
-    const rem = (rec.remainder && rec.remainder.count != null) ? rec.remainder.count : 0;
-    const total = (rec.remainder && rec.remainder.total != null) ? rec.remainder.total : (rec.total || stoning);
-    return { stoning: stoning, rock: rock, death: death, explained: Math.max(0, total - rem), remainder: rem, total: total };
+    const groups = childMotifs(dashFocusId).length;
+    const neigh = {};
+    let openbible = 0, typological = 0;
+    (DATA.edges || []).forEach(function(e) {
+      if (e.from !== dashFocusId && e.to !== dashFocusId) return;
+      const other = e.from === dashFocusId ? e.to : e.from;
+      if (e.kind !== "structure") neigh[other] = true;
+      if (e.kind === "openbible") openbible += 1;
+      if (e.kind === "typological") typological += 1;
+    });
+    let explained = null, remainder = null, total = null;
+    const ex = ((GRAPH.explained_by || {})[dashFocusId]) || {};
+    if (ex.remainder && ex.remainder.count != null) {
+      remainder = ex.remainder.count;
+      total = (ex.remainder.total != null) ? ex.remainder.total : (ex.total != null ? ex.total : (rec.count != null ? rec.count : 0));
+      explained = Math.max(0, total - remainder);
+    }
+    return {
+      count: rec.count != null ? rec.count : null,
+      groups: groups,
+      connections: Object.keys(neigh).length,
+      openbible: openbible,
+      typological: typological,
+      explained: explained,
+      remainder: remainder,
+      total: total,
+      name: shortLabel(rec)
+    };
   }
   function renderKpis() {
     const k = dashKpis();
-    const tiles = [
-      { v: fmt(k.stoning), l: "Stoning verses", s: "KJV verses with stoning language" },
-      { v: fmt(k.rock), l: "Rock / Stones verses", s: "KJV verses in the Rock / Stones motif" },
-      { v: fmt(k.death), l: "Death in General", s: "KJV verses in the Death in General motif" },
-      { v: fmt(k.explained), l: "Stoning verses explained", s: "Stoning verses that also appear in an explaining motif (" + fmt(k.total) + " minus " + fmt(k.remainder) + " that do not)" }
-    ];
+    const tiles = [];
+    if (k.count != null) tiles.push({ v: fmt(k.count), l: (k.name || "This stone") + " verses", s: "KJV verses in this stone" });
+    if (k.groups) tiles.push({ v: fmt(k.groups), l: "Use-groups", s: "Subgroups of this stone on the graph" });
+    if (k.connections) tiles.push({ v: fmt(k.connections), l: "Connected stones", s: "Other stones linked to this one" });
+    if (k.explained != null) tiles.push({ v: fmt(k.explained), l: "Verses explained", s: "Verses that also appear in an explaining motif (" + fmt(k.total) + " minus " + fmt(k.remainder) + " that do not)" });
+    else if (k.openbible) tiles.push({ v: fmt(k.openbible), l: "OpenBible.info links", s: "Cross-reference edges from OpenBible.info (CC-BY)" });
+    else if (k.typological) tiles.push({ v: fmt(k.typological), l: "Typological links", s: "Typological edges recorded for this stone" });
     const root = document.getElementById("dash-kpis");
-    root.innerHTML = tiles.map(function(t) {
+    if (!tiles.length) {
+      root.innerHTML = "<div class='kpi'><div class='v'>—</div><div class='l'>No data</div><div class='s'>No counts are recorded for this stone.</div></div>";
+      return k;
+    }
+    root.innerHTML = tiles.slice(0, 4).map(function(t) {
       return "<div class='kpi'><div class='v'>" + t.v + "</div><div class='l'>" + t.l + "</div><div class='s'>" + t.s + "</div></div>";
     }).join("");
     return k;
@@ -2365,7 +2463,14 @@ window.__renderCompanion = renderCompanion;
   }
   function renderBars() {
     const canvas = document.getElementById("dash-bars");
-    const motifs = stoneMotifs();
+    const wrap = document.getElementById("dash-bars-wrap");
+    const pack = barRows();
+    const motifs = pack.rows;
+    const titleEl = wrap && wrap.querySelector(".dash-panel-title");
+    if (titleEl && pack.title) titleEl.textContent = pack.title;
+    if (canvas) canvas.hidden = !motifs.length;
+    setWidget(wrap, !!motifs.length, "no data");
+    if (!motifs.length || !canvas) return;
     const hNeed = Math.max(180, motifs.length * 28 + 16);
     const fit = fitCanvas(canvas, hNeed);
     const ctx = fit.ctx, w = fit.w, h = fit.h;
@@ -2413,7 +2518,15 @@ window.__renderCompanion = renderCompanion;
   }
   function renderArc() {
     const canvas = document.getElementById("dash-arc");
-    const motifs = stoneMotifs();
+    const wrap = document.querySelector(".dash-bottom");
+    const motifs = arcMotifs().filter(function(n) { return motifVerses(n.id).length; });
+    if (canvas) canvas.hidden = !motifs.length;
+    if (wrap) {
+      const legend = wrap.querySelector(".dash-legend");
+      if (legend) legend.hidden = !motifs.length;
+    }
+    setWidget(wrap, !!motifs.length, "no data");
+    if (!motifs.length || !canvas) return;
     const fit = fitCanvas(canvas, isNarrow() ? 210 : 200);
     const ctx = fit.ctx, w = fit.w, h = fit.h;
     ctx.fillStyle = "#7eb4e4";
@@ -2630,8 +2743,34 @@ window.__renderCompanion = renderCompanion;
     renderArc();
     inkFrames();
   }
-  function setDashboardMode(on) {
+  function setDashTitle() {
+    const title = document.getElementById("dash-title");
+    if (!title) return;
+    if (dashView === "demand") {
+      title.textContent = "Why this exists \u2014 demand";
+      return;
+    }
+    const name = focusName();
+    title.textContent = name ? ("Scripture Ripples \u2014 " + name) : "Scripture Ripples";
+  }
+  function retargetDash(stoneId) {
+    dashFocusId = stoneId;
+    highlightId = stoneId || null;
+    if (stoneId) {
+      selected = stoneId;
+      try { network.selectNodes([stoneId]); } catch (err) {}
+      if (typeof applyFocus === "function") applyFocus(stoneId);
+    }
+    setDashTitle();
+    if (dashView === "demand") return;
+    renderSelected(stoneId);
+    renderCharts();
+    inkFrames();
+  }
+  function setDashboardMode(on, stoneId) {
     on = !!on;
+    if (on && stoneId) dashFocusId = stoneId;
+    if (on && !dashFocusId && typeof selected !== "undefined" && selected) dashFocusId = selected;
     if (on && typeof window.__exitHelix === "function" && document.body.classList.contains("helix-mode")) {
       window.__exitHelix();
     }
@@ -2642,6 +2781,10 @@ window.__renderCompanion = renderCompanion;
     homeParent = document.getElementById("graph-home");
     const slot = document.getElementById("dash-graph-slot");
     const dash = document.getElementById("dashboard");
+    if (on && document.body.classList.contains("dashboard-mode") && stoneId) {
+      retargetDash(stoneId);
+      return;
+    }
     document.body.classList.toggle("dashboard-mode", on);
     dash.hidden = !on;
     const pageH = document.querySelector("header h1");
@@ -2657,7 +2800,14 @@ window.__renderCompanion = renderCompanion;
       if (layoutEl && slot && layoutEl.parentNode !== slot) slot.appendChild(layoutEl);
       document.body.classList.remove("panel-open");
       if (isNarrow()) openMenu(false);
+      if (dashFocusId) {
+        highlightId = dashFocusId;
+        selected = dashFocusId;
+        try { network.selectNodes([dashFocusId]); } catch (err) {}
+        if (typeof applyFocus === "function") applyFocus(dashFocusId);
+      }
       setDashView("stones");
+      renderSelected(dashFocusId);
       renderCharts();
       inkFrames();
       setTimeout(function() {
@@ -2694,7 +2844,6 @@ window.__renderCompanion = renderCompanion;
       { label: "Other books (X)", count: 1, source: "x" }
     ]
   };
-  let dashView = "stones";
   function renderDemandKpis() {
     const root = document.getElementById("dash-demand-kpis");
     if (!root) return;
@@ -2745,7 +2894,7 @@ window.__renderCompanion = renderCompanion;
     if (demand) demand.hidden = dashView !== "demand";
     if (tabS) { tabS.classList.toggle("on", dashView === "stones"); tabS.setAttribute("aria-selected", dashView === "stones" ? "true" : "false"); }
     if (tabD) { tabD.classList.toggle("on", dashView === "demand"); tabD.setAttribute("aria-selected", dashView === "demand" ? "true" : "false"); }
-    if (title) title.textContent = dashView === "demand" ? "Why this exists \u2014 demand" : "Scripture Ripples \u2014 Stones Dashboard";
+    setDashTitle();
     if (dashView === "demand") {
       renderDemandKpis();
       renderDemandBars();
@@ -2760,18 +2909,18 @@ window.__renderCompanion = renderCompanion;
 
   const barCanvas = document.getElementById("dash-bars");
   if (barCanvas) barCanvas.addEventListener("click", function(ev) {
-    const motifs = stoneMotifs();
+    const motifs = barRows().rows;
     const rect = barCanvas.getBoundingClientRect();
     const y = ev.clientY - rect.top;
     const hNeed = Math.max(180, motifs.length * 28 + 16);
     const row = (hNeed - 4) / Math.max(1, motifs.length);
     const i = Math.floor((y - 4) / row);
-    if (i >= 0 && i < motifs.length && typeof window.__iamSelect === "function") window.__iamSelect(motifs[i].id);
+    if (i >= 0 && i < motifs.length) setDashboardMode(true, motifs[i].id);
   });
   const selBody = document.getElementById("dash-selected-body");
   if (selBody) selBody.addEventListener("click", function(ev) {
     const btn = ev.target.closest("button.dash-conn");
-    if (btn && btn.getAttribute("data-id") && typeof window.__iamSelect === "function") window.__iamSelect(btn.getAttribute("data-id"));
+    if (btn && btn.getAttribute("data-id")) setDashboardMode(true, btn.getAttribute("data-id"));
   });
   const clearF = document.getElementById("dash-clear-focus");
   if (clearF) clearF.addEventListener("click", function(ev) {
@@ -2784,12 +2933,40 @@ window.__renderCompanion = renderCompanion;
   const tabDemand = document.getElementById("dash-tab-demand");
   if (tabStones) tabStones.addEventListener("click", function() { setDashView("stones"); });
   if (tabDemand) tabDemand.addEventListener("click", function() { setDashView("demand"); });
-  document.getElementById("mode-dashboard").addEventListener("click", function() { setDashboardMode(true); });
+  document.getElementById("mode-dashboard").addEventListener("click", function() { setDashboardMode(true, selected || dashFocusId); });
   window.__iamSetDashboard = setDashboardMode;
   window.__iamDashHighlight = dashHighlight;
-  window.__iamDashState = function() {
-    return { active: document.body.classList.contains("dashboard-mode"), highlight: highlightId, kpis: dashKpis(), view: dashView, demand: DEMAND };
+  window.__iamDashRender = function() {
+    if (!document.body.classList.contains("dashboard-mode") || dashView === "demand") return;
+    renderCharts();
+    renderSelected(dashFocusId);
   };
+  window.__iamDashState = function() {
+    return { active: document.body.classList.contains("dashboard-mode"), focus: dashFocusId, highlight: highlightId, kpis: dashKpis(), view: dashView, demand: DEMAND };
+  };
+  function openDashFromHash() {
+    let q = "";
+    try {
+      const hash = String(location.hash || "").replace(/^#/, "");
+      if (hash.indexOf("dash=") === 0) q = decodeURIComponent(hash.slice(5).split("&")[0]);
+      if (!q) q = new URLSearchParams(location.search || "").get("dash") || "";
+    } catch (err) { q = ""; }
+    if (!q) return;
+    const nodes = DATA.nodes || [];
+    const ql = q.toLowerCase();
+    let rec = null;
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].id === q) { rec = nodes[i]; break; }
+    }
+    if (!rec) {
+      for (let i = 0; i < nodes.length; i++) {
+        const lab = String(nodes[i].label || "").split("\n")[0].toLowerCase();
+        if (lab === ql) { rec = nodes[i]; break; }
+      }
+    }
+    if (rec) setDashboardMode(true, rec.id);
+  }
+  openDashFromHash();
   window.addEventListener("resize", function() {
     if (!document.body.classList.contains("dashboard-mode")) return;
     if (window.__iamDashResize) clearTimeout(window.__iamDashResize);
