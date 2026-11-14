@@ -320,6 +320,7 @@
     font: italic 0.8rem Georgia, "Times New Roman", serif; min-height: 36px; padding: 4px 8px;
     border: 1px solid #3a3228; background: #f4ead8; color: #1a1916; cursor: pointer;
   }
+  #dash-selected-body summary { cursor: pointer; padding: 6px 0; }
   #dash-selected-body .kjv { margin: 0 0 8px; }
   #dash-selected-body .kjv .ref { font-style: italic; font-weight: bold; }
   .dash-legend { margin: 6px 2px 2px; font: italic 0.75rem/1.35 Georgia, "Times New Roman", serif; color: #1a1916; }
@@ -1034,10 +1035,11 @@ function revealRemainingSlices(animate) {
     wrap.innerHTML = remainderHtml(rec.remainder);
     live.appendChild(wrap);
   }
-  appendStoningCards(rec);
+  appendStoningCards(selected);
 }
-function appendStoningCards(rec) {
-  if (!rec || !rec.show_stoning_cards || !STONING || !STONING.cards) return;
+const STONING_NODE_ID = "Rock / Stones::stoning";
+function appendStoningCards(id) {
+  if (id !== STONING_NODE_ID || !STONING || !STONING.cards) return;
   if (document.getElementById("stoning-mini")) return;
   const body = panelBody();
   const wrap = document.createElement("div");
@@ -1068,7 +1070,7 @@ function renderPanel(id, query, opts) {
   if (explained) {
     html += "<div class='explained'>";
     html += "<h3>" + escapeHtml(explained.title || "Explained by") + "</h3>";
-    if (explained.show_stoning_cards && typeof renderLedger === "function") html += renderLedger();
+    if (id === STONING_NODE_ID) html += renderLedger();
     if (explained.lead_observation) html += "<p class='obs'><span class='tag-obs'>Observation</span> " + escapeHtml(explained.lead_observation) + "</p>";
     if (explained.observation) html += "<p class='obs'><span class='tag-obs'>Observation</span> " + escapeHtml(explained.observation) + "</p>";
     if (explained.interpretation) html += "<p class='interp'><span class='tag-interp'>Interpretation</span> " + escapeHtml(explained.interpretation) + "</p>";
@@ -1095,8 +1097,8 @@ function renderPanel(id, query, opts) {
   panelBody().innerHTML = html;
   if (explained && !opts.deferExplained) {
     revealRemainingSlices(false);
-  } else if (explained && explained.show_stoning_cards) {
-    appendStoningCards(explained);
+  } else if (id === STONING_NODE_ID) {
+    appendStoningCards(id);
   }
   if (isNarrow()) setSheet(Math.max(sheetStep, 1));
   if (typeof appendCompanionLink === "function") appendCompanionLink(id);
@@ -1313,7 +1315,7 @@ function startDrop(nid) {
   };
   if (reduceRippleAnim || !info.partners.length) {
     info.partners.forEach(function(p) { p.arrived = true; p.glowUntil = performance.now() + 4000; });
-    if (EXPLAINED[nid]) revealRemainingSlices(false);
+    if (EXPLAINED[nid] && !document.body.classList.contains("dashboard-mode")) revealRemainingSlices(false);
     dropAnim.finished = true;
     dropAnim.remainderShown = true;
     try { network.redraw(); } catch (err) {}
@@ -1342,7 +1344,7 @@ function startDrop(nid) {
     });
     const allIn = dropAnim.partners.every(function(p) { return p.arrived; });
     if (allIn && !dropAnim.remainderShown && dropAnim.radius > dropAnim.maxDist + 20) {
-      revealRemainingSlices(true);
+      if (!document.body.classList.contains("dashboard-mode")) revealRemainingSlices(true);
       dropAnim.remainderShown = true;
     }
     try { network.redraw(); } catch (err) {}
@@ -1858,9 +1860,8 @@ network.on("click", function(params) {
       try { network.selectNodes([nid]); } catch (err) {}
       if (typeof window.__iamSetDashboard === "function") {
         window.__iamSetDashboard(true, nid);
-      } else {
-        startDrop(nid);
       }
+      startDrop(nid);
       return;
     }
     if (params.edges && params.edges.length) {
@@ -1868,8 +1869,11 @@ network.on("click", function(params) {
       if (edge) renderEdge(edge);
       return;
     }
-    // Tap on empty water closes the open rock.
-    if (selected) closePanel();
+    if (document.body.classList.contains("dashboard-mode")) {
+      applyFocus(null);
+    } else if (selected) {
+      closePanel();
+    }
   } catch (err) {
     console.error(err);
     panelBody().innerHTML = "<p class='hint'>The verse panel could not be opened. Try another stone, or use search.</p>";
@@ -2151,6 +2155,7 @@ function setCompanionMode(on, query) {
   }
   document.body.classList.toggle("companion-mode", !!on);
   document.getElementById("companion").hidden = !on;
+  if (!on && selected === STONING_NODE_ID) closePanel();
   const btnC = document.getElementById("mode-companion");
   const btnG = document.getElementById("mode-graph");
   if (btnC) btnC.setAttribute("aria-expanded", on ? "true" : "false");
@@ -2237,7 +2242,11 @@ document.getElementById("panel-close").addEventListener("click", function(ev) { 
 document.addEventListener("keydown", function(e) {
   if (e.key !== "Escape") return;
   if (document.getElementById("toolbar").classList.contains("open")) return;
-  if (selected || document.body.classList.contains("panel-open")) closePanel();
+  if (document.body.classList.contains("dashboard-mode")) {
+    applyFocus(null);
+  } else if (selected || document.body.classList.contains("panel-open")) {
+    closePanel();
+  }
 });
 (function sheetSwipe() {
   const panel = document.getElementById("panel");
@@ -2352,9 +2361,15 @@ window.__renderCompanion = renderCompanion;
   function barRows() {
     const kids = stoneMotifs();
     if (kids.length) return { rows: kids, title: "Use-groups" };
+    const record = DATA.verses && DATA.verses[dashFocusId];
+    const groups = (record ? record.subgroups : []).filter(function(group) {
+      return group.verses.length;
+    }).map(function(group) {
+      return { label: group.name, count: group.verses.length };
+    });
+    if (groups.length) return { rows: groups, title: "Verses by use-group" };
     const conns = dashFocusId ? connectionBars(dashFocusId) : [];
-    if (conns.length) return { rows: conns, title: "Shared verses with connected stones" };
-    return { rows: [], title: "" };
+    return { rows: conns, title: conns.length ? "Recorded counts for connected stones" : "Verse groups" };
   }
   function arcMotifs() {
     const rows = [];
@@ -2384,7 +2399,10 @@ window.__renderCompanion = renderCompanion;
     if (!rec) {
       return { count: null, groups: 0, connections: 0, openbible: 0, typological: 0, explained: null, remainder: null, total: null, name: "" };
     }
-    const groups = childMotifs(dashFocusId).length;
+    const verseRecord = DATA.verses && DATA.verses[dashFocusId];
+    const groups = childMotifs(dashFocusId).length || (verseRecord ? verseRecord.subgroups.filter(function(group) {
+      return group.verses.length;
+    }).length : 0);
     const neigh = {};
     let openbible = 0, typological = 0;
     (DATA.edges || []).forEach(function(e) {
@@ -2416,7 +2434,10 @@ window.__renderCompanion = renderCompanion;
   function renderKpis() {
     const k = dashKpis();
     const tiles = [];
-    if (k.count != null) tiles.push({ v: fmt(k.count), l: (k.name || "This stone") + " verses", s: "KJV verses in this stone" });
+    if (k.count != null) {
+      const unit = dashFocusId === "Jesus" ? "sayings" : "verses";
+      tiles.push({ v: fmt(k.count), l: (k.name || "This stone") + " " + unit, s: unit === "verses" ? "KJV verses in this stone" : "Sayings indexed in the graph" });
+    }
     if (k.groups) tiles.push({ v: fmt(k.groups), l: "Use-groups", s: "Subgroups of this stone on the graph" });
     if (k.connections) tiles.push({ v: fmt(k.connections), l: "Connected stones", s: "Other stones linked to this one" });
     if (k.explained != null) tiles.push({ v: fmt(k.explained), l: "Verses explained", s: "Verses that also appear in an explaining motif (" + fmt(k.total) + " minus " + fmt(k.remainder) + " that do not)" });
@@ -2424,7 +2445,9 @@ window.__renderCompanion = renderCompanion;
     else if (k.typological) tiles.push({ v: fmt(k.typological), l: "Typological links", s: "Typological edges recorded for this stone" });
     const root = document.getElementById("dash-kpis");
     if (!tiles.length) {
-      root.innerHTML = "<div class='kpi'><div class='v'>—</div><div class='l'>No data</div><div class='s'>No counts are recorded for this stone.</div></div>";
+      root.innerHTML = dashFocusId
+        ? "<div class='kpi'><div class='v'>—</div><div class='l'>No data</div><div class='s'>No counts are recorded for this stone.</div></div>"
+        : "";
       return k;
     }
     root.innerHTML = tiles.slice(0, 4).map(function(t) {
@@ -2467,7 +2490,7 @@ window.__renderCompanion = renderCompanion;
     const pack = barRows();
     const motifs = pack.rows;
     const titleEl = wrap && wrap.querySelector(".dash-panel-title");
-    if (titleEl && pack.title) titleEl.textContent = pack.title;
+    if (titleEl) titleEl.textContent = pack.title;
     if (canvas) canvas.hidden = !motifs.length;
     setWidget(wrap, !!motifs.length, "no data");
     if (!motifs.length || !canvas) return;
@@ -2482,7 +2505,7 @@ window.__renderCompanion = renderCompanion;
     motifs.forEach(function(n, i) {
       const y = top + i * row;
       const bw = barW * ((n.count || 0) / maxC);
-      const on = !highlightId || highlightId === n.id || highlightId === "Rock / Stones";
+      const on = !n.id || !highlightId || highlightId === dashFocusId || highlightId === n.id;
       const col = on ? PALETTE[i % PALETTE.length] : "rgba(140,150,160,0.4)";
       pebbleBar(ctx, left, y + 4, Math.max(8, bw), row - 8, col, i * 11);
       ctx.fillStyle = on ? "#1a1916" : "#8a847c";
@@ -2686,12 +2709,14 @@ window.__renderCompanion = renderCompanion;
     const name = shortLabel(rec) || id;
     const count = rec.count != null ? rec.count : "";
     let html = "<h3>" + escapeHtml(name) + "</h3>";
-    if (count !== "") html += "<p class='count'>" + fmt(count) + " verse" + (count === 1 ? "" : "s") + "</p>";
-    const explainedRec = (typeof explainedRecord === "function") ? explainedRecord(id) : ((GRAPH.explained_by || {})[id]);
-    if (explainedRec && explainedRec.show_stoning_cards && typeof renderLedger === "function") {
-      html += renderLedger();
+    if (count !== "") {
+      const unit = id === "Jesus" ? " saying" : " verse";
+      html += "<p class='count'>" + fmt(count) + unit + (count === 1 ? "" : "s") + "</p>";
     }
-    const ex = explainedRec || ((GRAPH.explained_by || {})[id]) || null;
+    if (id === STONING_NODE_ID) {
+      html += renderLedger() + "<button type='button' class='dash-conn' data-stonings>Open the Stonings companion</button>";
+    }
+    const ex = explainedRecord(id);
     if (ex && ex.slices && ex.slices.length) {
       html += "<p class='t'>Explained by</p>";
       ex.slices.forEach(function(sl) {
@@ -2718,19 +2743,15 @@ window.__renderCompanion = renderCompanion;
       html += "</div>";
     }
     const vrec = DATA.verses && DATA.verses[id];
-    const verses = [];
-    const seen = {};
-    if (vrec) (vrec.subgroups || []).forEach(function(g) {
-      (g.verses || []).forEach(function(v) {
-        if (!v || !v.verse_id || seen[v.verse_id] || verses.length >= 5) return;
-        seen[v.verse_id] = true;
-        verses.push(v);
-      });
-    });
-    if (verses.length) {
-      html += "<p class='t'>KJV verses</p>";
-      verses.forEach(function(v) {
-        html += "<div class='kjv'><div class='ref'>" + escapeHtml(v.ref || v.verse_id) + "</div><div>" + escapeHtml(v.text || "") + "</div></div>";
+    if (vrec) {
+      const groups = vrec.subgroups.filter(function(group) { return group.verses.length; });
+      if (groups.length) html += "<p class='t'>KJV verses</p>";
+      groups.forEach(function(group) {
+        html += "<details><summary>" + escapeHtml(group.name) + " (" + fmt(group.verses.length) + ")</summary>";
+        group.verses.forEach(function(v) {
+          html += "<div class='kjv'><div class='ref'>" + escapeHtml(v.ref || v.verse_id) + "</div><div>" + escapeHtml(v.text || "") + "</div></div>";
+        });
+        html += "</details>";
       });
     }
     body.innerHTML = html;
@@ -2762,15 +2783,13 @@ window.__renderCompanion = renderCompanion;
       if (typeof applyFocus === "function") applyFocus(stoneId);
     }
     setDashTitle();
-    if (dashView === "demand") return;
     renderSelected(stoneId);
-    renderCharts();
-    inkFrames();
+    if (dashView === "demand") setDashView("stones");
+    else renderCharts();
   }
   function setDashboardMode(on, stoneId) {
     on = !!on;
-    if (on && stoneId) dashFocusId = stoneId;
-    if (on && !dashFocusId && typeof selected !== "undefined" && selected) dashFocusId = selected;
+    if (on) dashFocusId = stoneId || null;
     if (on && typeof window.__exitHelix === "function" && document.body.classList.contains("helix-mode")) {
       window.__exitHelix();
     }
@@ -2781,7 +2800,7 @@ window.__renderCompanion = renderCompanion;
     homeParent = document.getElementById("graph-home");
     const slot = document.getElementById("dash-graph-slot");
     const dash = document.getElementById("dashboard");
-    if (on && document.body.classList.contains("dashboard-mode") && stoneId) {
+    if (on && document.body.classList.contains("dashboard-mode")) {
       retargetDash(stoneId);
       return;
     }
@@ -2889,7 +2908,6 @@ window.__renderCompanion = renderCompanion;
     const demand = document.getElementById("dash-demand-view");
     const tabS = document.getElementById("dash-tab-stones");
     const tabD = document.getElementById("dash-tab-demand");
-    const title = document.getElementById("dash-title");
     if (stones) stones.hidden = dashView !== "stones";
     if (demand) demand.hidden = dashView !== "demand";
     if (tabS) { tabS.classList.toggle("on", dashView === "stones"); tabS.setAttribute("aria-selected", dashView === "stones" ? "true" : "false"); }
@@ -2915,25 +2933,29 @@ window.__renderCompanion = renderCompanion;
     const hNeed = Math.max(180, motifs.length * 28 + 16);
     const row = (hNeed - 4) / Math.max(1, motifs.length);
     const i = Math.floor((y - 4) / row);
-    if (i >= 0 && i < motifs.length) setDashboardMode(true, motifs[i].id);
+    if (i >= 0 && i < motifs.length && motifs[i].id) setDashboardMode(true, motifs[i].id);
   });
   const selBody = document.getElementById("dash-selected-body");
   if (selBody) selBody.addEventListener("click", function(ev) {
-    const btn = ev.target.closest("button.dash-conn");
-    if (btn && btn.getAttribute("data-id")) setDashboardMode(true, btn.getAttribute("data-id"));
+    if (ev.target.closest("button[data-stonings]")) {
+      setCompanionMode(true, "");
+      return;
+    }
+    const btn = ev.target.closest("button.dash-conn[data-id]");
+    if (btn) setDashboardMode(true, btn.getAttribute("data-id"));
   });
   const clearF = document.getElementById("dash-clear-focus");
   if (clearF) clearF.addEventListener("click", function(ev) {
     ev.preventDefault();
     ev.stopPropagation();
-    if (typeof window.__iamClosePanel === "function") window.__iamClosePanel();
+    applyFocus(null);
   });
 
   const tabStones = document.getElementById("dash-tab-stones");
   const tabDemand = document.getElementById("dash-tab-demand");
   if (tabStones) tabStones.addEventListener("click", function() { setDashView("stones"); });
   if (tabDemand) tabDemand.addEventListener("click", function() { setDashView("demand"); });
-  document.getElementById("mode-dashboard").addEventListener("click", function() { setDashboardMode(true, selected || dashFocusId); });
+  document.getElementById("mode-dashboard").addEventListener("click", function() { setDashboardMode(true, selected); });
   window.__iamSetDashboard = setDashboardMode;
   window.__iamDashHighlight = dashHighlight;
   window.__iamDashRender = function() {
