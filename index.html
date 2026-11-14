@@ -2785,7 +2785,6 @@ window.__renderCompanion = renderCompanion;
   if (tabStones) tabStones.addEventListener("click", function() { setDashView("stones"); });
   if (tabDemand) tabDemand.addEventListener("click", function() { setDashView("demand"); });
   document.getElementById("mode-dashboard").addEventListener("click", function() { setDashboardMode(true); });
-  window.addEventListener("load", function() { setTimeout(function(){ try { setDashboardMode(true); } catch(e) {} }, 50); });
   window.__iamSetDashboard = setDashboardMode;
   window.__iamDashHighlight = dashHighlight;
   window.__iamDashState = function() {
