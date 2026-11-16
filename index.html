@@ -83,6 +83,63 @@
   }
 
   #graph canvas { pointer-events: auto; }
+  body.start-pond-mode > :is(header,#toolbar,#backdrop,#dashboard,#companion) { display:none !important; }
+  body.start-pond-mode:not(.pond-mode) > #graph-home { position:absolute; left:-200vw; top:0; width:100%; height:100%; visibility:hidden; }
+  body.pond-mode > #start-pond, body:not(.start-pond-mode) > #start-pond { display:none; }
+  #start-pond { flex:1; min-height:0; overflow:auto; z-index:1; padding:clamp(16px,3vw,36px); background:#f4ead8; color:#17314b; }
+  .start-pond-inner { max-width:1040px; margin:auto; }
+  .start-pond-header { display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; }
+  .start-pond-header h1 { margin:0; color:#17314b; font-size:clamp(2rem,5vw,3.3rem); font-weight:600; }
+  .start-pond-header p { margin:5px 0 0; line-height:1.45; }
+  .start-pond-tools { margin:0; }
+  .start-pond-tools button { min-height:44px; }
+  .start-pond-primary { background:#1e3a5f !important; color:#fff8e9 !important; border-color:#1e3a5f !important; }
+  .start-pond-scene { display:grid; grid-template-columns:112px minmax(0,1fr) 112px; align-items:stretch; background:#e8d9b8; border:1px solid #a3977b; border-radius:18px; padding:8px; }
+  #start-water { position:relative; isolation:isolate; min-height:clamp(270px,43vh,410px); background:#7eb4e4; border-radius:22px 29px 20px 33px / 18px 25px 27px 19px; }
+  #start-water .pond-plants { opacity:.9; }
+  .start-rock { z-index:1; min-height:90px; width:100px; font-size:1rem; }
+  .start-rock:hover, .start-rock:focus-visible { filter:drop-shadow(0 0 5px #fff5d2); }
+  #start-pond button:focus-visible, #start-pond summary:focus-visible { outline:2px solid #1e3a5f; outline-offset:3px; }
+  .start-lines { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .start-lines line { stroke:#25405a; stroke-width:2; vector-effect:non-scaling-stroke; cursor:pointer; pointer-events:stroke; }
+  .start-lines line:hover { stroke:#183149; stroke-width:4; }
+  .start-lines .start-line-hit { stroke:transparent; stroke-width:22; }
+  .start-lines .start-line-hit:hover { stroke:transparent; stroke-width:22; }
+  .start-ripple { pointer-events:none; position:absolute; left:var(--rock-x); top:var(--rock-y); width:96px; height:42px; border:2px solid #e9f8fd; border-radius:50%; translate:-50% -15%; animation:start-ripple .6s ease-out both; }
+  @keyframes start-ripple { from { transform:scale(.35); opacity:.95; } to { transform:scale(1.6); opacity:0; } }
+  .start-pond-footer { display:flex; gap:10px; align-items:baseline; justify-content:space-between; }
+  #start-pond-status { margin:12px 0; line-height:1.35; }
+  #start-pond-links { margin:0 0 8px; }
+  #start-pond-links[hidden], #start-evidence[hidden] { display:none; }
+  #start-evidence { background:#fffaf0; padding:12px; border-left:3px solid #536c77; margin-bottom:14px; }
+  #start-evidence h2 { font-size:1.15rem; margin:0 0 8px; }
+  #start-evidence details { margin:8px 0; }
+  #start-evidence summary { cursor:pointer; }
+  #start-evidence a { color:#17314b; }
+  @media (max-width:600px) {
+    .start-pond-scene { grid-template-columns:1fr; }
+    .start-rock { width:84px; min-height:72px; font-size:.88rem; }
+    .start-pond-header { gap:12px; }
+    .start-pond-header h1 { font-size:2rem; }
+  }
+  @media (prefers-reduced-motion:reduce) { .start-ripple { display:none; } }
+  .start-scroll { margin:0 0 14px; padding:12px 25px; color:#312a1b; background:linear-gradient(100deg,#dfc99b,#fff1ce 8%,#f4e6c0 91%,#d9c08d); border-block:1px solid #b19a6a; border-radius:16px 12px 16px 12px; box-shadow:0 2px 5px #4f442536; }
+  .start-scroll p { margin:0; line-height:1.4; }
+  .start-scroll p:first-child { font-weight:600; font-size:clamp(1.1rem,2.5vw,1.45rem); }
+  .start-search { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 10px; }
+  .start-search input { font:inherit; max-width:100%; min-height:36px; padding:4px 7px; }
+  .start-bank { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; max-height:405px; overflow:auto; padding:3px; }
+  .start-bank .start-rock[hidden] { display:none; }
+  #start-water { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(84px,100%),1fr)); align-content:center; justify-items:center; align-items:center; gap:14px 5px; padding:30px clamp(10px,4%,55px); }
+  #start-water .start-rock { align-self:center; max-width:100%; }
+  #start-legend { background:#f4ead8; border:1px solid #5c584a; padding:8px 10px; margin:10px 0; width:max-content; max-width:100%; }
+  #start-pond-links { max-height:168px; overflow:auto; }
+  @media (max-width:600px) {
+    .start-bank { flex-direction:row; max-height:none; min-height:72px; overflow:auto; }
+    .start-bank .start-rock { flex:0 0 84px; }
+    #start-water { min-height:245px; }
+  }
+
 
   header, .toolbar, .layout, .backdrop { position: relative; z-index: 1; }
   header {
@@ -795,11 +852,15 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
 </style>
 </head>
 <body>
+<script>
+if (!location.hash && !new URLSearchParams(location.search).has("dash")) document.body.classList.add("start-pond-mode");
+</script>
 <canvas id="water" aria-hidden="true"></canvas>
 <header>
   <div class="header-row">
     <button type="button" id="menu-btn" aria-expanded="false" aria-controls="toolbar">Menu</button>
     <h1>Scripture Ripples</h1>
+    <span class="verse-tools"><button type="button" id="start-open-home">Start pond</button></span>
     <button type="button" id="mode-dashboard">Dashboard</button>
     <span class="verse-tools"><button type="button" id="open-year-plan">Bible in a Year</button></span>
     <span class="verse-tools"><button type="button" id="open-my-stones">Build Your Pond</button></span>
@@ -811,6 +872,43 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
   <p class="lead-short">Open Menu to search verses or explore Biblical Symbols. Save verses to your own stones in Build Your Pond.</p>
   <p class="lead lead-long">Published cross-references come from <a href="https://www.openbible.info/labs/cross-references/" style="color:inherit">OpenBible.info</a> (CC BY).</p>
 </header>
+<main id="start-pond" aria-labelledby="start-pond-title">
+  <div class="start-pond-inner">
+    <div class="start-pond-header">
+      <div>
+        <h1 id="start-pond-title" tabindex="-1">Scripture Ripples</h1>
+        <p>Explore connections between Bible passages.</p>
+      </div>
+      <nav class="verse-tools start-pond-tools" aria-label="Explore Scripture Ripples">
+        <button type="button" id="start-full-pond" class="start-pond-primary">Explore full pond</button>
+        <button type="button" id="start-year">Bible in a Year</button>
+        <button type="button" id="start-personal">My Pond</button>
+      </nav>
+    </div>
+    <section class="start-scroll" aria-label="How to use the pond">
+      <p>Drop a stone into the water to see its Scripture Ripples.</p>
+      <p>Drop as many stones as you like, or make your own in My Pond.</p>
+    </section>
+    <label class="start-search" for="start-search">Find a stone <input type="search" id="start-search" placeholder="e.g. Bread" autocomplete="off"></label>
+    <div class="start-pond-scene">
+      <div class="start-bank" id="start-west-bank" role="group" aria-label="Left bank"></div>
+      <div id="start-water" class="pond-surface" role="group" aria-label="Pond">
+        <svg class="start-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+      </div>
+      <div class="start-bank" id="start-east-bank" role="group" aria-label="Right bank"></div>
+    </div>
+    <div class="start-pond-footer">
+      <p id="start-pond-status" role="status">Choose a stone on either bank.</p>
+      <div class="verse-tools"><button type="button" id="start-reset" disabled>Reset pond</button></div>
+    </div>
+    <div class="verse-tools" id="start-pond-links" aria-label="Connections between stones" hidden></div>
+    <section id="start-evidence" aria-labelledby="start-evidence-title" hidden>
+      <h2 id="start-evidence-title"></h2>
+      <div id="start-evidence-verses"></div>
+    </section>
+    <div id="start-legend"></div>
+  </div>
+</main>
 <div class="backdrop" id="backdrop" hidden></div>
 <div class="toolbar toolbar-graph" id="toolbar">
   <button type="button" id="menu-close">Close</button>
@@ -2341,7 +2439,8 @@ window.addEventListener("resize", function() {
   window.__iamFitTimer = setTimeout(fitGraph, 150);
 });
 
-inflateVerses().then(function() {
+const motifVersesReady = inflateVerses();
+motifVersesReady.then(function() {
   if (network.getSeed && window.__IAM_READY === false) {
     /* verses ready; mark ready if physics already finished */
   }
@@ -5054,6 +5153,283 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
   });
 })();
 
+</script>
+<script>
+(function startPond() {
+  const water = document.getElementById("start-water");
+  const lineLayer = water.querySelector("svg");
+  const banks = [document.getElementById("start-west-bank"), document.getElementById("start-east-bank")];
+  const status = document.getElementById("start-pond-status");
+  const links = document.getElementById("start-pond-links");
+  const reset = document.getElementById("start-reset");
+  const evidence = document.getElementById("start-evidence");
+  const search = document.getElementById("start-search");
+  const ns = "http://www.w3.org/2000/svg";
+  const placed = new Set();
+  const rocks = new Map();
+  let pairs = [];
+  let active = null;
+  let verseLoadFailed = false;
+  addPondPlants(water);
+  const legend = document.getElementById("edge-key").cloneNode(true);
+  legend.removeAttribute("id");
+  document.getElementById("start-legend").append(legend);
+
+  const kinds = {
+    "word-match": "Word-match / overlap",
+    openbible: "OpenBible.info",
+    typological: "Typological",
+    structure: "Structure"
+  };
+
+  function nameOf(id) { return rocks.get(id).label; }
+
+  function makeButton(label, activate) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+    button.addEventListener("click", activate);
+    return button;
+  }
+
+  function evidenceVerses(verses, parent, openFirst) {
+    verses.forEach(function(verse, index) {
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = verse.ref || verse.verse_id;
+      const text = document.createElement("p");
+      text.textContent = verse.text;
+      details.open = Boolean(openFirst && index === 0);
+      details.append(summary, text);
+      parent.append(details);
+    });
+  }
+
+  function versesOf(id) {
+    return new Map((DATA.verses?.[id]?.subgroups || []).flatMap(group =>
+      group.verses.map(verse => [verse.verse_id, verse])));
+  }
+
+  function showEvidence(selection) {
+    active = selection;
+    const list = document.getElementById("start-evidence-verses");
+    list.replaceChildren();
+    const title = document.getElementById("start-evidence-title");
+    if (typeof selection === "string") {
+      title.textContent = nameOf(selection);
+      evidenceVerses([...versesOf(selection).values()].slice(0, 3), list);
+      list.append(makeButton("Explore this stone", function() {
+        openFullPond();
+        window.__iamSetDashboard(true, selection);
+      }));
+    } else {
+      const { from, to, edges } = selection;
+      title.textContent = nameOf(from) + " ↔ " + nameOf(to);
+      const connected = versesOf(to);
+      const shared = [...versesOf(from).values()].filter(verse => connected.has(verse.verse_id));
+      const message = document.createElement("p");
+      message.textContent = [...new Set(edges.map(edge => kinds[edge.kind]))].join(" · ");
+      list.append(message);
+      if (shared.length) {
+        const count = document.createElement("p");
+        count.textContent = shared.length + (shared.length === 1 ? " shared verse" : " shared verses");
+        list.append(count);
+        evidenceVerses(shared.slice(0, 5), list, true);
+      } else if (!DATA.verses && !verseLoadFailed) {
+        list.append(document.createTextNode("Loading verse text…"));
+      }
+      list.append(makeButton("Explore this connection", function() {
+        openFullPond();
+        window.__iamSetDashboard(true, from);
+        window.__iamReadConnection(from, to);
+      }));
+    }
+    evidence.hidden = false;
+  }
+
+  function drawLines() {
+    const bounds = water.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) return;
+    lineLayer.setAttribute("viewBox", "0 0 " + bounds.width + " " + bounds.height);
+    lineLayer.replaceChildren();
+    const defs = document.createElementNS(ns, "defs");
+    const arrow = document.createElementNS(ns, "marker");
+    arrow.setAttribute("id", "start-edge-arrow");
+    arrow.setAttribute("viewBox", "0 0 8 8");
+    arrow.setAttribute("refX", "7");
+    arrow.setAttribute("refY", "4");
+    arrow.setAttribute("markerWidth", "5");
+    arrow.setAttribute("markerHeight", "5");
+    arrow.setAttribute("orient", "auto");
+    const triangle = document.createElementNS(ns, "path");
+    triangle.setAttribute("d", "M0 0 L8 4 L0 8 z");
+    triangle.setAttribute("fill", "#46607a");
+    arrow.append(triangle);
+    defs.append(arrow);
+    lineLayer.append(defs);
+    const positions = new Map([...placed].map(function(id) {
+      const rect = rocks.get(id).button.getBoundingClientRect();
+      return [id, {x:rect.left + rect.width / 2 - bounds.left, y:rect.top + rect.height / 2 - bounds.top}];
+    }));
+    pairs.forEach(function(pair) {
+      pair.edges.forEach(function(edge, i) {
+        const first = positions.get(edge.from);
+        const last = positions.get(edge.to);
+        const span = Math.hypot(last.x - first.x, last.y - first.y);
+        if (span < 10) return;
+        const x = (last.x - first.x) / span;
+        const y = (last.y - first.y) / span;
+        const setback = Math.min(39, span * 0.39);
+        const offset = (i - (pair.edges.length - 1) / 2) * 5;
+        const line = document.createElementNS(ns, "line");
+        line.setAttribute("x1", first.x + x * setback - y * offset);
+        line.setAttribute("y1", first.y + y * setback + x * offset);
+        line.setAttribute("x2", last.x - x * setback - y * offset);
+        line.setAttribute("y2", last.y - y * setback + x * offset);
+        if (Array.isArray(edge.dashes)) line.setAttribute("stroke-dasharray", edge.dashes.join(" "));
+        line.setAttribute("marker-end", "url(#start-edge-arrow)");
+        const hit = line.cloneNode();
+        hit.removeAttribute("marker-end");
+        hit.removeAttribute("stroke-dasharray");
+        hit.classList.add("start-line-hit");
+        hit.addEventListener("click", () => showEvidence(pair));
+        lineLayer.append(line, hit);
+      });
+    });
+  }
+
+  function updateConnections(added) {
+    const grouped = new Map();
+    DATA.edges.forEach(function(edge) {
+      if (!kinds[edge.kind] || !placed.has(edge.from) || !placed.has(edge.to) || edge.from === edge.to) return;
+      const key = [edge.from, edge.to].sort().join("\u0000");
+      if (!grouped.has(key)) grouped.set(key, { from:edge.from, to:edge.to, edges:[] });
+      grouped.get(key).edges.push(edge);
+    });
+    pairs = [...grouped.values()];
+    links.replaceChildren();
+    pairs.forEach(function(pair) {
+      links.append(makeButton(nameOf(pair.from) + " ↔ " + nameOf(pair.to), () => showEvidence(pair)));
+    });
+    links.hidden = !pairs.length;
+    if (added) {
+      const connection = pairs.find(pair => pair.from === added || pair.to === added);
+      if (connection) {
+        showEvidence(connection);
+        status.textContent = "Select a line or connection to read the verses.";
+      } else {
+        showEvidence(added);
+        status.textContent = placed.size === 1
+          ? "Drop another stone to look for a connection."
+          : "This stone has no recorded link to the stones in the pond yet. Try another.";
+      }
+    }
+    drawLines();
+  }
+
+  function filterBank() {
+    const query = search.value.toLowerCase().trim();
+    let count = 0;
+    for (const [id, {button, label}] of rocks) {
+      button.hidden = !placed.has(id) && !label.toLowerCase().includes(query);
+      if (!placed.has(id) && !button.hidden) count++;
+    }
+    if (!count && query) status.textContent = "No stones on the banks match that search.";
+    else if (status.textContent.startsWith("No stones on the banks")) {
+      status.textContent = "Choose a stone on either bank.";
+    }
+    drawLines();
+  }
+
+  function dropStone(id) {
+    if (placed.has(id)) { showEvidence(id); return; }
+    const { button } = rocks.get(id);
+    const before = button.getBoundingClientRect();
+    placed.add(id);
+    button.hidden = false;
+    button.dataset.inWater = "true";
+    button.setAttribute("aria-label", nameOf(id) + ", in the pond. Read verses");
+    water.append(button);
+    const after = button.getBoundingClientRect();
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && button.animate) {
+      button.animate([
+        { transform:"translate(" + (before.left - after.left) + "px," + (before.top - after.top) + "px) scale(.82)" },
+        { transform:"translateY(-20px) scale(1.08)", offset:.64 },
+        { transform:"none" }
+      ], { duration:420, easing:"ease-out" });
+      const bounds = water.getBoundingClientRect();
+      const ripple = document.createElement("span");
+      ripple.className = "start-ripple";
+      ripple.setAttribute("aria-hidden", "true");
+      ripple.style.setProperty("--rock-x", after.left + after.width / 2 - bounds.left + "px");
+      ripple.style.setProperty("--rock-y", after.top + after.height / 2 - bounds.top + "px");
+      water.append(ripple);
+      setTimeout(() => ripple.remove(), 800);
+    }
+    button.focus({preventScroll:true});
+    reset.disabled = false;
+    updateConnections(id);
+  }
+
+  const featured = ["Bread", "Rock / Stones", "Blood", "Sheep"];
+  const ordered = featured.map(id => DATA.nodes.find(node => node.id === id))
+    .concat(DATA.nodes.filter(node => !featured.includes(node.id)));
+  ordered.forEach(function(node, index) {
+    const label = (node.label || node.id).split("\n")[0];
+    const button = makeButton(label, () => dropStone(node.id));
+    button.className = "personal-rock start-rock";
+    button.style.backgroundImage = 'url("' + node.image + '")';
+    rocks.set(node.id, { label, button, bank:banks[index % 2] });
+  });
+
+  function resetPond() {
+    placed.clear();
+    active = null;
+    evidence.hidden = true;
+    search.value = "";
+    for (const [, {label, button, bank}] of rocks) {
+      delete button.dataset.inWater;
+      button.setAttribute("aria-label", "Drop " + label + " into the pond");
+      button.hidden = false;
+      bank.append(button);
+    }
+    water.querySelectorAll(".start-ripple").forEach(ripple => ripple.remove());
+    status.textContent = "Choose a stone on either bank.";
+    reset.disabled = true;
+    updateConnections();
+  }
+
+  function openFullPond() {
+    document.body.classList.remove("start-pond-mode");
+    requestAnimationFrame(fitGraph);
+  }
+  document.getElementById("start-full-pond").addEventListener("click", function() {
+    openFullPond();
+    document.getElementById("mode-dashboard").focus();
+  });
+  document.getElementById("start-open-home").addEventListener("click", function() {
+    if (document.body.classList.contains("dashboard-mode")) window.__iamSetDashboard(false);
+    if (document.body.classList.contains("companion-mode")) setCompanionMode(false);
+    if (document.body.classList.contains("helix-mode")) window.__exitHelix?.();
+    document.body.classList.add("start-pond-mode");
+    document.getElementById("start-pond-title").focus();
+    requestAnimationFrame(drawLines);
+  });
+  document.getElementById("start-year").addEventListener("click", () => document.getElementById("open-year-plan").click());
+  document.getElementById("start-personal").addEventListener("click", () => openPersonalStones());
+  reset.addEventListener("click", function() {
+    resetPond();
+    rocks.get(featured[0]).button.focus({preventScroll:true});
+  });
+  search.addEventListener("input", filterBank);
+  window.addEventListener("resize", drawLines);
+  if (typeof ResizeObserver === "function") new ResizeObserver(drawLines).observe(water);
+  motifVersesReady.then(function() { if (active) showEvidence(active); }).catch(function() {
+    verseLoadFailed = true;
+    if (active) showEvidence(active);
+  });
+  resetPond();
+})();
 </script>
 </body>
 </html>
