@@ -784,8 +784,7 @@
     }
     .edge-key .edge-key-title { font-size: 0.72rem; margin-bottom: 3px; }
   }
-  /* Demo-only: remove rock visuals; all other screens unchanged. */
-  #start-pond .start-rock { display: none !important; }
+  /* Demo stones remain visible on the banks, never preloaded in the water. */
 </style>
 <script>
 /**
@@ -5476,6 +5475,13 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     if (active) showEvidence(active);
   });
   resetPond();
+  // Initial demo state: every stone belongs to its bank; the water is empty.
+  for (const [, { button, bank }] of rocks) {
+    if (button.parentElement !== bank) bank.append(button);
+    delete button.dataset.inWater;
+  }
+  placed.clear();
+  updateConnections();
 })();
 </script>
 </body>
