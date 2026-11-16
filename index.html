@@ -84,20 +84,27 @@
 
   #graph canvas { pointer-events: auto; }
   body.start-pond-mode > :is(header,#toolbar,#backdrop,#dashboard,#companion) { display:none !important; }
-  body.start-pond-mode:not(.pond-mode) > #graph-home { position:absolute; left:-200vw; top:0; width:100%; height:100%; visibility:hidden; }
+  body.start-pond-mode > #water { visibility:hidden; }
+  body.start-pond-mode:not(.pond-mode) > #graph-home { display:block; position:fixed; inset:0 100% 0 auto; width:100vw; height:100%; visibility:hidden; pointer-events:none; }
+  body.start-pond-mode:not(.pond-mode) > #graph-home .layout-graph { width:100%; height:100%; }
   body.pond-mode > #start-pond, body:not(.start-pond-mode) > #start-pond { display:none; }
-  #start-pond { flex:1; min-height:0; overflow:auto; z-index:1; padding:clamp(16px,3vw,36px); background:#f4ead8; color:#17314b; }
+  #start-pond { position:fixed; inset:0; overflow:auto; z-index:2; overscroll-behavior:contain; padding:clamp(16px,3vw,36px); background:#f4ead8; color:#17314b; }
   .start-pond-inner { max-width:1040px; margin:auto; }
   .start-pond-header { display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; }
   .start-pond-header h1 { margin:0; color:#17314b; font-size:clamp(2rem,5vw,3.3rem); font-weight:600; }
   .start-pond-header p { margin:5px 0 0; line-height:1.45; }
-  .start-pond-tools { margin:0; }
+  .start-pond-tools { margin:0; max-width:100%; }
   .start-pond-tools button { min-height:44px; }
   .start-pond-primary { background:#1e3a5f !important; color:#fff8e9 !important; border-color:#1e3a5f !important; }
   .start-pond-scene { display:grid; grid-template-columns:112px minmax(0,1fr) 112px; align-items:stretch; background:#e8d9b8; border:1px solid #a3977b; border-radius:18px; padding:8px; }
   #start-water { position:relative; isolation:isolate; min-height:clamp(270px,43vh,410px); background:#7eb4e4; border-radius:22px 29px 20px 33px / 18px 25px 27px 19px; }
   #start-water .pond-plants { opacity:.9; }
   .start-rock { z-index:1; min-height:90px; width:100px; font-size:1rem; }
+  .start-rock { isolation:isolate; }
+  .start-rock::before { content:""; position:absolute; inset:0; z-index:-1; background:var(--stone-art) center/100% 100% no-repeat; }
+  .start-rock.has-subthemes::before { filter:grayscale(1) brightness(.77) contrast(1.08); }
+  .start-rock.has-subthemes .start-rock-name { color:#fffdf5; text-shadow:0 1px 2px #121313,0 0 5px #121313; }
+  .start-rock .start-rock-subthemes { justify-self:center; padding:2px 4px; border-radius:3px; background:#f5ebd6; color:#283646; font-size:.65rem; text-shadow:none; }
   .start-rock:hover, .start-rock:focus-visible { filter:drop-shadow(0 0 5px #fff5d2); }
   #start-pond button:focus-visible, #start-pond summary:focus-visible { outline:2px solid #1e3a5f; outline-offset:3px; }
   .start-lines { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
@@ -107,6 +114,8 @@
   .start-lines .start-line-hit:hover { stroke:transparent; stroke-width:22; }
   .start-ripple { pointer-events:none; position:absolute; left:var(--rock-x); top:var(--rock-y); width:96px; height:42px; border:2px solid #e9f8fd; border-radius:50%; translate:-50% -15%; animation:start-ripple .6s ease-out both; }
   @keyframes start-ripple { from { transform:scale(.35); opacity:.95; } to { transform:scale(1.6); opacity:0; } }
+  #start-dashboard-tools { margin:10px 0 0; }
+  #start-stone-dashboard { min-height:44px; }
   .start-pond-footer { display:flex; gap:10px; align-items:baseline; justify-content:space-between; }
   #start-pond-status { margin:12px 0; line-height:1.35; }
   #start-pond-links { margin:0 0 8px; }
@@ -119,8 +128,12 @@
   @media (max-width:600px) {
     .start-pond-scene { grid-template-columns:1fr; }
     .start-rock { width:84px; min-height:72px; font-size:.88rem; }
-    .start-pond-header { gap:12px; }
+    #start-pond { padding:12px 12px max(20px,env(safe-area-inset-bottom)); }
+    .start-pond-header { gap:10px; }
     .start-pond-header h1 { font-size:2rem; }
+    .start-pond-tools { row-gap:6px; }
+    .start-scroll { padding:10px 16px; }
+    .start-pond-footer { align-items:flex-start; }
   }
   @media (prefers-reduced-motion:reduce) { .start-ripple { display:none; } }
   .start-scroll { margin:0 0 14px; padding:12px 25px; color:#312a1b; background:linear-gradient(100deg,#dfc99b,#fff1ce 8%,#f4e6c0 91%,#d9c08d); border-block:1px solid #b19a6a; border-radius:16px 12px 16px 12px; box-shadow:0 2px 5px #4f442536; }
@@ -882,7 +895,7 @@ if (!location.hash && !new URLSearchParams(location.search).has("dash")) documen
       <nav class="verse-tools start-pond-tools" aria-label="Explore Scripture Ripples">
         <button type="button" id="start-full-pond" class="start-pond-primary">Explore full pond</button>
         <button type="button" id="start-year">Bible in a Year</button>
-        <button type="button" id="start-personal">My Pond</button>
+        <button type="button" id="start-personal">Build Your Pond</button>
       </nav>
     </div>
     <section class="start-scroll" aria-label="How to use the pond">
@@ -896,6 +909,10 @@ if (!location.hash && !new URLSearchParams(location.search).has("dash")) documen
         <svg class="start-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
       </div>
       <div class="start-bank" id="start-east-bank" role="group" aria-label="Right bank"></div>
+    </div>
+    <div class="verse-tools" id="start-dashboard-tools" hidden>
+      <button type="button" id="start-stone-dashboard" class="start-pond-primary">Open stone dashboard</button>
+      <span>Choose a stone in the water to switch dashboards.</span>
     </div>
     <div class="start-pond-footer">
       <p id="start-pond-status" role="status">Choose a stone on either bank.</p>
@@ -1037,7 +1054,7 @@ if (!location.hash && !new URLSearchParams(location.search).has("dash")) documen
 
 <div id="dashboard" hidden>
   <div class="dash-head">
-    <h1 id="dash-title">Scripture Ripples — Stones Dashboard</h1>
+    <h1 id="dash-title" tabindex="-1">Scripture Ripples — Stones Dashboard</h1>
     <div class="dash-tabs" role="tablist" aria-label="Dashboard view">
       <button type="button" id="dash-tab-stones" class="dash-tab on" role="tab" aria-selected="true">Stones</button>
       <button type="button" id="dash-tab-demand" class="dash-tab" role="tab" aria-selected="false">Why I built this</button>
@@ -5162,6 +5179,8 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
   const status = document.getElementById("start-pond-status");
   const links = document.getElementById("start-pond-links");
   const reset = document.getElementById("start-reset");
+  const dashboardTools = document.getElementById("start-dashboard-tools");
+  const dashboardButton = document.getElementById("start-stone-dashboard");
   const evidence = document.getElementById("start-evidence");
   const search = document.getElementById("start-search");
   const ns = "http://www.w3.org/2000/svg";
@@ -5169,6 +5188,11 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
   const rocks = new Map();
   let pairs = [];
   let active = null;
+  let dashboardStone = null;
+  const childCounts = new Map();
+  DATA.nodes.forEach(node => {
+    if (node.parent) childCounts.set(node.parent, (childCounts.get(node.parent) || 0) + 1);
+  });
   let verseLoadFailed = false;
   addPondPlants(water);
   const legend = document.getElementById("edge-key").cloneNode(true);
@@ -5218,10 +5242,6 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     if (typeof selection === "string") {
       title.textContent = nameOf(selection);
       evidenceVerses([...versesOf(selection).values()].slice(0, 3), list);
-      list.append(makeButton("Explore this stone", function() {
-        openFullPond();
-        window.__iamSetDashboard(true, selection);
-      }));
     } else {
       const { from, to, edges } = selection;
       title.textContent = nameOf(from) + " ↔ " + nameOf(to);
@@ -5342,13 +5362,17 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
   }
 
   function dropStone(id) {
+    dashboardStone = id;
+    dashboardButton.textContent = "Open " + nameOf(id) + " dashboard";
+    dashboardTools.hidden = false;
     if (placed.has(id)) { showEvidence(id); return; }
     const { button } = rocks.get(id);
     const before = button.getBoundingClientRect();
     placed.add(id);
     button.hidden = false;
     button.dataset.inWater = "true";
-    button.setAttribute("aria-label", nameOf(id) + ", in the pond. Read verses");
+    const count = childCounts.get(id);
+    button.setAttribute("aria-label", nameOf(id) + ", in the pond. Read verses" + (count ? ", " + count + " subthemes" : ""));
     water.append(button);
     const after = button.getBoundingClientRect();
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && button.animate) {
@@ -5376,20 +5400,35 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     .concat(DATA.nodes.filter(node => !featured.includes(node.id)));
   ordered.forEach(function(node, index) {
     const label = (node.label || node.id).split("\n")[0];
-    const button = makeButton(label, () => dropStone(node.id));
+    const button = makeButton("", () => dropStone(node.id));
     button.className = "personal-rock start-rock";
-    button.style.backgroundImage = 'url("' + node.image + '")';
+    button.style.setProperty("--stone-art", 'url("' + node.image + '")');
+    const name = document.createElement("span");
+    name.className = "start-rock-name";
+    name.textContent = label;
+    button.append(name);
+    const count = childCounts.get(node.id);
+    if (count) {
+      button.classList.add("has-subthemes");
+      const badge = document.createElement("small");
+      badge.className = "start-rock-subthemes";
+      badge.textContent = count + (count === 1 ? " subtheme" : " subthemes");
+      button.append(badge);
+    }
     rocks.set(node.id, { label, button, bank:banks[index % 2] });
   });
 
   function resetPond() {
     placed.clear();
     active = null;
+    dashboardStone = null;
+    dashboardTools.hidden = true;
     evidence.hidden = true;
     search.value = "";
     for (const [, {label, button, bank}] of rocks) {
       delete button.dataset.inWater;
-      button.setAttribute("aria-label", "Drop " + label + " into the pond");
+      const badge = button.querySelector(".start-rock-subthemes");
+      button.setAttribute("aria-label", "Drop " + label + " into the pond" + (badge ? ", " + badge.textContent : ""));
       button.hidden = false;
       bank.append(button);
     }
@@ -5403,6 +5442,12 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     document.body.classList.remove("start-pond-mode");
     requestAnimationFrame(fitGraph);
   }
+  dashboardButton.addEventListener("click", function() {
+    if (!dashboardStone) return;
+    openFullPond();
+    window.__iamSetDashboard(true, dashboardStone);
+    document.getElementById("dash-title").focus({ preventScroll: true });
+  });
   document.getElementById("start-full-pond").addEventListener("click", function() {
     openFullPond();
     document.getElementById("mode-dashboard").focus();
