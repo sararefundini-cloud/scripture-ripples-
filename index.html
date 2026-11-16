@@ -83,6 +83,9 @@
   }
 
   #graph canvas { pointer-events: auto; }
+  #graph.pond-entrance-pending > .vis-network { opacity:0; }
+  #graph .pond-entrance-overlay { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+
   header, .toolbar, .layout, .backdrop { position: relative; z-index: 1; }
   header {
     padding: 10px 16px 8px;
@@ -2293,6 +2296,109 @@ document.getElementById("layer").addEventListener("change", function() {
   fitGraph();
 });
 
+const pondEntrance = (function() {
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (reducedMotion.matches || /^#dash=/.test(location.hash) || new URLSearchParams(location.search).has("dash")) return function() {};
+
+  let canvas;
+  let frame = 0;
+  let armed = true;
+  container.classList.add("pond-entrance-pending");
+  document.addEventListener("pointerdown", finish, true);
+  document.addEventListener("keydown", finish, true);
+  window.addEventListener("resize", finish);
+  reducedMotion.addEventListener("change", finish);
+
+  function finish() {
+    armed = false;
+    cancelAnimationFrame(frame);
+    canvas?.remove();
+    container.classList.remove("pond-entrance-pending");
+    document.removeEventListener("pointerdown", finish, true);
+    document.removeEventListener("keydown", finish, true);
+    window.removeEventListener("resize", finish);
+    reducedMotion.removeEventListener("change", finish);
+  }
+
+  return function runEntrance() {
+    if (!armed) return;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    if (width < 2 || height < 2 || document.body.classList.contains("helix-mode")) { finish(); return; }
+    const visible = nodesDS.get({ filter: function(node) { return !node.hidden; } });
+    const positions = network.getPositions(visible.map(function(node) { return node.id; }));
+    const scale = network.getScale();
+    const artwork = new Map();
+    const stones = visible.flatMap(function(node) {
+      if (!positions[node.id] || !node.image) return [];
+      const target = network.canvasToDOM(positions[node.id]);
+      if (target.x < 0 || target.x > width || target.y < 0 || target.y > height) return [];
+      if (!artwork.has(node.image)) {
+        const image = new Image();
+        image.src = node.image;
+        artwork.set(node.image, image);
+      }
+      return [{ ...target, size: Math.max(10, node.size * scale * 2), image: artwork.get(node.image) }];
+    }).sort(function(a, b) { return a.x - b.x; });
+    if (!stones.length) { finish(); return; }
+
+    canvas = document.createElement("canvas");
+    canvas.className = "pond-entrance-overlay";
+    canvas.setAttribute("aria-hidden", "true");
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    container.append(canvas);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) { finish(); return; }
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    const interval = Math.min(150, 1700 / stones.length);
+    const flight = 285;
+    const ripple = 430;
+    const duration = (stones.length - 1) * interval + flight + ripple;
+    const begin = performance.now();
+
+    function draw(now) {
+      if (!armed) return;
+      const elapsed = now - begin;
+      if (elapsed >= duration) { finish(); return; }
+      ctx.clearRect(0, 0, width, height);
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(7, 7, width - 14, height - 14, 20);
+      ctx.clip();
+      stones.forEach(function(stone, index) {
+        const age = elapsed - index * interval;
+        if (age < 0) return;
+        if (age >= flight && age < flight + ripple) {
+          const progress = (age - flight) / ripple;
+          ctx.strokeStyle = "rgba(228, 247, 250," + (0.66 * (1 - progress)) + ")";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          const radius = 8 + progress * (stone.size * 0.55 + 20);
+          ctx.ellipse(stone.x, stone.y + stone.size * 0.19, radius, radius * 0.45, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        if (!stone.image.complete || !stone.image.naturalWidth) return;
+        const progress = Math.min(1, age / flight);
+        const x = stone.x + (index % 2 ? -1 : 1) * 45 * (1 - progress);
+        const y = stone.y - (40 + stone.size * 0.5) * (1 - progress * progress);
+        const size = stone.size * (0.76 + 0.24 * progress);
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, age / 85);
+        ctx.translate(x, y);
+        ctx.rotate((index % 2 ? -1 : 1) * 0.30 * (1 - progress));
+        ctx.drawImage(stone.image, -size / 2, -size / 2, size, size);
+        ctx.restore();
+      });
+      ctx.restore();
+      frame = requestAnimationFrame(draw);
+    }
+
+    frame = requestAnimationFrame(draw);
+  };
+})();
+
 window.__IAM_READY = false;
 function markReady() {
   if (window.__IAM_READY) return;
@@ -2303,6 +2409,7 @@ function markReady() {
   }
   window.__IAM_READY = true;
   document.body.classList.add("ready");
+  pondEntrance();
 }
 network.once("stabilized", function() {
   freezeLayout();
