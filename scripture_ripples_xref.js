@@ -1,102 +1,73 @@
 /**
- * Scripture Ripples - Simple Cross-Reference Feature for Kids
- * Drop this single file into your GitHub repository!
+ * Scripture Ripples - Auto-Inject Cross-References
  */
-
-// 1. Cross-reference data made super simple and kid-friendly
 const simpleCrossReferences = {
     "Genesis 1": [
-        {
-            "ref": "John 1:1",
-            "text": "In the beginning, Jesus was already there with God!"
-        }
+        { "ref": "John 1:1", "text": "In the beginning, Jesus was already there with God!" }
     ],
     "Genesis 2": [
-        {
-            "ref": "Hebrews 4:4",
-            "text": "God rested on the seventh day and looked at His wonderful creation."
-        }
+        { "ref": "Hebrews 4:4", "text": "God rested on the seventh day and looked at His wonderful creation." }
     ],
     "Genesis 3": [
-        {
-            "ref": "Romans 16:20",
-            "text": "God promised to rescue us and make everything right again!"
-        }
+        { "ref": "Romans 16:20", "text": "God promised to rescue us and make everything right again!" }
     ]
 };
 
-// 2. Add simple styling to the page automatically
+// Add styling automatically
 const styleTag = document.createElement('style');
 styleTag.innerHTML = `
     .kid-xref-btn {
         background-color: #e0f2fe;
         color: #0369a1;
         border: 2px solid #bae6fd;
-        padding: 8px 16px;
+        padding: 6px 14px;
         border-radius: 20px;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
         cursor: pointer;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .kid-xref-btn:hover {
-        background-color: #bae6fd;
+        margin-top: 6px;
+        margin-bottom: 6px;
     }
     .kid-xref-box {
         background-color: #f0fdf4;
         border: 2px dashed #bbf7d0;
-        border-radius: 12px;
-        padding: 12px;
-        margin-top: 8px;
-        margin-bottom: 12px;
-        font-size: 14px;
+        border-radius: 10px;
+        padding: 10px;
+        margin-top: 6px;
+        margin-bottom: 10px;
+        font-size: 13px;
         color: #166534;
-    }
-    .kid-xref-box h4 {
-        margin: 0 0 6px 0;
-        color: #15803d;
-        font-size: 14px;
     }
 `;
 document.head.appendChild(styleTag);
 
-// 3. Helper function to create the button and popup for chapters
-function renderChapterWithXref(chapterName) {
-    const refs = simpleCrossReferences[chapterName] || [];
-    const safeId = chapterName.replace(/\s+/g, '-');
-
-    if (refs.length === 0) {
-        return `<div><strong>${chapterName} · KJV</strong></div>`;
-    }
-
-    return `
-        <div class="chapter-card" style="margin-bottom: 15px;">
-            <div style="font-size: 16px; font-weight: bold; color: #1e293b;">${chapterName} · KJV</div>
-            
-            <!-- Fun Button for Kids -->
-            <button class="kid-xref-btn" onclick="toggleKidXref('${safeId}')">
-                ✨ See Connected Bible Verses (${refs.length})
-            </button>
-
-            <!-- Friendly Popup Box -->
-            <div id="kid-xref-${safeId}" class="kid-xref-box" style="display: none;">
-                <h4>📖 Bible Connection:</h4>
-                <ul style="margin: 0; padding-left: 18px;">
-                    ${refs.map(item => `<li><strong>${item.ref}</strong>: ${item.text}</li>`).join('')}
-                </ul>
-            </div>
-        </div>
-    `;
+// Automatically scan the page and add buttons to chapters
+function injectCrossReferences() {
+    const chapterDivs = document.querySelectorAll('.chapter-card, div, h3, span');
+    
+    chapterDivs.forEach(el => {
+        for (const [chapterName, refs] of Object.entries(simpleCrossReferences)) {
+            if (el.textContent.includes(chapterName + " · KJV") && !el.dataset.hasXref) {
+                el.dataset.hasXref = "true";
+                
+                const safeId = chapterName.replace(/\s+/g, '-');
+                const container = document.createElement('div');
+                container.innerHTML = `
+                    <button class="kid-xref-btn" onclick="document.getElementById('kid-xref-${safeId}').style.display = document.getElementById('kid-xref-${safeId}').style.display === 'none' ? 'block' : 'none'">
+                        ✨ See Connected Bible Verses (${refs.length})
+                    </button>
+                    <div id="kid-xref-${safeId}" class="kid-xref-box" style="display: none;">
+                        <strong>📖 Bible Connection:</strong>
+                        <ul style="margin: 4px 0 0 16px; padding: 0;">
+                            ${refs.map(item => `<li><strong>${item.ref}</strong>: ${item.text}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                el.appendChild(container);
+            }
+        }
+    });
 }
 
-// 4. Toggle function to open/close the box easily
-function toggleKidXref(safeId) {
-    const box = document.getElementById(`kid-xref-${safeId}`);
-    if (box) {
-        box.style.display = box.style.display === 'none' ? 'block' : 'none';
-    }
-}
-
-console.log("Scripture Ripples kid-friendly cross-references loaded!");
+// Run scanner every second to catch when modals open
+setInterval(injectCrossReferences, 1000);
