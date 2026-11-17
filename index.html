@@ -1026,7 +1026,7 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
       <div id="start-water" class="pond-surface" role="group" aria-label="Pond">
         <svg class="start-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
       </div>
-      <section class="start-bank-section" aria-label="Tabernacle architecture and furnishings"><h2>Tabernacle · Architecture</h2><p>Explore the structure, materials, and furnishings of the Tabernacle.</p><div class="start-bank" id="start-east-bank" role="group" aria-label="Tabernacle stones"></div></section>
+      <section class="start-bank-section" aria-label="Tabernacle architecture and furnishings"><h2>Tabernacle · Symbolic Themes</h2><p>Explore the original themes, including Tabernacle architecture and furnishings.</p><div class="start-bank" id="start-east-bank" role="group" aria-label="Tabernacle stones"></div></section>
     </div>
     <div class="verse-tools" id="start-dashboard-tools" hidden>
       <button type="button" id="start-stone-dashboard" class="start-pond-primary">Explore This Stone in Detail</button>
@@ -5516,13 +5516,11 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
                          y:(r.top+r.bottom)/2-bounds.top,
                          radius:Math.min(r.width,r.height)*0.43});
     }
-    const seen = new Set();
-    for (const pair of pairs) {
-      // One clear connection per pair; evidence panel retains all edge types.
-      const key = [pair.from,pair.to].sort().join("\u0000");
-      if (seen.has(key)) continue;
-      seen.add(key);
-      const first = positions.get(pair.from), last = positions.get(pair.to);
+    // Draw the ORIGINAL individual edges, with their own color, width and dash style.
+    // Never draw unless both original endpoints are physically in the water.
+    for (const edge of DATA.edges) {
+      if (!placed.has(edge.from) || !placed.has(edge.to) || edge.from === edge.to) continue;
+      const first = positions.get(edge.from), last = positions.get(edge.to);
       if (!first || !last) continue;
       const distance = Math.hypot(last.x-first.x,last.y-first.y);
       if (distance <= first.radius+last.radius+8) continue;
@@ -5532,12 +5530,17 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
       line.setAttribute("y1",first.y+uy*first.radius);
       line.setAttribute("x2",last.x-ux*last.radius);
       line.setAttribute("y2",last.y-uy*last.radius);
-      line.setAttribute("stroke-dasharray","5 5");
-      line.setAttribute("aria-label",`${nameOf(pair.from)} to ${nameOf(pair.to)}`);
+      line.style.stroke = (typeof edge.color === "string" ? edge.color : edge.color?.color) || "#25405a";
+      line.style.strokeWidth = String(edge.width || 2);
+      if (edge.dashes) line.setAttribute("stroke-dasharray",Array.isArray(edge.dashes) ? edge.dashes.join(" ") : "5 5");
+      line.setAttribute("aria-label",`${nameOf(edge.from)} to ${nameOf(edge.to)} (${kinds[edge.kind] || edge.kind})`);
       const hit=line.cloneNode();
       hit.classList.add("start-line-hit");
       hit.removeAttribute("stroke-dasharray");
-      hit.addEventListener("click",()=>showEvidence(pair));
+      hit.style.stroke = "transparent";
+      hit.style.strokeWidth = "22";
+      const pair = pairs.find(p => (p.from === edge.from && p.to === edge.to) || (p.from === edge.to && p.to === edge.from));
+      hit.addEventListener("click",()=>showEvidence(pair || {from:edge.from,to:edge.to,edges:[edge]}));
       lineLayer.append(line,hit);
     }
   }
@@ -5621,21 +5624,12 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     window.setTimeout(drawLines, 550);
   }
 
-  // This is a guided demonstration, not a dump of the entire 85-node lexicon.
-  // Each bank is deliberately limited to one of the two sources of the study.
-  const iamIds = [
-    "bread_of_life", "light_of_the_world", "the_door", "the_good_shepherd",
-    "resurrection_and_life", "way_truth_life", "the_true_vine", "before_abraham"
-  ];
-  const tabernacleIds = [
-    "economy::tabernacle", "economy::outer court", "economy::altar",
-    "economy::laver", "economy::holy place", "economy::lampstand",
-    "economy::showbread / bread of life", "economy::incense altar",
-    "economy::veil", "economy::Holiest of all", "economy::ark",
-    "economy::cherubim", "economy::boards", "economy::pillar"
-  ];
-  const featured = [...iamIds, ...tabernacleIds];
-  const ordered = featured.map(id => DATA.nodes.find(node => node.id === id)).filter(Boolean);
+  // Preserve the complete original lexicon and all original DATA.edges.
+  // The banks organize existing nodes; they never replace or fabricate them.
+  const featured = ["Bread", "Rock / Stones", "Blood", "Sheep"];
+  const ordered = featured.map(id => DATA.nodes.find(node => node.id === id)).filter(Boolean)
+    .concat(DATA.nodes.filter(node => !featured.includes(node.id)));
+  const iamIds = DATA.nodes.filter(node => node.layer === "iam").map(node => node.id);
   ordered.forEach(function(node) {
     const label = (node.label || node.id).split("\n")[0];
     const button = makeButton("", () => dropStone(node.id));
