@@ -978,11 +978,11 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
   <div class="header-row">
     <button type="button" id="menu-btn" aria-expanded="false" aria-controls="toolbar">Menu</button>
     <h1>Scripture Ripples</h1>
-    <span class="verse-tools"><button type="button" id="start-open-home">Try the Pond Demo</button></span>
+    <span class="verse-tools"><button type="button" id="start-open-home">Pond Demo</button></span>
     <button type="button" id="mode-dashboard" hidden>Dashboard</button>
     <span class="verse-tools"><button type="button" id="open-year-plan">Bible in a Year</button></span>
     <span class="verse-tools"><button type="button" id="open-my-stones">Build Your Pond</button></span>
-    <button type="button" id="mode-graph">Back to the graph</button>
+    <button type="button" id="mode-graph">Explore Full Pond</button>
   </div>
   <p id="theme-starters">Trace a Connection — How can patterns across Scripture help us understand difficult passages?</p>
   <p class="lead lead-long">Read a theme’s KJV verses, tap a timeline dot to open a passage, or select a line between stones to see why they’re connected.</p>
@@ -998,7 +998,7 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
         <p>Explore recurring themes, trace the connections, and read the Scripture behind every ripple.</p>
       </div>
       <nav class="verse-tools start-pond-tools" aria-label="Explore Scripture Ripples">
-        <button type="button" id="start-full-pond" class="start-pond-primary">Exit Demo · Explore Scripture</button>
+        <button type="button" id="start-full-pond" class="start-pond-primary">Explore Full Pond</button>
         <button type="button" id="start-year">Bible in a Year</button>
         <button type="button" id="start-personal">Build Your Pond</button>
       </nav>
@@ -1136,7 +1136,7 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
     <input type="search" id="search" placeholder="e.g. John 6:35 or manna" enterkeyhint="search">
   </label>
 </div>
-<div id="graph-home">
+<div id="graph-home" role="region" aria-label="Explore Full Pond — complete Scripture connections graph">
 <div class="layout layout-graph">
   <div id="graph" class="pond-surface"></div>
   <div class="edge-key" id="edge-key" aria-label="Line key">
