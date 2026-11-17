@@ -96,7 +96,16 @@
   .start-pond-tools { margin:0; max-width:100%; }
   .start-pond-tools button { min-height:44px; }
   .start-pond-primary { background:#1e3a5f !important; color:#fff8e9 !important; border-color:#1e3a5f !important; }
-  .start-pond-scene { display:grid; grid-template-columns:112px minmax(0,1fr) 112px; align-items:stretch; background:#e8d9b8; border:1px solid #a3977b; border-radius:18px; padding:8px; }
+  .start-pond-scene { display:grid; grid-template-columns:minmax(145px,170px) minmax(0,1fr) minmax(145px,170px); align-items:stretch; background:#e8d9b8; border:1px solid #a3977b; border-radius:18px; padding:8px; }
+  .start-origin-scroll { max-width:920px; margin:0 auto 12px; background:#f7ecd3; border:1px solid #b8a581; border-radius:12px; box-shadow:0 2px 7px #4c382218; line-height:1.5; }
+  .start-origin-scroll h2 { font-size:1.15rem; margin:0 0 5px; color:#283c4b; }
+  .start-origin-scroll p { margin:5px 0 8px; }
+  .start-study-terms { margin:8px 0; }
+  .start-study-terms summary { cursor:pointer; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+  .start-study-terms p { margin:7px 0; }
+  .start-howto { font-size:.95rem; }
+  .start-bank-section .start-rock { max-width:100%; }
+  #start-water { overflow:hidden; }
   #start-water { position:relative; isolation:isolate; min-height:clamp(270px,43vh,410px); background:#7eb4e4; border-radius:22px 29px 20px 33px / 18px 25px 27px 19px; }
   #start-water .pond-plants { opacity:.9; }
   .start-rock { z-index:1; min-height:90px; width:100px; font-size:1rem; }
@@ -810,6 +819,39 @@
 
 /* Ensure the Dashboard starts visually empty even if the graph library redraws its canvas. */
 body.dashboard-mode.dashboard-no-stones #graph canvas { opacity: 0 !important; }
+
+/* Bible in a Year: accessible, progressive cross-reference discovery */
+#year-plan .year-cross-more { display:block; margin:12px 0 4px; border:1px solid #536c77; border-radius:6px; padding:9px 12px; background:#fffaf0; color:#1e3a5f; cursor:pointer; font:inherit; }
+#year-plan .year-cross-more:hover, #year-plan .year-cross-more:focus-visible { background:#e8eee8; }
+#year-plan .year-cross-anchor { display:block; font-size:.88em; margin:0 0 5px; }
+#year-plan .year-cross-note { font-size:.8em; color:#525b56; margin:12px 0 0; }
+#year-plan .year-scripture-verse > details > summary { display:inline-block; padding:6px 8px; border:1px solid #b6c1b8; border-radius:5px; background:#f4f7f2; }
+#year-plan .year-scripture-verse > details[open] > summary { background:#e6efe8; }
+@media (max-width:600px) { #year-plan .year-cross-more { width:100%; min-height:44px; } #year-plan .year-scripture-verse > details > summary { min-height:36px; } }
+
+/* Reading-plan Scripture trails: no moving elements or layout-dependent positioning. */
+#year-plan .year-trail-help {font-size:.9rem;line-height:1.45;background:#f5efdf;border-left:3px solid #87917b;padding:9px 12px;margin:8px 0 16px;color:#273b3d;}
+#year-plan .year-trail-start {display:inline-block;margin:4px 0 8px 10px;padding:7px 10px;border:1px solid #536c77;border-radius:6px;background:#fffaf0;color:#1e3a5f;font:inherit;cursor:pointer;}
+#year-plan .year-trail {margin:12px 0;padding:14px;border:1px solid #a49b80;border-radius:9px;background:#faf2de;box-shadow:0 2px 7px #2221;overflow-wrap:anywhere;}
+#year-plan .year-trail-nav {display:flex;align-items:center;gap:5px;overflow-x:auto;white-space:nowrap;padding-bottom:8px;border-bottom:1px solid #c6b99b;scrollbar-width:thin;}
+#year-plan .year-trail-nav button {flex:0 0 auto;border:0;border-radius:4px;background:transparent;color:#1e3a5f;padding:7px;font:inherit;text-decoration:underline;cursor:pointer;}
+#year-plan .year-trail-nav button[aria-current="location"] {background:#e6dcc3;font-weight:bold;text-decoration:none;}
+#year-plan .year-trail-passage {padding:10px 0;line-height:1.6;}
+#year-plan .year-trail-label {font-size:.86rem;font-weight:bold;margin:12px 0 6px;}
+#year-plan .year-trail-results {display:flex;flex-wrap:wrap;gap:7px;}
+#year-plan .year-trail-results button,#year-plan .year-trail-actions button {min-height:40px;padding:8px 11px;border:1px solid #87917b;border-radius:6px;background:#fffdf6;color:#1e3a5f;font:inherit;cursor:pointer;}
+#year-plan .year-trail-actions {border-top:1px solid #c6b99b;padding-top:10px;}
+@media(max-width:600px){#year-plan .year-trail {padding:10px;}#year-plan .year-trail-results button {max-width:100%;}#year-plan .year-trail-start {min-height:44px;}}
+@media(prefers-reduced-motion:reduce){#year-plan .year-trail * {scroll-behavior:auto!important;transition:none!important;animation:none!important;}}
+
+/* Mission-first demo scroll; keeps the pond visible and readable on small screens. */
+.start-origin-scroll .start-mission-eyebrow{font-size:.7rem;letter-spacing:.14em;font-weight:800;opacity:.78;margin:0 0 .3rem}
+.start-origin-scroll>h2{font-size:clamp(1.25rem,2.4vw,1.8rem);line-height:1.2;margin:.15rem 0 .55rem}
+.start-origin-scroll>p{line-height:1.5}
+.start-origin-scroll details{margin:.5rem 0}
+.start-origin-scroll summary{cursor:pointer;font-weight:700}
+.start-origin-scroll details p{line-height:1.5;margin:.5rem 0}
+@media(max-width:680px){.start-origin-scroll{max-height:48vh;overflow:auto;overscroll-behavior:contain}.start-origin-scroll>h2{font-size:1.3rem}}
 </style>
 <script>
 /**
@@ -889,8 +931,45 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
   #year-plan .year-navigation button, #year-plan select { min-height:44px; }
 }
 </style>
+<style id="start-pond-layout-fix">
+/* The tutorial should remain a bounded pond, not a horizontal canvas. */
+#start-pond { box-sizing:border-box; max-width:100vw; overflow-x:hidden; }
+#start-pond .start-pond-scene { width:100%; min-width:0; box-sizing:border-box; }
+#start-pond .start-bank-section { min-width:0; overflow:hidden; }
+#start-pond .start-bank { min-width:0; }
+#start-pond #start-water { min-width:0; box-sizing:border-box; grid-template-columns:repeat(auto-fit,minmax(108px,1fr)); gap:20px 10px; align-content:center; }
+#start-pond #start-water .start-rock { width:100px; min-width:0; }
+#start-pond .start-lines { overflow:hidden; }
+@media (max-width:720px) {
+ #start-pond .start-pond-scene { grid-template-columns:minmax(0,1fr); }
+ #start-pond #start-water { grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); padding:22px 12px; }
+ #start-pond #start-water .start-rock { width:90px; }
+ #start-pond .start-bank { flex-direction:row; overflow-x:auto; overflow-y:hidden; justify-content:flex-start; max-height:none; gap:8px; }
+ #start-pond .start-bank .start-rock { flex:0 0 90px; }
+}
+</style>
+<style id="guided-demo-layout-fix">
+/* The guided demo is a contained, responsive three-column layout. */
+#start-pond .start-pond-scene {display:grid!important;grid-template-columns:minmax(165px,205px) minmax(0,1fr) minmax(165px,205px)!important;gap:12px!important;align-items:stretch!important;width:100%!important;overflow:hidden!important;}
+#start-pond .start-bank-section {min-width:0!important;max-width:100%!important;overflow:hidden!important;}
+#start-pond .start-bank {display:flex!important;flex-direction:column!important;gap:8px!important;overflow-y:auto!important;overflow-x:hidden!important;max-height:470px!important;align-items:center!important;}
+#start-pond .start-bank .start-rock {flex:0 0 auto!important;max-width:96%!important;width:132px!important;min-height:88px!important;white-space:normal!important;overflow-wrap:break-word!important;font-size:.86rem!important;}
+#start-pond #start-water {display:flex!important;flex-wrap:wrap!important;justify-content:center!important;align-content:center!important;align-items:center!important;gap:26px 18px!important;padding:48px 30px!important;min-width:0!important;min-height:420px!important;box-sizing:border-box!important;overflow:hidden!important;}
+#start-pond #start-water>.start-rock {position:relative!important;flex:0 0 108px!important;width:108px!important;max-width:108px!important;min-height:90px!important;z-index:2!important;}
+#start-pond #start-water>.start-lines {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:1!important;pointer-events:none!important;}
+#start-pond #start-water>.start-lines .start-line-hit {pointer-events:stroke!important;}
+#start-pond #start-water>.pond-plants,#start-pond #start-water>.start-ripple {pointer-events:none!important;}
+@media(max-width:760px){
+#start-pond .start-pond-scene {grid-template-columns:minmax(0,1fr)!important;}
+#start-pond .start-bank-section {width:100%!important;}
+#start-pond .start-bank {flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important;max-height:none!important;align-items:stretch!important;padding-bottom:8px!important;}
+#start-pond .start-bank .start-rock {flex:0 0 112px!important;width:112px!important;}
+#start-pond #start-water {min-height:300px!important;padding:38px 14px!important;gap:18px 12px!important;}
+#start-pond #start-water>.start-rock {flex-basis:94px!important;width:94px!important;min-height:82px!important;}
+}
+</style>
 </head>
-<body>
+<body class="start-pond-mode">
 <script>
 // Open the full Scripture graph by default. The pond tutorial is optional.
 </script>
@@ -915,8 +994,8 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
   <div class="start-pond-inner">
     <div class="start-pond-header">
       <div>
-        <h1 id="start-pond-title" tabindex="-1">Trace a Connection — Interactive Demo</h1>
-        <p>How can patterns across Scripture help us understand difficult passages?</p>
+        <h1 id="start-pond-title" tabindex="-1">Scripture Ripples · Interactive Pond Demo</h1>
+        <p>Explore recurring themes, trace the connections, and read the Scripture behind every ripple.</p>
       </div>
       <nav class="verse-tools start-pond-tools" aria-label="Explore Scripture Ripples">
         <button type="button" id="start-full-pond" class="start-pond-primary">Exit Demo · Explore Scripture</button>
@@ -924,17 +1003,30 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
         <button type="button" id="start-personal">Build Your Pond</button>
       </nav>
     </div>
-    <section class="start-scroll" aria-label="How to use the pond">
-      <p>Choose a stone from the bank and drop it into the pond to reveal its Scripture connections.</p>
-      <p>Add more stones to see where their ripples meet. The pond begins empty; your own collections live in Build Your Pond.</p>
+    <section class="start-scroll start-origin-scroll" aria-label="Why Scripture Ripples exists and how to explore">
+      <p class="start-mission-eyebrow">WHY SCRIPTURE RIPPLES EXISTS</p>
+      <h2>Stop Flattening the Bible.</h2>
+      <p>Reading passages in isolation can hide the recurring imagery, literary structures, and connections that give them depth. <strong>Scripture Ripples is an interactive graph of themes throughout Scripture</strong>: it helps you see where biblical images reappear, how passages relate, and how their significance develops in context.</p>
+      <details class="start-study-terms" open><summary>Where do the stones come from?</summary>
+        <p>Our symbolic lexicon begins with <strong>Jesus’ “I Am” statements</strong> (John 6:35; 8:12; 10:9, 11; 11:25; 14:6; 15:1) and <strong>the architecture and furnishings of the Tabernacle</strong> (Exodus 25–27). These provide starting points for tracing imagery across Scripture—not a fixed symbolic dictionary supplied by the Bible.</p>
+      </details>
+      <details class="start-study-terms"><summary>What are mnemonic maps and recursive patterns?</summary>
+        <p><strong>Mnemonic maps:</strong> study aids that organize passages around memorable images, objects, and places, helping readers recall and compare related biblical accounts. This is our analytical framework, not a claim that every biblical author used the same map.</p>
+        <p><strong>Recursive patterns:</strong> motifs or narrative structures that recur across passages, sometimes gaining new or expanded significance. Repetition invites investigation; it does not automatically prove intentional symbolism.</p>
+      </details>
+      <details class="start-study-terms"><summary>Why do symbols matter?</summary>
+        <p>Objects such as stones, doors, lamps, and veils belonged to specific historical and literary settings. Tracing them can help illuminate difficult passages, but context matters: not every repeated object carries the same meaning.</p>
+        <p>For example, Jesus explicitly connects Moses’ lifted serpent (Numbers 21:8–9) with his own lifting up (John 3:14–15). Other proposed connections should be weighed against the passages themselves.</p>
+      </details>
+      <p class="start-howto"><strong>Try the demo:</strong> Choose a stone from a bank and drop it into the pond. Add another to explore connections. Select a stone to read its passages or a connecting line to examine the recorded evidence. Connections may be thematic rather than direct quotations. When you're ready, select <strong>Exit Demo · Explore Scripture</strong> to enter the full graph.</p>
     </section>
-    <label class="start-search" for="start-search">Find a stone <input type="search" id="start-search" placeholder="e.g. Bread" autocomplete="off"></label>
+    <label class="start-search" for="start-search">Find a stone <input type="search" id="start-search" placeholder="e.g. lampstand or vine" autocomplete="off"></label>
     <div class="start-pond-scene">
       <section class="start-bank-section" aria-label="Jesus and the I Am statements"><h2>Jesus · I Am</h2><p>Explore Jesus’ words and identity.</p><div class="start-bank" id="start-west-bank" role="group" aria-label="Jesus stones"></div></section>
       <div id="start-water" class="pond-surface" role="group" aria-label="Pond">
         <svg class="start-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
       </div>
-      <section class="start-bank-section" aria-label="Scripture themes"><h2>Scripture Themes</h2><p>Explore recurring biblical images.</p><div class="start-bank" id="start-east-bank" role="group" aria-label="Theme stones"></div></section>
+      <section class="start-bank-section" aria-label="Tabernacle architecture and furnishings"><h2>Tabernacle · Architecture</h2><p>Explore the structure, materials, and furnishings of the Tabernacle.</p><div class="start-bank" id="start-east-bank" role="group" aria-label="Tabernacle stones"></div></section>
     </div>
     <div class="verse-tools" id="start-dashboard-tools" hidden>
       <button type="button" id="start-stone-dashboard" class="start-pond-primary">Explore This Stone in Detail</button>
@@ -4931,6 +5023,11 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
   const progress = document.getElementById("year-progress");
   const storage = document.getElementById("year-storage");
   const completed = new Set();
+  const help = document.createElement("p");
+  help.className = "year-trail-help";
+  help.textContent = "Trace passages, not matching words: open a chapter and choose “Follow passage references” beside a verse. Use the trail to go back, or “Return to reading” to resume. Your trail clears when you close the reading plan.";
+  const intro = plan.querySelector(".year-intro");
+  if (intro) intro.after(help); else plan.insertBefore(help, plan.firstChild);
   const cache = new Map();
   const keilChapters = {"GEN":50,"EXO":38,"LEV":27,"NUM":35,"DEU":34,"JOS":24,"JDG":21,"RUT":4,"1SA":31,"2SA":24,"1KI":22,"2KI":25,"1CH":29,"2CH":36,"EZR":10,"NEH":13,"EST":9,"JOB":41,"PSA":146,"PRO":31,"ECC":12,"SNG":0,"ISA":66,"JER":52,"LAM":5,"EZK":45,"DAN":12,"HOS":14,"JOL":3,"AMO":9,"OBA":1,"JON":4,"MIC":7,"NAM":3,"HAB":3,"ZEP":3,"HAG":2,"ZEC":14,"MAL":4};
   let concise;
@@ -5018,40 +5115,130 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
   }
 
   function renderCrossReferences(parent, groups, verses) {
+    const entries = [];
     groups.forEach(function([anchor, passages]) {
+      passages.forEach(function(indices) { entries.push({anchor, indices}); });
+    });
+    const list = document.createElement("div");
+    list.className = "year-cross-list";
+    const addEntry = function(entry) {
       const group = document.createElement("div");
       group.className = "year-cross-group";
-      if (anchor) {
+      if (entry.anchor) {
         const label = document.createElement("strong");
-        label.textContent = anchor;
+        label.className = "year-cross-anchor";
+        label.textContent = "Reference index phrase: " + entry.anchor;
         group.append(label);
       }
-      passages.forEach(function(indices) {
-        group.append(disclosure(passageLabel(indices, verses), function(details) {
-          indices.forEach(function(index) {
-            const [, reference, text] = verses[index];
-            details.append(verseLine(reference, text));
-          });
-        }));
+      group.append(disclosure(passageLabel(entry.indices, verses), function(details) {
+        entry.indices.forEach(function(index) {
+          const [, reference, text] = verses[index];
+          details.append(verseLine(reference, text));
+        });
+      }));
+      list.append(group);
+    };
+    entries.slice(0, 5).forEach(addEntry);
+    parent.append(list);
+    if (entries.length > 5) {
+      const more = document.createElement("button");
+      more.type = "button";
+      more.className = "year-cross-more";
+      more.textContent = "View " + (entries.length - 5) + " more references";
+      more.addEventListener("click", function() {
+        entries.slice(5).forEach(addEntry);
+        more.remove();
+      }, {once:true});
+      parent.append(more);
+    }
+    const note = document.createElement("p");
+    note.className = "year-cross-note";
+    note.textContent = "Curated passage references may include thematic parallels. They are not automatically direct quotations, prophecies, or typology.";
+    parent.append(note);
+  }
+
+  // Temporary passage trail: kept in memory only, never in reading progress storage.
+  function createReferenceTrail(host, sourceIndex, data) {
+    const {verses, references} = data;
+    const trail = [sourceIndex];
+    let position = 0;
+    const shell = document.createElement("section");
+    shell.className = "year-trail";
+    shell.setAttribute("aria-label", "Temporary Scripture reference trail");
+    const nav = document.createElement("nav");
+    nav.className = "year-trail-nav";
+    nav.setAttribute("aria-label", "Scripture trail breadcrumbs");
+    const passage = document.createElement("div");
+    passage.className = "year-trail-passage";
+    const controls = document.createElement("div");
+    controls.className = "year-trail-actions";
+    const home = document.createElement("button");
+    home.type = "button";
+    home.textContent = "Return to reading";
+    home.addEventListener("click", () => { shell.remove(); host.setAttribute("tabindex", "-1"); host.focus({preventScroll:true}); host.scrollIntoView({block:"nearest"}); });
+    controls.append(home);
+    shell.append(nav, passage, controls);
+    host.after(shell);
+    function draw() {
+      nav.replaceChildren(); passage.replaceChildren();
+      trail.slice(0,position+1).forEach((index, i) => {
+        if(i) { const sep=document.createElement("span"); sep.textContent=" › "; sep.setAttribute("aria-hidden","true"); nav.append(sep); }
+        const crumb=document.createElement("button"); crumb.type="button";
+        crumb.textContent=verses[index][1]; crumb.setAttribute("aria-current",i===position?"location":"false");
+        crumb.addEventListener("click",()=>{ position=i; trail.splice(i+1); draw(); crumb.focus(); });
+        nav.append(crumb);
       });
-      parent.append(group);
-    });
+      const index=trail[position];
+      passage.append(verseLine(verses[index][1],verses[index][2]));
+      const groups=references[index]||[];
+      const entries=groups.flatMap(([anchor, passages])=>passages.map(indices=>({anchor,indices})));
+      if (!entries.length) { const msg=document.createElement("p"); msg.className="year-cross-note"; msg.textContent="No further curated references listed for this verse."; passage.append(msg); return; }
+      const heading=document.createElement("p"); heading.className="year-trail-label"; heading.textContent="Follow a referenced passage"; passage.append(heading);
+      const results=document.createElement("div"); results.className="year-trail-results";
+      function appendEntry(entry) {
+        const first=entry.indices[0];
+        if (!Number.isInteger(first) || !verses[first]) return;
+        const btn=document.createElement("button"); btn.type="button";
+        btn.textContent=passageLabel(entry.indices,verses);
+        btn.setAttribute("aria-label","Follow reference to "+passageLabel(entry.indices,verses));
+        btn.addEventListener("click",()=>{ trail.splice(position+1); trail.push(first); position++; draw(); shell.scrollIntoView({block:"nearest",behavior:"auto"}); });
+        results.append(btn);
+      }
+      entries.slice(0,5).forEach(appendEntry);
+      passage.append(results);
+      if(entries.length>5) {
+        const more=document.createElement("button"); more.type="button"; more.className="year-cross-more";
+        more.textContent="View "+(entries.length-5)+" more references";
+        more.addEventListener("click",()=>{ entries.slice(5).forEach(appendEntry); more.remove(); });
+        passage.append(more);
+      }
+      const note=document.createElement("p"); note.className="year-cross-note";
+      note.textContent="These are curated passage links, not keyword search results. Some may be thematic parallels rather than explicit quotations or allusions; examine each passage in context.";
+      passage.append(note);
+    }
+    draw();
+    shell.scrollIntoView({block:"nearest"});
+    return shell;
   }
 
   function chapterReader(name, chapter) {
     const details = document.createElement("details");
     details.className = "year-chapter-reader";
     const summary = document.createElement("summary");
-    summary.textContent = "Read chapter with cross-references";
+    summary.textContent = "Read KJV chapter + explore cross-references";
     const content = document.createElement("div");
     details.append(summary, content);
     let reading = false;
+    let loaded = false;
+    let activeTrail = null;
     details.addEventListener("toggle", async function() {
-      if (!details.open || reading) return;
+      if (!details.open) { if(activeTrail) activeTrail.remove(); activeTrail=null; return; }
+      if (!details.open || reading || loaded) return;
       reading = true;
       content.textContent = "Loading chapter…";
       try {
         const { verses, references, chapters } = await loadChapterReader();
+        if (!details.isConnected || !details.open) { reading = false; return; }
         const indices = chapters.get(name + "." + chapter) || [];
         if (!indices.length) throw new Error("Chapter unavailable");
         const rows = document.createDocumentFragment();
@@ -5062,13 +5249,25 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
           section.append(verseLine(id.slice(id.lastIndexOf(".") + 1), text));
           const groups = references[index];
           if (groups?.length) {
-            const cross = disclosure("Cross-references", body => renderCrossReferences(body, groups, verses));
+            const cross = disclosure("Cross-references (" + groups.reduce((count, group) => count + group[1].length, 0) + ")", body => renderCrossReferences(body, groups, verses));
             cross.querySelector("summary").setAttribute("aria-label", "Cross-references for " + reference);
             section.append(cross);
+            const follow = document.createElement("button");
+            follow.type = "button";
+            follow.className = "year-trail-start";
+            follow.textContent = "Follow passage references";
+            follow.setAttribute("aria-label", "Follow cross-reference trail from " + reference);
+            follow.addEventListener("click", () => {
+              if(activeTrail) activeTrail.remove();
+              activeTrail = createReferenceTrail(section, index, {verses, references});
+            });
+            section.append(follow);
           }
           rows.append(section);
         });
         content.replaceChildren(rows);
+        loaded = true;
+        reading = false;
       } catch (error) {
         content.textContent = "The chapter couldn’t load. Close and reopen it to retry.";
         reading = false;
@@ -5180,6 +5379,7 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     const index = Array.from({length: total}, (_, i) => i).find(i => !completed.has(i));
     renderDay(index ?? total - 1);
   }
+  plan.addEventListener("close", () => { list.replaceChildren(); });
   document.getElementById("open-year-plan").addEventListener("click", () => {
     nextUnread();
     plan.showModal();
@@ -5238,7 +5438,7 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     structure: "Structure"
   };
 
-  function nameOf(id) { return rocks.get(id).label; }
+  function nameOf(id) { return rocks.get(id)?.label || id; }
 
   function makeButton(label, activate) {
     const button = document.createElement("button");
@@ -5302,52 +5502,44 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
   function drawLines() {
     const bounds = water.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return;
-    lineLayer.setAttribute("viewBox", "0 0 " + bounds.width + " " + bounds.height);
+    lineLayer.setAttribute("viewBox", `0 0 ${bounds.width} ${bounds.height}`);
     lineLayer.replaceChildren();
-    const defs = document.createElementNS(ns, "defs");
-    const arrow = document.createElementNS(ns, "marker");
-    arrow.setAttribute("id", "start-edge-arrow");
-    arrow.setAttribute("viewBox", "0 0 8 8");
-    arrow.setAttribute("refX", "7");
-    arrow.setAttribute("refY", "4");
-    arrow.setAttribute("markerWidth", "5");
-    arrow.setAttribute("markerHeight", "5");
-    arrow.setAttribute("orient", "auto");
-    const triangle = document.createElementNS(ns, "path");
-    triangle.setAttribute("d", "M0 0 L8 4 L0 8 z");
-    triangle.setAttribute("fill", "#46607a");
-    arrow.append(triangle);
-    defs.append(arrow);
-    lineLayer.append(defs);
-    const positions = new Map([...placed].map(function(id) {
-      const rect = rocks.get(id).button.getBoundingClientRect();
-      return [id, {x:rect.left + rect.width / 2 - bounds.left, y:rect.top + rect.height / 2 - bounds.top}];
-    }));
-    pairs.forEach(function(pair) {
-      pair.edges.forEach(function(edge, i) {
-        const first = positions.get(edge.from);
-        const last = positions.get(edge.to);
-        const span = Math.hypot(last.x - first.x, last.y - first.y);
-        if (span < 10) return;
-        const x = (last.x - first.x) / span;
-        const y = (last.y - first.y) / span;
-        const setback = Math.min(39, span * 0.39);
-        const offset = (i - (pair.edges.length - 1) / 2) * 5;
-        const line = document.createElementNS(ns, "line");
-        line.setAttribute("x1", first.x + x * setback - y * offset);
-        line.setAttribute("y1", first.y + y * setback + x * offset);
-        line.setAttribute("x2", last.x - x * setback - y * offset);
-        line.setAttribute("y2", last.y - y * setback + x * offset);
-        if (Array.isArray(edge.dashes)) line.setAttribute("stroke-dasharray", edge.dashes.join(" "));
-        line.setAttribute("marker-end", "url(#start-edge-arrow)");
-        const hit = line.cloneNode();
-        hit.removeAttribute("marker-end");
-        hit.removeAttribute("stroke-dasharray");
-        hit.classList.add("start-line-hit");
-        hit.addEventListener("click", () => showEvidence(pair));
-        lineLayer.append(line, hit);
-      });
-    });
+    const positions = new Map();
+    for (const id of placed) {
+      const button = rocks.get(id)?.button;
+      if (!button || button.parentElement !== water || button.hidden || button.dataset.inWater !== "true") continue;
+      const r = button.getBoundingClientRect();
+      // Never connect a rock that is clipped, in a bank, or outside the visible water.
+      if (r.left < bounds.left + 2 || r.right > bounds.right - 2 ||
+          r.top < bounds.top + 2 || r.bottom > bounds.bottom - 2) continue;
+      positions.set(id, {x:(r.left+r.right)/2-bounds.left,
+                         y:(r.top+r.bottom)/2-bounds.top,
+                         radius:Math.min(r.width,r.height)*0.43});
+    }
+    const seen = new Set();
+    for (const pair of pairs) {
+      // One clear connection per pair; evidence panel retains all edge types.
+      const key = [pair.from,pair.to].sort().join("\u0000");
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const first = positions.get(pair.from), last = positions.get(pair.to);
+      if (!first || !last) continue;
+      const distance = Math.hypot(last.x-first.x,last.y-first.y);
+      if (distance <= first.radius+last.radius+8) continue;
+      const ux=(last.x-first.x)/distance, uy=(last.y-first.y)/distance;
+      const line=document.createElementNS(ns,"line");
+      line.setAttribute("x1",first.x+ux*first.radius);
+      line.setAttribute("y1",first.y+uy*first.radius);
+      line.setAttribute("x2",last.x-ux*last.radius);
+      line.setAttribute("y2",last.y-uy*last.radius);
+      line.setAttribute("stroke-dasharray","5 5");
+      line.setAttribute("aria-label",`${nameOf(pair.from)} to ${nameOf(pair.to)}`);
+      const hit=line.cloneNode();
+      hit.classList.add("start-line-hit");
+      hit.removeAttribute("stroke-dasharray");
+      hit.addEventListener("click",()=>showEvidence(pair));
+      lineLayer.append(line,hit);
+    }
   }
 
   function updateConnections(added) {
@@ -5367,8 +5559,8 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     if (added) {
       const connection = pairs.find(pair => pair.from === added || pair.to === added);
       if (connection) {
-        showEvidence(connection);
-        status.textContent = "Select a line or connection to read the verses.";
+        showEvidence(added);
+        status.textContent = "A documented connection appeared. Select its line to inspect the evidence.";
       } else {
         showEvidence(added);
         status.textContent = placed.size === 1
@@ -5425,12 +5617,26 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     button.focus({preventScroll:true});
     reset.disabled = false;
     updateConnections(id);
+    if (typeof requestAnimationFrame === "function") requestAnimationFrame(drawLines);
+    window.setTimeout(drawLines, 550);
   }
 
-  const featured = ["Bread", "Rock / Stones", "Blood", "Sheep"];
-  const ordered = featured.map(id => DATA.nodes.find(node => node.id === id))
-    .concat(DATA.nodes.filter(node => !featured.includes(node.id)));
-  ordered.forEach(function(node, index) {
+  // This is a guided demonstration, not a dump of the entire 85-node lexicon.
+  // Each bank is deliberately limited to one of the two sources of the study.
+  const iamIds = [
+    "bread_of_life", "light_of_the_world", "the_door", "the_good_shepherd",
+    "resurrection_and_life", "way_truth_life", "the_true_vine", "before_abraham"
+  ];
+  const tabernacleIds = [
+    "economy::tabernacle", "economy::outer court", "economy::altar",
+    "economy::laver", "economy::holy place", "economy::lampstand",
+    "economy::showbread / bread of life", "economy::incense altar",
+    "economy::veil", "economy::Holiest of all", "economy::ark",
+    "economy::cherubim", "economy::boards", "economy::pillar"
+  ];
+  const featured = [...iamIds, ...tabernacleIds];
+  const ordered = featured.map(id => DATA.nodes.find(node => node.id === id)).filter(Boolean);
+  ordered.forEach(function(node) {
     const label = (node.label || node.id).split("\n")[0];
     const button = makeButton("", () => dropStone(node.id));
     button.className = "personal-rock start-rock";
@@ -5447,7 +5653,7 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
       badge.textContent = count + (count === 1 ? " subtheme" : " subthemes");
       button.append(badge);
     }
-    rocks.set(node.id, { label, button, bank: (node.id === "Jesus" || node.kind === "saying" || node.layer === "iam" && /^(bread_of_life|light_of_world|good_shepherd|true_vine|door|way_truth_life|resurrection_and_life|before_abraham)$/.test(node.id)) ? banks[0] : banks[1] });
+    rocks.set(node.id, { label, button, bank: iamIds.includes(node.id) ? banks[0] : banks[1] });
   });
 
   function resetPond() {
