@@ -141,6 +141,9 @@
   .start-scroll p:first-child { font-weight:600; font-size:clamp(1.1rem,2.5vw,1.45rem); }
   .start-search { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 10px; }
   .start-search input { font:inherit; max-width:100%; min-height:36px; padding:4px 7px; }
+  .start-bank-section { min-width:0; text-align:center; padding:5px; }
+  .start-bank-section h2 { margin:4px 0; font-size:1rem; color:#17314b; }
+  .start-bank-section p { margin:0 0 8px; font-size:.76rem; line-height:1.3; }
   .start-bank { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; max-height:405px; overflow:auto; padding:3px; }
   .start-bank .start-rock[hidden] { display:none; }
   #start-water { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(84px,100%),1fr)); align-content:center; justify-items:center; align-items:center; gap:14px 5px; padding:30px clamp(10px,4%,55px); }
@@ -148,9 +151,12 @@
   #start-legend { background:#f4ead8; border:1px solid #5c584a; padding:8px 10px; margin:10px 0; width:max-content; max-width:100%; }
   #start-pond-links { max-height:168px; overflow:auto; }
   @media (max-width:600px) {
+    .start-bank-section { border-bottom:1px solid #b8a98b; }
     .start-bank { flex-direction:row; max-height:none; min-height:72px; overflow:auto; }
     .start-bank .start-rock { flex:0 0 84px; }
-    #start-water { min-height:245px; }
+    #start-water { min-height:245px; order:2; }
+    .start-bank-section:first-child { order:1; }
+    .start-bank-section:last-child { order:3; }
   }
 
 
@@ -309,7 +315,7 @@
     /* Keep a visible static caustic frame; do not flatten to a plain gradient. */
   }
 
-  #mode-dashboard { display: inline-flex; align-items: center; }
+  #mode-dashboard { display: none !important; }
   #mode-graph { display: none; align-items: center; }
   body.companion-mode #mode-graph { display: inline-flex; }
   #mode-graph, #mode-dashboard {
@@ -784,7 +790,26 @@
     }
     .edge-key .edge-key-title { font-size: 0.72rem; margin-bottom: 3px; }
   }
-  /* Demo stones remain visible on the banks, never preloaded in the water. */
+
+/* Main dashboard stone throwing; the separate Start Pond remains an optional demo. */
+#dash-throw{margin:12px 16px;padding:14px;background:#f4ead8;border:1px solid #b6a17c;color:#17314b;box-shadow:2px 3px 0 #1e1c181a}
+.dash-throw-intro{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.dash-throw-intro h2{margin:0 0 4px;font:italic 1.35rem Georgia,serif}
+.dash-throw-intro p{margin:0 0 4px;font-size:1rem}
+.dash-throw-intro small{line-height:1.4;display:block}
+#dash-throw-clear{padding:9px 12px;white-space:nowrap;border:1px solid #1e3a5f;background:#fff9ed;color:#1e3a5f;cursor:pointer;min-height:44px}
+.dash-throw-banks{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.dash-throw-bank{min-width:0;background:#e7d9b9;padding:10px;border-radius:9px}
+.dash-throw-bank h3{margin:0 0 8px;font:italic 1rem Georgia,serif}
+.dash-throw-list{display:flex;flex-wrap:wrap;gap:7px;max-height:140px;overflow:auto}
+.dash-throw-stone{min-height:44px;padding:8px 12px;border:1px solid #68717a;border-radius:45% 55% 44% 56%;background:linear-gradient(145deg,#d4d6d2,#89939b);color:#182c39;font:600 .85rem Georgia,serif;cursor:pointer}
+.dash-throw-stone[aria-pressed=true]{background:linear-gradient(145deg,#f9e7ac,#c3a567);border-color:#725b29;box-shadow:0 0 0 2px #fff8e5}
+.dash-throw-stone:focus-visible,#dash-throw-clear:focus-visible{outline:3px solid #2367a4;outline-offset:2px}
+#dash-throw-status{margin:10px 0 0;font-size:.88rem}
+@media(max-width:720px){#dash-throw{margin:8px 10px}.dash-throw-banks{grid-template-columns:1fr}.dash-throw-intro{flex-wrap:wrap}.dash-throw-list{max-height:110px}}
+
+/* Ensure the Dashboard starts visually empty even if the graph library redraws its canvas. */
+body.dashboard-mode.dashboard-no-stones #graph canvas { opacity: 0 !important; }
 </style>
 <script>
 /**
@@ -867,20 +892,20 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
 </head>
 <body>
 <script>
-if (!location.hash && !new URLSearchParams(location.search).has("dash")) document.body.classList.add("start-pond-mode");
+// Open the full Scripture graph by default. The pond tutorial is optional.
 </script>
 <canvas id="water" aria-hidden="true"></canvas>
 <header>
   <div class="header-row">
     <button type="button" id="menu-btn" aria-expanded="false" aria-controls="toolbar">Menu</button>
     <h1>Scripture Ripples</h1>
-    <span class="verse-tools"><button type="button" id="start-open-home">Start pond</button></span>
-    <button type="button" id="mode-dashboard">Dashboard</button>
+    <span class="verse-tools"><button type="button" id="start-open-home">Try the Pond Demo</button></span>
+    <button type="button" id="mode-dashboard" hidden>Dashboard</button>
     <span class="verse-tools"><button type="button" id="open-year-plan">Bible in a Year</button></span>
     <span class="verse-tools"><button type="button" id="open-my-stones">Build Your Pond</button></span>
     <button type="button" id="mode-graph">Back to the graph</button>
   </div>
-  <p id="theme-starters">Choose a stone to explore a theme.</p>
+  <p id="theme-starters">Trace a Connection — How can patterns across Scripture help us understand difficult passages?</p>
   <p class="lead lead-long">Read a theme’s KJV verses, tap a timeline dot to open a passage, or select a line between stones to see why they’re connected.</p>
   <p class="lead lead-long">Use <strong>Menu</strong> to search for a verse, filter the graph, or explore <strong>Biblical Symbols</strong>. In <strong>Build Your Pond</strong>, create your own stones and see which verses they share.</p>
   <p class="lead-short">Open Menu to search verses or explore Biblical Symbols. Save verses to your own stones in Build Your Pond.</p>
@@ -890,33 +915,33 @@ if (!location.hash && !new URLSearchParams(location.search).has("dash")) documen
   <div class="start-pond-inner">
     <div class="start-pond-header">
       <div>
-        <h1 id="start-pond-title" tabindex="-1">Scripture Ripples</h1>
-        <p>Explore connections between Bible passages.</p>
+        <h1 id="start-pond-title" tabindex="-1">Trace a Connection — Interactive Demo</h1>
+        <p>How can patterns across Scripture help us understand difficult passages?</p>
       </div>
       <nav class="verse-tools start-pond-tools" aria-label="Explore Scripture Ripples">
-        <button type="button" id="start-full-pond" class="start-pond-primary">Explore full pond</button>
+        <button type="button" id="start-full-pond" class="start-pond-primary">Exit Demo · Explore Scripture</button>
         <button type="button" id="start-year">Bible in a Year</button>
         <button type="button" id="start-personal">Build Your Pond</button>
       </nav>
     </div>
     <section class="start-scroll" aria-label="How to use the pond">
-      <p>Drop a stone into the water to see its Scripture Ripples.</p>
-      <p>Drop as many stones as you like, or make your own in My Pond.</p>
+      <p>Choose a stone from the bank and drop it into the pond to reveal its Scripture connections.</p>
+      <p>Add more stones to see where their ripples meet. The pond begins empty; your own collections live in Build Your Pond.</p>
     </section>
     <label class="start-search" for="start-search">Find a stone <input type="search" id="start-search" placeholder="e.g. Bread" autocomplete="off"></label>
     <div class="start-pond-scene">
-      <div class="start-bank" id="start-west-bank" role="group" aria-label="Left bank"></div>
+      <section class="start-bank-section" aria-label="Jesus and the I Am statements"><h2>Jesus · I Am</h2><p>Explore Jesus’ words and identity.</p><div class="start-bank" id="start-west-bank" role="group" aria-label="Jesus stones"></div></section>
       <div id="start-water" class="pond-surface" role="group" aria-label="Pond">
         <svg class="start-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
       </div>
-      <div class="start-bank" id="start-east-bank" role="group" aria-label="Right bank"></div>
+      <section class="start-bank-section" aria-label="Scripture themes"><h2>Scripture Themes</h2><p>Explore recurring biblical images.</p><div class="start-bank" id="start-east-bank" role="group" aria-label="Theme stones"></div></section>
     </div>
     <div class="verse-tools" id="start-dashboard-tools" hidden>
-      <button type="button" id="start-stone-dashboard" class="start-pond-primary">Open stone dashboard</button>
-      <span>Choose a stone in the water to switch dashboards.</span>
+      <button type="button" id="start-stone-dashboard" class="start-pond-primary">Explore This Stone in Detail</button>
+      <span>Choose a stone in the water to explore its connections in detail.</span>
     </div>
     <div class="start-pond-footer">
-      <p id="start-pond-status" role="status">Choose a stone on either bank.</p>
+      <p id="start-pond-status" role="status">Choose a stone from either bank to begin.</p>
       <div class="verse-tools"><button type="button" id="start-reset" disabled>Reset pond</button></div>
     </div>
     <div class="verse-tools" id="start-pond-links" aria-label="Connections between stones" hidden></div>
@@ -930,10 +955,10 @@ if (!location.hash && !new URLSearchParams(location.search).has("dash")) documen
 <div class="backdrop" id="backdrop" hidden></div>
 <div class="toolbar toolbar-graph" id="toolbar">
   <button type="button" id="menu-close">Close</button>
-  <label><input type="checkbox" id="tog-word" checked> Word-match / overlap edges</label>
-  <label><input type="checkbox" id="tog-xref" checked> Typological edges</label>
-  <label><input type="checkbox" id="tog-ob" checked> OpenBible.info cross-reference edges</label>
-  <label>Layer
+  <label><input type="checkbox" id="tog-word" checked> Shared words &amp; themes</label>
+  <label><input type="checkbox" id="tog-xref" checked> Biblical patterns &amp; foreshadowing</label>
+  <label><input type="checkbox" id="tog-ob" checked> Published Scripture cross-references</label>
+  <label>Choose a Theme
     <select id="layer">
       <option value="iam" selected>I am &amp; stones</option>
       <option value="economy">Biblical Symbols</option>
@@ -941,9 +966,9 @@ if (!location.hash && !new URLSearchParams(location.search).has("dash")) documen
       <option value="all">All rocks</option>
     </select>
   </label>
-  <label>Filter by node
+  <label>Trace a Connection · Start with a Passage
     <select id="filter">
-      <option value="">All nodes</option>
+      <option value="">Explore all passages</option>
       <option value="Jesus">Jesus</option>
 <option value="bread_of_life">I am the bread of life</option>
 <option value="light_of_the_world">I am the light of the world</option>
@@ -1062,6 +1087,11 @@ if (!location.hash && !new URLSearchParams(location.search).has("dash")) documen
     </div>
   </div>
   <div id="dash-stones-view" class="dash-view">
+  <section id="dash-throw" aria-label="Throw Scripture stones into the dashboard pond">
+  <div class="dash-throw-intro"><div><h2>Trace a Connection</h2><p>How can patterns across Scripture help us understand difficult passages?</p><small>Choose a stone to send its ripples through the graph. Add more to reveal overlapping connections. Select a graph point to read its Scripture.</small></div><button type="button" id="dash-throw-clear">Clear stones</button></div>
+  <div class="dash-throw-banks"><div class="dash-throw-bank"><h3>Jesus · I Am</h3><div id="dash-jesus-bank" class="dash-throw-list"></div></div><div class="dash-throw-bank"><h3>Scripture Themes</h3><div id="dash-theme-bank" class="dash-throw-list"></div></div></div>
+  <p id="dash-throw-status" role="status" aria-live="polite">Choose your first stone from either bank.</p>
+</section>
   <div class="dash-kpis" id="dash-kpis"></div>
   <div class="dash-main">
     <div class="dash-center" id="dash-graph-slot">
@@ -4093,6 +4123,7 @@ const openPersonalStones = (function () {
     browse.value = "";
     document.body.classList.toggle("dashboard-mode", on);
     dash.hidden = !on;
+    if (typeof window.__dashboardThrowModeChanged === "function") window.__dashboardThrowModeChanged();
     const pageH = document.querySelector("header h1");
     if (pageH) {
       if (on) {
@@ -5357,7 +5388,7 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     }
     if (!count && query) status.textContent = "No stones on the banks match that search.";
     else if (status.textContent.startsWith("No stones on the banks")) {
-      status.textContent = "Choose a stone on either bank.";
+      status.textContent = "Choose a stone from either bank to begin.";
     }
     drawLines();
   }
@@ -5416,7 +5447,7 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
       badge.textContent = count + (count === 1 ? " subtheme" : " subthemes");
       button.append(badge);
     }
-    rocks.set(node.id, { label, button, bank:banks[index % 2] });
+    rocks.set(node.id, { label, button, bank: (node.id === "Jesus" || node.kind === "saying" || node.layer === "iam" && /^(bread_of_life|light_of_world|good_shepherd|true_vine|door|way_truth_life|resurrection_and_life|before_abraham)$/.test(node.id)) ? banks[0] : banks[1] });
   });
 
   function resetPond() {
@@ -5434,7 +5465,7 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
       bank.append(button);
     }
     water.querySelectorAll(".start-ripple").forEach(ripple => ripple.remove());
-    status.textContent = "Choose a stone on either bank.";
+    status.textContent = "Choose a stone from either bank to begin.";
     reset.disabled = true;
     updateConnections();
   }
@@ -5475,13 +5506,73 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     if (active) showEvidence(active);
   });
   resetPond();
-  // Initial demo state: every stone belongs to its bank; the water is empty.
-  for (const [, { button, bank }] of rocks) {
-    if (button.parentElement !== bank) bank.append(button);
-    delete button.dataset.inWater;
+})();
+</script>
+<script>
+/* Dashboard pond: multi-stone highlighting without changing the underlying graph data. */
+(function dashboardThrowing(){
+  const jesusBank=document.getElementById('dash-jesus-bank');
+  const themeBank=document.getElementById('dash-theme-bank');
+  const status=document.getElementById('dash-throw-status');
+  const clear=document.getElementById('dash-throw-clear');
+  if(!jesusBank||!themeBank||typeof DATA==='undefined'||typeof nodesDS==='undefined')return;
+  const active=new Set();
+  const originalNodeHidden=new Map(nodesDS.get().map(n=>[n.id,!!n.hidden]));
+  const originalEdgeHidden=new Map(edgesDS.get().map(e=>[e.id,!!e.hidden]));
+  const allNodes=DATA.nodes.filter(n=>n && n.id);
+  const nodeById=new Map(allNodes.map(n=>[n.id,n]));
+  const connected=new Map();
+  DATA.edges.forEach(e=>{
+    if(!connected.has(e.from))connected.set(e.from,new Set());
+    if(!connected.has(e.to))connected.set(e.to,new Set());
+    connected.get(e.from).add(e.to);connected.get(e.to).add(e.from);
+  });
+  function name(n){return String(n.label||n.id).replace(/\n/g,' ').replace(/\s+\d+ sayings?$/i,'').trim();}
+  const seen=new Set();
+  const choices=allNodes.filter(n=>{
+    if(seen.has(n.id)||n.kind==='verse'||n.kind==='reference')return false;
+    seen.add(n.id);return true;
+  });
+  const jesus=choices.filter(n=>n.id==='Jesus'||n.layer==='iam'||/^(i am|jesus)/i.test(name(n)));
+  const themes=choices.filter(n=>!jesus.includes(n)&&n.kind!=='center');
+  function renderBank(nodes,el){nodes.forEach(n=>{
+    const b=document.createElement('button');b.type='button';b.className='dash-throw-stone';
+    b.textContent=name(n);b.title='Throw '+name(n)+' into the dashboard pond';b.setAttribute('aria-pressed','false');
+    b.dataset.stoneId=n.id;b.addEventListener('click',()=>toggle(n.id));el.appendChild(b);
+  });}
+  renderBank(jesus,jesusBank);renderBank(themes,themeBank);
+  function update(){
+    const inDashboard=document.body.classList.contains('dashboard-mode');
+    document.body.classList.toggle('dashboard-no-stones', inDashboard && active.size === 0);
+    const keep=new Set();
+    active.forEach(id=>{keep.add(id);(connected.get(id)||[]).forEach(other=>keep.add(other));});
+    // An empty Dashboard must show empty water, not the entire preloaded graph.
+    // Outside Dashboard, restore the graph exactly as it was originally.
+    const nChanges=[],eChanges=[];
+    nodesDS.forEach(n=>nChanges.push({id:n.id,hidden:inDashboard ? (originalNodeHidden.get(n.id)||!keep.has(n.id)) : originalNodeHidden.get(n.id)}));
+    edgesDS.forEach(e=>eChanges.push({id:e.id,hidden:inDashboard ? (originalEdgeHidden.get(e.id)||!active.size||!(keep.has(e.from)&&keep.has(e.to))||!(active.has(e.from)||active.has(e.to))) : originalEdgeHidden.get(e.id)}));
+    if(nChanges.length)nodesDS.update(nChanges);
+    if(eChanges.length)edgesDS.update(eChanges);
+    document.querySelectorAll('.dash-throw-stone').forEach(b=>b.setAttribute('aria-pressed',String(active.has(b.dataset.stoneId))));
+    const names=[...active].map(id=>name(nodeById.get(id)||{id}));
+    status.textContent=names.length?('In the pond: '+names.join(' · ')+'. Select a point in the graph to read its passage.'):'Choose your first stone from either bank.';
   }
-  placed.clear();
-  updateConnections();
+  function toggle(id){
+    if(active.has(id)){active.delete(id);update();return;}
+    active.add(id);
+    // Reuse the original ripple animation and verse-reading integration.
+    try{if(typeof startDrop==='function')startDrop(id);}catch(e){console.warn('Ripple animation unavailable',e);}
+    try{if(typeof network!=='undefined')network.selectNodes([id]);}catch(e){}
+    update();
+    // Original ripple animation updates the graph while playing; restore the combined selection afterward.
+    window.setTimeout(update,1100);
+  }
+  clear.addEventListener('click',()=>{active.clear();try{if(typeof stopDrop==='function')stopDrop();}catch(e){}update();});
+  // Preserve the dashboard selection when its existing chart re-renders.
+  window.__dashboardThrowRefresh=update;
+  // Refresh when the existing Dashboard opens or closes.
+  window.__dashboardThrowModeChanged=update;
+  update();
 })();
 </script>
 </body>
