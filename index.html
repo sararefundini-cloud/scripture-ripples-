@@ -852,6 +852,33 @@ body.dashboard-mode.dashboard-no-stones #graph canvas { opacity: 0 !important; }
 .start-origin-scroll summary{cursor:pointer;font-weight:700}
 .start-origin-scroll details p{line-height:1.5;margin:.5rem 0}
 @media(max-width:680px){.start-origin-scroll{max-height:48vh;overflow:auto;overscroll-behavior:contain}.start-origin-scroll>h2{font-size:1.3rem}}
+
+
+/* Literary Discovery: scoped, optional guided learning */
+.srl-lab{margin:18px 0;border:1px solid #d9c9e2;border-radius:18px;background:#faf6fd;padding:18px;font-family:system-ui,sans-serif;color:#342944}
+.srl-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}.srl-heading h3{margin:0;font-size:20px}.srl-toggle,.srl-next,.srl-lesson{border:1px solid #a992bb;background:white;color:#3d3154;border-radius:12px;padding:9px 12px;cursor:pointer;font:inherit}.srl-toggle[aria-expanded=true],.srl-lesson[aria-pressed=true]{background:#4d3864;color:white}.srl-content[hidden]{display:none!important}.srl-lessons{display:flex;gap:7px;flex-wrap:wrap;margin:15px 0}.srl-reading{background:white;border-radius:12px;padding:14px;line-height:1.55}.srl-reading h4{margin:0 0 7px}.srl-reading p{margin:7px 0}.srl-quiz{border:0;margin:12px 0 0;padding:0}.srl-quiz legend{font-weight:700;margin-bottom:8px}.srl-answer{display:block;margin:8px 0;cursor:pointer}.srl-answer input{margin-right:8px}.srl-feedback{margin-top:12px;padding:11px;border-radius:9px;background:#f0eaf5}.srl-feedback[hidden]{display:none!important}.srl-source{font-size:13px;color:#5c5364}.srl-progress{font-size:13px;color:#645673}.srl-next{margin-top:10px}.srl-reading a{color:#5d3c80;text-decoration:underline}
+@media(max-width:520px){.srl-lab{padding:12px}.srl-lesson{font-size:13px;padding:8px}}
+/* Narrative Alignment isolated feature */
+#sr-align-launch{background:#e8dcf1;color:#352447;border:1px solid #ac92c0;border-radius:12px;padding:11px 17px;font-weight:700;cursor:pointer}
+#sr-align-panel[hidden]{display:none!important}
+#sr-align-panel{position:fixed;inset:0;z-index:2147483000;background:rgba(20,15,32,.78);overflow-y:auto;padding:24px 12px;font-family:Georgia,serif;color:#342944}
+#sr-align-panel *{box-sizing:border-box}
+.sra-shell{max-width:1200px;margin:auto;background:#fcf9f5;border-radius:22px;padding:clamp(16px,3vw,32px);box-shadow:0 15px 70px #100a18}
+.sra-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.sra-top h2{font-size:clamp(25px,4vw,38px);margin:0;color:#47335e}.sra-top p{margin:8px 0 15px;max-width:730px}
+.sra-close,.sra-tab{border:1px solid #b9aac9;background:white;color:#49355f;border-radius:20px;padding:9px 15px;cursor:pointer;font-size:15px}
+.sra-close:focus-visible,.sra-tab:focus-visible,#sr-align-launch:focus-visible{outline:3px solid #ba8bdb;outline-offset:2px}
+.sra-tabs{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0 20px}.sra-tab[aria-pressed=true]{background:#4d3864;color:white}
+.sra-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(230px,.8fr);gap:15px;align-items:start}
+.sra-col{border:1px solid #ddd2e2;border-radius:17px;overflow:hidden;background:white}
+.sra-col h3{background:#e7e1f1;padding:16px;margin:0;font-size:21px;color:#3d3154}.sra-col.sra-right h3{background:#eee2d6}
+.sra-event{padding:13px 14px;border-bottom:1px solid #eee7ee;min-height:125px}.sra-event:last-child{border:0}.sra-event b{display:block;font-size:16px;margin-bottom:6px}.sra-event p{font-size:14px;line-height:1.5;margin:5px 0}.sra-event a{font-size:13px;color:#65428d;text-decoration:underline}.sra-number{display:inline-grid;place-items:center;background:#786294;color:white;width:25px;height:25px;border-radius:50%;margin-right:7px}
+.sra-insights{background:#f4eef7;border-radius:15px;padding:18px;font-size:15px;line-height:1.55}.sra-insights h3{margin:0 0 12px;font-size:20px}.sra-insights li{margin-bottom:10px}.sra-note{border-left:4px solid #ab875a;padding:10px 13px;background:#fff7e8;margin-top:15px;font-size:14px}
+.sra-connector{display:flex;align-items:center;justify-content:center;gap:7px;margin:12px 0;color:#775c93;font-size:13px}.sra-connector:before,.sra-connector:after{content:'';height:2px;background:#ad91c7;flex:1}
+.sra-footer{font:13px/1.5 system-ui,sans-serif;color:#5f5864;margin-top:18px}
+@media(max-width:800px){.sra-layout{grid-template-columns:1fr 1fr}.sra-insights{grid-column:1/-1}.sra-event{min-height:160px}}
+@media(max-width:520px){#sr-align-panel{padding:8px}.sra-shell{padding:13px}.sra-layout{gap:7px}.sra-col h3{font-size:16px;padding:11px}.sra-event{padding:10px;min-height:185px}.sra-event b{font-size:14px}.sra-event p{font-size:12px}.sra-event a{font-size:12px}}
+
 </style>
 <script>
 /**
@@ -968,6 +995,66 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
 #start-pond #start-water>.start-rock {flex-basis:94px!important;width:94px!important;min-height:82px!important;}
 }
 </style>
+
+<style id="sra-enhanced-style">
+#sr-align-panel .sra-enhance{font-family:system-ui,-apple-system,sans-serif;color:#352746}
+#sr-align-panel .sra-tools{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px;align-items:center}
+#sr-align-panel .sra-view,#sr-align-panel .sra-extra-tab,#sr-align-panel .sra-evidence-button,#sr-align-panel .sra-save,#sr-align-panel .sra-export{border:1px solid #b9a8c9;border-radius:999px;background:#fff;color:#3d3154;padding:9px 14px;cursor:pointer;font:600 14px system-ui}
+#sr-align-panel .sra-view[aria-pressed="true"],#sr-align-panel .sra-extra-tab[aria-pressed="true"]{background:#45315f;color:#fff}
+#sr-align-panel .sra-hint{font-size:13px;color:#675a73;margin:0 0 12px}
+#sr-align-panel .sra-evidence{border:1px solid #ddd2e8;background:#fff;border-radius:14px;padding:12px;margin:12px 0}
+#sr-align-panel .sra-evidence h4{margin:0 0 6px;font-size:16px}
+#sr-align-panel .sra-evidence p{margin:7px 0;font-size:14px;line-height:1.55}
+#sr-align-panel .sra-evidence a{color:#513e83}
+#sr-align-panel .sra-confidence{font-size:12px;border-radius:10px;background:#f0e9f7;padding:3px 8px;display:inline-block}
+#sr-align-panel .sra-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin:14px 0}
+#sr-align-panel .sra-pair article{border:1px solid #ddd3e5;border-radius:15px;background:#fff;padding:14px}
+#sr-align-panel .sra-pair h4{margin:0 0 6px}
+#sr-align-panel .sra-pair p{margin:5px 0}
+#sr-align-panel .sra-pair a{color:#563c86}
+#sr-align-panel .sra-pair details{grid-column:1/-1;background:#f3eef9;border-radius:12px;padding:10px 13px}
+#sr-align-panel .sra-pair summary{cursor:pointer;font-weight:700}
+#sr-align-panel .sra-diagram{display:flex;gap:10px;justify-content:center;align-items:stretch;flex-wrap:wrap;margin:15px 0}
+#sr-align-panel .sra-diagram-item{flex:1 1 160px;max-width:260px;min-height:125px;background:#e9eef9;border:1px solid #c6d5e7;border-radius:18px;padding:16px;text-align:center}
+#sr-align-panel .sra-diagram-item:nth-child(2){background:#f7e9d9;border-color:#e4c5a6}
+#sr-align-panel .sra-diagram-item:nth-child(3){background:#e8dbf5;border-color:#cfb6e8}
+#sr-align-panel .sra-diagram-item strong{display:block;font-size:25px}
+#sr-align-panel .sra-venn{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;align-items:stretch;margin:15px auto;max-width:800px}
+#sr-align-panel .sra-venn>div{border:2px solid #b5a2d1;padding:18px 12px;min-height:170px;background:#e9eff9;border-radius:50px 12px 12px 50px}
+#sr-align-panel .sra-venn>div:nth-child(2){background:#efe3f6;border-radius:14px;border-color:#b9a2cb}
+#sr-align-panel .sra-venn>div:nth-child(3){background:#f9eddf;border-radius:12px 50px 50px 12px}
+#sr-align-panel .sra-venn h4{margin:0 0 8px}
+#sr-align-panel .sra-builder{border:1px solid #d4c7de;border-radius:16px;padding:16px;background:#fff}
+#sr-align-panel .sra-builder label{display:block;font-weight:700;margin:12px 0 4px}
+#sr-align-panel .sra-builder input,#sr-align-panel .sra-builder textarea,#sr-align-panel .sra-builder select{width:100%;max-width:100%;border:1px solid #bcb0c7;border-radius:9px;padding:10px;font:inherit;color:#342944;background:#fff}
+#sr-align-panel .sra-builder textarea{min-height:80px}
+#sr-align-panel .sra-builder button{margin-top:12px}
+#sr-align-panel .sra-status{font-size:13px;color:#544568}
+#sr-align-panel .sra-inline-links a{margin-right:12px}
+#sr-align-panel .sra-legend{font-size:13px;color:#62536e}
+#sr-align-panel .sra-tools button:focus-visible,#sr-align-panel summary:focus-visible,#sr-align-panel .sra-builder :focus-visible{outline:3px solid #7a4db7;outline-offset:3px}
+@media(max-width:700px){#sr-align-panel .sra-pair{grid-template-columns:1fr}#sr-align-panel .sra-venn{grid-template-columns:1fr}#sr-align-panel .sra-venn>div{border-radius:18px!important;min-height:auto}#sr-align-panel .sra-pair details{grid-column:1}#sr-align-panel .sra-tools{gap:5px}}
+</style>
+<style id="sra-repair-styles">
+#sr-align-panel .sra-complete-alignment{display:grid;grid-template-columns:minmax(0,1fr) 100px minmax(0,1fr);gap:12px;align-items:stretch}
+#sr-align-panel .sra-event-column{min-width:0;display:flex;flex-direction:column;gap:12px}
+#sr-align-panel .sra-event-column>h4{margin:0 0 4px}
+#sr-align-panel .sra-event-card{border:1px solid #ddd3e5;border-radius:14px;padding:12px;background:#fff;min-width:0}
+#sr-align-panel .sra-event-card h4{margin:0 0 6px}
+#sr-align-panel .sra-event-card p{margin:6px 0;overflow-wrap:anywhere}
+#sr-align-panel .sra-event-count{font-size:12px;color:#625779}
+#sr-align-panel .sra-graph-gap{position:relative;min-height:100px}
+#sr-align-panel .sra-edges{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+#sr-align-panel .sra-edge-evidence{margin-top:22px}
+#sr-align-panel .sra-relationship-detail{padding:12px;margin:8px 0;border:1px solid #d8cbe6;border-radius:12px;background:#faf7fd}
+#sr-align-panel .sra-relationship-detail summary{cursor:pointer}
+#sr-align-panel .sra-event-card.sra-selected-event{border-color:#7045a1;box-shadow:0 0 0 2px #7045a1;background:#f5edff}
+#sr-align-panel .sra-relationship-detail.sra-selected-relationship{border-color:#7045a1;background:#f5edff}
+#sr-align-panel .sra-edges path.sra-selected-edge{stroke:#492174;stroke-width:4}
+#sr-align-panel .sra-relationship-detail summary:focus-visible{outline:3px solid #7045a1;outline-offset:3px}
+@media(max-width:700px){#sr-align-panel .sra-complete-alignment{grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr);gap:4px}#sr-align-panel .sra-graph-gap{display:block;min-width:24px}#sr-align-panel .sra-event-card{padding:6px;font-size:12px}#sr-align-panel .sra-event-card h4{font-size:13px;overflow-wrap:anywhere}#sr-align-panel .sra-event-column{gap:8px}}
+
+</style>
 </head>
 <body class="start-pond-mode">
 <script>
@@ -1001,12 +1088,13 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
         <button type="button" id="start-full-pond" class="start-pond-primary">Explore Full Pond</button>
         <button type="button" id="start-year">Bible in a Year</button>
         <button type="button" id="start-personal">Build Your Pond</button>
+        <button type="button" id="sr-align-launch">Narrative Alignment</button>
       </nav>
     </div>
     <section class="start-scroll start-origin-scroll" aria-label="Why Scripture Ripples exists and how to explore">
       <p class="start-mission-eyebrow">WHY SCRIPTURE RIPPLES EXISTS</p>
-      <h2>Discover the Patterns Across Scripture.</h2>
-      <p>Reading passages in isolation can hide the recurring imagery, literary structures, and connections that give them depth. <strong>Scripture Ripples is an interactive graph of themes throughout Scripture</strong>: it helps you see where biblical images reappear, how passages relate, and how their significance develops in context.</p>
+      <h2>Discover the Patterns Across Scripture</h2>
+      <p>Biblical images and themes often appear across different books and passages. Exploring them together can bring their literary and historical contexts into clearer view. <strong>Scripture Ripples is an interactive graph of themes throughout Scripture</strong>: it helps you see where biblical images reappear, how passages relate, and how their significance develops in context.</p>
       <details class="start-study-terms" open><summary>Where do the stones come from?</summary>
         <p>Our symbolic lexicon begins with <strong>Jesus’ “I Am” statements</strong> (John 6:35; 8:12; 10:9, 11; 11:25; 14:6; 15:1) and <strong>the architecture and furnishings of the Tabernacle</strong> (Exodus 25–27). These provide starting points for tracing imagery across Scripture—not a fixed symbolic dictionary supplied by the Bible.</p>
       </details>
@@ -1018,7 +1106,7 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
         <p>Objects such as stones, doors, lamps, and veils belonged to specific historical and literary settings. Tracing them can help illuminate difficult passages, but context matters: not every repeated object carries the same meaning.</p>
         <p>For example, Jesus explicitly connects Moses’ lifted serpent (Numbers 21:8–9) with his own lifting up (John 3:14–15). Other proposed connections should be weighed against the passages themselves.</p>
       </details>
-      <p class="start-howto"><strong>Try the demo:</strong> Choose a stone from a bank and drop it into the pond. Add another to explore connections. Select a stone to read its passages or a connecting line to examine the recorded evidence. Connections may be thematic rather than direct quotations. When you're ready, select <strong>Exit Demo · Explore Scripture</strong> to enter the full graph.</p>
+      <p class="start-howto"><strong>Try the demo:</strong> Choose a stone from a bank and drop it into the pond. Add another to explore connections. Select a stone to read its passages or a connecting line to examine the recorded evidence. Connections may be thematic rather than direct quotations. When you're ready, select <strong>Explore Full Pond</strong> to enter the complete interactive graph.</p>
     </section>
     <label class="start-search" for="start-search">Find a stone <input type="search" id="start-search" placeholder="e.g. lampstand or vine" autocomplete="off"></label>
     <div class="start-pond-scene">
@@ -1026,7 +1114,7 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
       <div id="start-water" class="pond-surface" role="group" aria-label="Pond">
         <svg class="start-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
       </div>
-      <section class="start-bank-section" aria-label="Tabernacle architecture and furnishings"><h2>Tabernacle · Symbolic Themes</h2><p>Explore the original themes, including Tabernacle architecture and furnishings.</p><div class="start-bank" id="start-east-bank" role="group" aria-label="Tabernacle stones"></div></section>
+      <section class="start-bank-section" aria-label="Tabernacle architecture and furnishings"><h2>Original Symbolic Lexicon</h2><p>Explore all the other original stones, including Tabernacle architecture and furnishings.</p><div class="start-bank" id="start-east-bank" role="group" aria-label="Tabernacle stones"></div></section>
     </div>
     <div class="verse-tools" id="start-dashboard-tools" hidden>
       <button type="button" id="start-stone-dashboard" class="start-pond-primary">Explore This Stone in Detail</button>
@@ -1378,6 +1466,7 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
   </section>
   <section class="pond-editor pond-bank" aria-labelledby="pond-bank-title">
     <h2 id="pond-bank-title">My stones</h2>
+    <div class="verse-tools"><button type="button" id="clear-personal-pond">Clear pond</button></div>
     <div id="personal-stone-list"></div>
   </section>
 </main>
@@ -2956,9 +3045,11 @@ const openPersonalStones = (function () {
   const list = document.getElementById("personal-stone-list");
   const tools = document.getElementById("collect-stone-tools");
   let stones = [];
+  let storageAvailable = true;
   let pending = null;
 
   function load() {
+    if (!storageAvailable) return;
     try {
       const stored = JSON.parse(localStorage.getItem(key) || "[]");
       stones = Array.isArray(stored) ? stored.filter(function(stone) {
@@ -2969,8 +3060,8 @@ const openPersonalStones = (function () {
           });
       }) : [];
     } catch (error) {
-      stones = [];
-      status.textContent = "Saved stones could not be loaded.";
+      storageAvailable = false;
+      status.textContent = "Your pond will remain available until this page is refreshed.";
     }
   }
 
@@ -3007,6 +3098,18 @@ const openPersonalStones = (function () {
         if (list.children[index]) list.children[index].open = true;
       });
       details.append(toggle);
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "Delete stone";
+      remove.setAttribute("aria-label", "Delete " + stone.name + " permanently from your pond");
+      remove.addEventListener("click", function() {
+        if (!window.confirm('Delete "' + stone.name + '" and its connections?')) return;
+        const next = stones.filter(function(item) { return item.name !== stone.name; });
+        compared = compared.filter(function(label) { return label !== stone.name; });
+        activeVerseId = "";
+        save(next, stone.name + " deleted.");
+      });
+      details.append(remove);
       details.open = opened.has(stone.name);
       if (!stone.inPond) {
         stone.verses.forEach(function(verse) {
@@ -3105,10 +3208,11 @@ const openPersonalStones = (function () {
   }
 
   function drawConnections() {
+    // Clear obsolete lines even if the pond is hidden or has no layout width.
+    edges.replaceChildren();
     const bounds = rocks.getBoundingClientRect();
     if (!bounds.width) return;
     const namespace = "http://www.w3.org/2000/svg";
-    edges.replaceChildren();
     const focused = compared.at(-1);
     const positions = new Map(Array.from(rockButtons, function([label, button]) {
       const rect = button.getBoundingClientRect();
@@ -3117,6 +3221,8 @@ const openPersonalStones = (function () {
     connections.forEach(function(connection) {
       const a = positions.get(connection.first.name);
       const b = positions.get(connection.second.name);
+      // Never draw an edge when either stone is absent from the current pond.
+      if (!a || !b) return;
       const group = document.createElementNS(namespace, "g");
       group.classList.toggle("is-active", focused === connection.first.name || focused === connection.second.name);
       const title = document.createElementNS(namespace, "title");
@@ -3381,17 +3487,29 @@ const openPersonalStones = (function () {
   });
 
   function save(next, message) {
-    try {
-      localStorage.setItem(key, JSON.stringify(next));
-    } catch (error) {
-      status.textContent = "This browser couldn't save your changes. Check that site storage is available.";
-      return false;
-    }
     stones = next;
+    if (storageAvailable) {
+      try {
+        localStorage.setItem(key, JSON.stringify(next));
+      } catch (error) {
+        storageAvailable = false;
+      }
+    }
     render();
-    status.textContent = message;
+    status.textContent = message + (storageAvailable ? "" : " Changes are temporary in this browser.");
     return true;
   }
+
+  document.getElementById("clear-personal-pond").addEventListener("click", function() {
+    if (!stones.length) {
+      status.textContent = "There are no stones to clear.";
+      return;
+    }
+    if (!window.confirm("Delete all custom stones and their connections?")) return;
+    compared = [];
+    activeVerseId = "";
+    save([], "Pond cleared.");
+  });
 
   document.getElementById("create-stone").addEventListener("submit", async function(event) {
     event.preventDefault();
@@ -5480,7 +5598,7 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
       const connected = versesOf(to);
       const shared = [...versesOf(from).values()].filter(verse => connected.has(verse.verse_id));
       const message = document.createElement("p");
-      message.textContent = [...new Set(edges.map(edge => kinds[edge.kind]))].join(" · ");
+      message.textContent = [...new Set(edges.map(edge => (kinds[edge.kind] || edge.kind || "Recorded connection")))].join(" · ");
       list.append(message);
       if (shared.length) {
         const count = document.createElement("p");
@@ -5548,7 +5666,7 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
   function updateConnections(added) {
     const grouped = new Map();
     DATA.edges.forEach(function(edge) {
-      if (!kinds[edge.kind] || !placed.has(edge.from) || !placed.has(edge.to) || edge.from === edge.to) return;
+      if (!placed.has(edge.from) || !placed.has(edge.to) || edge.from === edge.to) return;
       const key = [edge.from, edge.to].sort().join("\u0000");
       if (!grouped.has(key)) grouped.set(key, { from:edge.from, to:edge.to, edges:[] });
       grouped.get(key).edges.push(edge);
@@ -5773,6 +5891,209 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
   // Refresh when the existing Dashboard opens or closes.
   window.__dashboardThrowModeChanged=update;
   update();
+})();
+</script>
+
+<section id="sr-align-panel" hidden role="dialog" aria-modal="true" aria-labelledby="sra-title">
+<div class="sra-shell"><header class="sra-top"><div><h2 id="sra-title">Narrative Alignment</h2><p>Read two biblical narratives side by side. Investigate literary structure, parallels, and contrasts using Scripture references.</p></div><button id="sra-close" class="sra-close" type="button">Close ×</button></header>
+<div class="sra-tabs" role="group" aria-label="Choose a guided comparison"><button type="button" class="sra-tab" data-case="fig" aria-pressed="true">Fig tree · Mark and Luke</button><button type="button" class="sra-tab" data-case="david" aria-pressed="false">David and Samson</button></div>
+<div class="sra-enhance"><div class="sra-tools" role="group" aria-label="Comparison view"><button class="sra-view" type="button" data-view="alignment" aria-pressed="true">Alignment</button><button class="sra-view" type="button" data-view="venn" aria-pressed="false">Venn</button><button class="sra-view" type="button" data-view="structure" aria-pressed="false">Structure</button><button class="sra-view" type="button" data-view="evidence" aria-pressed="false">Relationship evidence</button><button class="sra-view" type="button" data-view="builder" aria-pressed="false">Build a comparison</button></div><p class="sra-hint" id="sra-view-hint">Select an event or connection to see the passage evidence and interpretation level.</p><div class="sra-tools" role="group" aria-label="More guided comparisons"><button class="sra-extra-tab" type="button" data-case="bread" aria-pressed="false">Bread · Exodus / John</button><button class="sra-extra-tab" type="button" data-case="mark" aria-pressed="false">Mark 11 · A–B–A′</button></div></div><div id="sra-body" aria-live="polite"></div>
+<section id="srl-lab" class="srl-lab" aria-labelledby="srl-title"><div class="srl-heading"><div><h3 id="srl-title">Literary Discovery Lab</h3><p class="srl-progress">Four optional, short lessons · Learn to recognize patterns in the text</p></div><button type="button" id="srl-toggle" class="srl-toggle" aria-expanded="false" aria-controls="srl-content">Explore lessons +</button></div><div id="srl-content" class="srl-content" hidden><div id="srl-lessons" class="srl-lessons" role="group" aria-label="Choose a literary lesson"></div><div id="srl-reading" class="srl-reading" aria-live="polite"></div></div></section><p class="sra-footer">Guided literary studies, not automatically discovered connections. Passage summaries are paraphrases. Open the linked KJV passages to verify the text and context. Additional user-created comparisons are planned for a later version.</p></div></section>
+
+<script>
+(function(){
+const data={
+'david':{
+ left:'David · 2 Samuel 11–12',right:'Samson · Judges 14–16',
+ a:[['Desire and pursuit','David takes Bathsheba, the wife of Uriah.','2 Samuel 11:2-4'],['Loyal soldier','Uriah refuses to go home while Israel is at war.','2 Samuel 11:6-13'],['Betrayal','David arranges for Uriah to be placed in deadly combat.','2 Samuel 11:14-17'],['Confrontation','Nathan confronts David through a parable.','2 Samuel 12:1-13'],['Consequences','David acknowledges his sin; the child later dies.','2 Samuel 12:13-23']],
+ b:[['Desire and pursuit','Samson seeks a Philistine woman as his wife.','Judges 14:1-3'],['Compromised relationships','Samson’s relationships become entangled in conflict.','Judges 14:15-20'],['Betrayal','Delilah discloses the source of Samson’s strength.','Judges 16:4-20'],['Captivity','The Philistines seize and blind Samson.','Judges 16:21'],['Final act','Samson brings down the building on himself and the Philistines.','Judges 16:23-30']],
+ relations:['Both narratives involve desire, relationships, betrayal, and grave consequences.','Role reversal to investigate: David arranges a loyal man’s death; Samson is betrayed by Delilah.','The narratives are not arranged in a proven matching literary sequence.'],
+ caution:'Proposed foil / thematic comparison. Uriah is called one of David’s mighty men (2 Samuel 23:39), not explicitly his best friend. Samson and David both kill multiple people.'
+},
+'fig':{
+ left:'Mark 11 · Fig tree / temple',right:'Luke 13 · Fig-tree parable',
+ a:[['A · Fig tree introduced','Jesus finds leaves but no fruit and speaks against the tree.','Mark 11:12-14'],['B · Temple episode','Jesus drives out those buying and selling in the temple and teaches there.','Mark 11:15-19'],['A′ · Fig tree revisited','The disciples see the tree withered; Jesus teaches about faith and prayer.','Mark 11:20-25']],
+ b:[['Parable begins','A man finds no fruit on a fig tree in his vineyard.','Luke 13:6'],['Judgment proposed','The owner says to cut down the unproductive tree.','Luke 13:7'],['Intervention','The gardener requests another year to tend it; the outcome is left open.','Luke 13:8-9']],
+ relations:['Mark 11 is a recognized A–B–A′ narrative intercalation: fig tree → temple → fig tree.','Luke 13 is a separate parable with a conditional outcome, not another intercalation.','Compare fruitlessness, judgment, delay, and response without assuming identical meanings.'],
+ caution:'Mark’s internal sandwich is observable from its narrative arrangement. Comparing Mark 11 with Luke 13 is a separate interpretive exercise, not an explicit cross-reference.'
+}};
+const panel=document.getElementById('sr-align-panel');const host=document.getElementById('sra-body');
+function refLink(ref){return 'https://www.biblegateway.com/passage/?search='+encodeURIComponent(ref)+'&version=KJV'}
+function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
+function column(title,events,cls){const col=el('section','sra-col '+cls);col.append(el('h3','',title));events.forEach((e,i)=>{const d=el('div','sra-event');const h=el('b');h.append(el('span','sra-number',String(i+1)),document.createTextNode(e[0]));d.append(h,el('p','',e[1]));const a=el('a','',e[2]+' · Read KJV');a.href=refLink(e[2]);a.target='_blank';a.rel='noopener noreferrer';d.append(a);col.append(d)});return col}
+
+/* Literary Discovery: data and controls are intentionally separate from the alignment data. */
+const literaryLessons=[
+ {id:'foil',name:'Foils',title:'Characters in contrast',definition:'A literary foil is a character whose qualities become clearer when compared with another character. A foil does not require a perfect opposite or an intentional cross-book link.',example:'Compare David arranging Uriah’s death (2 Samuel 11:14–17) with Samson being betrayed by Delilah (Judges 16:15–21). The role reversal is a possible reading, not a demonstrated authorial design.',refs:['2 Samuel 11:14-17','Judges 16:15-21'],question:'Which claim is most defensible?',options:['David and Samson each kill only one person.','David arranges a betrayal, while Samson experiences betrayal.','The biblical writers explicitly identify these two narratives as foils.'],correct:1,why:'The actions are documented in the cited passages. A deliberate literary connection between the books remains a hypothesis.'},
+ {id:'sandwich',name:'Sandwiches',title:'A story inside a story',definition:'Intercalation (sometimes called a narrative sandwich) interrupts one episode with another and then resumes the first: A–B–A′. The placement can invite readers to interpret the episodes together.',example:'Mark 11:12–14 begins the fig-tree episode (A); Mark 11:15–19 recounts the temple episode (B); Mark 11:20–25 returns to the fig tree (A′). Luke 13:6–9 is a separate fig-tree parable, not the middle of Mark’s sandwich.',refs:['Mark 11:12-25','Luke 13:6-9'],question:'Which passage completes Mark’s A–B–A′ sequence?',options:['The disciples see the withered fig tree (Mark 11:20–25).','The gardener requests another year (Luke 13:8–9).','Samson visits Timnah (Judges 14:1).'],correct:0,why:'Mark returns to the same fig tree after the temple scene, completing the observable A–B–A′ arrangement.'},
+ {id:'chiasmus',name:'Chiasmus',title:'Patterns in reverse',definition:'A chiasmus arranges corresponding elements in reverse order, such as A–B–B′–A′. A ring composition may include a central element: A–B–C–B′–A′. Proposed patterns need meaningful, text-supported pairings.',example:'As a practice exercise, compare the abstract sequence “departure → loss → recovery → return” with its proposed reverse pairings. This is a teaching illustration, NOT a claim that a particular biblical passage has this structure.',refs:[],question:'What is the best evidence for a proposed biblical chiasmus?',options:['The passage has an even number of verses.','Several correspondences match in reverse order and make sense in context.','Two words sound alike in English.'],correct:1,why:'Strong structural claims require multiple coherent textual correspondences; arbitrary word matches are insufficient.'},
+ {id:'motif',name:'Motifs',title:'Images that recur',definition:'A motif is a recurring image, phrase, action, or idea. Repetition can be meaningful, but the same word appearing twice does not by itself establish a literary connection.',example:'Bread is a recurring image. Compare manna in Exodus 16 with Jesus’ bread-of-life discourse in John 6; John 6:31–35 explicitly refers to the earlier bread tradition.',refs:['Exodus 16:4-15','John 6:31-35'],question:'What makes this bread comparison stronger than a mere word match?',options:['John 6 explicitly discusses bread from heaven and refers to the earlier tradition.','Both passages are equally long.','Every mention of bread means exactly the same thing.'],correct:0,why:'An explicit reference and shared subject provide evidence; the passages still need to be read in their own contexts.'}
+];
+const labToggle=document.getElementById('srl-toggle'),labContent=document.getElementById('srl-content'),labTabs=document.getElementById('srl-lessons'),labReading=document.getElementById('srl-reading');
+let activeLesson='sandwich';
+function showLesson(id){const lesson=literaryLessons.find(x=>x.id===id);if(!lesson)return;activeLesson=id;labTabs.replaceChildren();literaryLessons.forEach(l=>{const b=el('button','srl-lesson',l.name);b.type='button';b.setAttribute('aria-pressed',String(l.id===id));b.addEventListener('click',()=>showLesson(l.id));labTabs.append(b)});labReading.replaceChildren();labReading.append(el('h4','',lesson.title),el('p','',lesson.definition),el('p','',lesson.example));if(lesson.refs.length){const p=el('p','srl-source','Read the passages: ');lesson.refs.forEach((ref,i)=>{if(i)p.append(document.createTextNode(' · '));const a=el('a','',ref);a.href=refLink(ref);a.target='_blank';a.rel='noopener noreferrer';p.append(a)});labReading.append(p)}const field=el('fieldset','srl-quiz'),legend=el('legend','',lesson.question);field.append(legend);const feedback=el('div','srl-feedback');feedback.hidden=true;feedback.setAttribute('role','status');lesson.options.forEach((answer,i)=>{const label=el('label','srl-answer'),input=document.createElement('input');input.type='radio';input.name='srl-answer-'+lesson.id;input.value=String(i);input.addEventListener('change',()=>{feedback.hidden=false;feedback.textContent=(i===lesson.correct?'Correct. ':'Not quite. ')+lesson.why});label.append(input,document.createTextNode(answer));field.append(label)});labReading.append(field,feedback);const next=el('button','srl-next','Next lesson →');next.type='button';next.addEventListener('click',()=>showLesson(literaryLessons[(literaryLessons.findIndex(x=>x.id===id)+1)%literaryLessons.length].id));labReading.append(next)}
+labToggle.addEventListener('click',()=>{const opening=labContent.hidden;labContent.hidden=!opening;labToggle.setAttribute('aria-expanded',String(opening));labToggle.textContent=opening?'Hide lessons −':'Explore lessons +';if(opening)showLesson(activeLesson)});
+
+function render(which){const d=data[which];host.replaceChildren();const wrap=el('div','sra-layout');wrap.append(column(d.left,d.a,'sra-left'),column(d.right,d.b,'sra-right'));const side=el('aside','sra-insights');side.append(el('h3','','What corresponds?'));const ul=el('ul');d.relations.forEach(t=>ul.append(el('li','',t)));side.append(ul,el('div','sra-note',d.caution));wrap.append(side);host.append(wrap);document.querySelectorAll('.sra-tab').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.case===which)))}
+const launch=document.getElementById('sr-align-launch');const close=document.getElementById('sra-close');let previous=null;
+launch.addEventListener('click',()=>{previous=document.activeElement;panel.hidden=false;window.ScriptureRipplesLiterary?.open('fig');close.focus();document.body.style.overflow='hidden'});
+function shut(){panel.hidden=true;document.body.style.overflow='';if(previous&&previous.focus)previous.focus()}
+close.addEventListener('click',shut);panel.addEventListener('click',e=>{if(e.target===panel)shut()});panel.addEventListener('keydown',e=>{if(e.key==='Escape')shut()});/* Case tabs are managed by the enhanced renderer. */
+})();
+</script>
+
+<script id="sra-enhanced-script">
+(function(){
+'use strict';
+const panel=document.getElementById('sr-align-panel'), host=document.getElementById('sra-body');
+if(!panel||!host)return;
+const $=s=>panel.querySelector(s), $$=s=>Array.from(panel.querySelectorAll(s));
+const link=r=>'https://www.biblegateway.com/passage/?search='+encodeURIComponent(r)+'&version=KJV';
+const E=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
+const cases={
+ fig:{name:'Fig tree · Mark / Luke',left:'Mark 11:12–25',right:'Luke 13:6–9',structure:'A–B–A′ in Mark; a separate parable in Luke',
+  leftEvents:[['A · Tree','Jesus finds no fruit on the fig tree.','Mark 11:12-14'],['B · Temple','Jesus enters the temple and drives out sellers and buyers.','Mark 11:15-19'],['A′ · Tree','The disciples find the tree withered. Jesus teaches on faith and prayer.','Mark 11:20-25']],
+  rightEvents:[['Parable','The vineyard owner seeks fruit.','Luke 13:6'],['Proposed judgment','The owner proposes cutting down the tree.','Luke 13:7'],['Delay','The gardener requests another year; no outcome is stated.','Luke 13:8-9']],
+  links:[{a:0,b:0,type:'Shared image',level:'Observed motif',reason:'Both passages describe a fig tree and fruitfulness. This is a shared image, not proof that one passage intentionally references the other.'},{a:1,b:1,type:'Contrast',level:'Interpretive proposal',reason:'Mark narrates a temple episode within a fig-tree frame; Luke narrates the owner proposing judgment within a parable. These are not equivalent narrative events.'},{a:2,b:2,type:'Contrast',level:'Interpretive proposal',reason:'Mark reports the tree withered; Luke leaves the tree’s eventual fate open after a request for delay.'}],
+  leftOnly:'Mark contains the temple episode and a resumed fig-tree narrative.',both:'Fruitlessness and the prospect of judgment can be compared.',rightOnly:'Luke includes the gardener’s plea for additional time.',caution:'Only Mark 11 itself exhibits the A–B–A′ sandwich here. The cross-Gospel comparison is a hypothesis about thematic resonance.'},
+ david:{name:'David / Samson',left:'David · 2 Samuel 11–12',right:'Samson · Judges 14–16',structure:'Proposed foil / role reversal; not a verified shared literary structure',
+  leftEvents:[['Desire','David takes Bathsheba, Uriah’s wife.','2 Samuel 11:2-4'],['Loyal soldier','Uriah remains with the servants rather than going home.','2 Samuel 11:6-13'],['Betrayal','David arranges Uriah’s death.','2 Samuel 11:14-17'],['Confrontation','Nathan confronts David.','2 Samuel 12:1-13'],['Consequences','David confesses; the child later dies.','2 Samuel 12:13-23']],
+  rightEvents:[['Desire','Samson seeks a Philistine woman as his wife.','Judges 14:1-3'],['Relationships','Samson’s marriage becomes entangled in conflict.','Judges 14:15-20'],['Betrayal','Delilah reveals Samson’s secret.','Judges 16:15-21'],['Captivity','Samson is captured and blinded.','Judges 16:21'],['Final act','Samson brings down the building on himself and others.','Judges 16:23-30']],
+  links:[{a:0,b:0,type:'Thematic similarity',level:'Interpretive proposal',reason:'Both narratives feature desire and consequential relationships. Their situations are morally and narratively distinct.'},{a:2,b:2,type:'Role reversal',level:'Textual actions observed; literary link proposed',reason:'David orchestrates the death of Uriah; Delilah betrays Samson. David acts as betrayer in one story; Samson is betrayed in the other.'},{a:3,b:3,type:'Contrast',level:'Interpretive proposal',reason:'Nathan confronts David; the Philistines physically capture Samson. These are distinct events, not a demonstrated structural parallel.'},{a:4,b:4,type:'Contrast',level:'Interpretive proposal',reason:'The narratives end differently and cannot be reduced to an identical arc.'}],
+  leftOnly:'David arranges the death of Uriah and is confronted by Nathan.',both:'Desire, betrayal, and consequences occur in both narratives.',rightOnly:'Samson is betrayed by Delilah, blinded, and dies in a final act.',caution:'This is an exploratory comparison, not a claim that Judges and Samuel were deliberately written as paired narratives. Uriah is a mighty man (2 Samuel 23:39), not explicitly David’s best friend.'},
+ bread:{name:'Bread · Exodus / John',left:'Exodus 16',right:'John 6',structure:'Explicit textual reference / recurring motif',
+  leftEvents:[['Need','The Israelites complain of hunger.','Exodus 16:2-3'],['Provision','God promises bread from heaven.','Exodus 16:4'],['Manna','The people gather manna.','Exodus 16:13-15']],
+  rightEvents:[['Crowd','Jesus feeds the crowd.','John 6:5-13'],['Reference','The crowd refers to bread from heaven.','John 6:30-31'],['Interpretation','Jesus calls himself the bread of life.','John 6:32-35']],
+  links:[{a:1,b:1,type:'Explicit reference',level:'Strong textual evidence',reason:'John 6:31 explicitly mentions bread from heaven and attributes the statement to Scripture.'},{a:2,b:2,type:'Motif and contrast',level:'Textual evidence + interpretation',reason:'Exodus narrates manna; Jesus describes himself as bread of life. Read John 6:32–35 for the stated distinction.'}],
+  leftOnly:'The wilderness account narrates material provision of manna.',both:'Bread from heaven and divine provision appear in both.',rightOnly:'Jesus explicitly interprets the bread imagery in relation to himself.',caution:'John 6 directly invokes the bread-from-heaven tradition; this is stronger evidence than a coincidental shared word.'},
+ mark:{name:'Mark 11 · A–B–A′',left:'Mark 11 · Narrative frame',right:'Mark 11 · Temple center',structure:'Documented A–B–A′ arrangement within one narrative',
+  leftEvents:[['A · Tree','Jesus speaks against the fruitless tree.','Mark 11:12-14'],['A′ · Return','The disciples see the tree withered.','Mark 11:20-21'],['Teaching','Jesus teaches about faith, prayer, and forgiveness.','Mark 11:22-25']],
+  rightEvents:[['B · Temple','Jesus enters the temple and drives out sellers and buyers.','Mark 11:15-17'],['B · Continued','Jesus teaches; authorities seek to destroy him.','Mark 11:17-18'],['B · Exit','Jesus leaves the city at evening.','Mark 11:19']],
+  links:[{a:0,b:0,type:'Intercalation',level:'Observed narrative arrangement',reason:'The fig-tree episode begins in Mark 11:12–14 and is interrupted by the temple episode in Mark 11:15–19.'},{a:1,b:2,type:'Resumption',level:'Observed narrative arrangement',reason:'After the temple scene, Mark returns to the fig tree in 11:20–21.'}],
+  leftOnly:'The tree episode begins and resumes after the temple account.',both:'The narrative placement invites comparison between fruitfulness and temple activity.',rightOnly:'The temple episode interrupts the fig-tree episode.',caution:'A–B–A′ is directly observable in Mark 11. The theological significance of the juxtaposition should be argued from the text, not assumed.'}
+};
+// Stable identifiers for the curated events. Indexes are only used once during legacy-data migration.
+const stableIds={
+ fig:{left:['mark-tree-opening','mark-temple','mark-tree-return'],right:['luke-owner','luke-judgment-proposal','luke-gardener-delay']},
+ david:{left:['david-desire','david-uriah','david-betrayal','david-nathan','david-consequences'],right:['samson-desire','samson-marriage','samson-delilah','samson-captivity','samson-final-act']},
+ bread:{left:['exodus-need','exodus-provision','exodus-manna'],right:['john-crowd','john-reference','john-bread-of-life']},
+ mark:{left:['mark-frame-opening','mark-frame-return','mark-frame-teaching'],right:['mark-temple-entry','mark-temple-conflict','mark-temple-exit']}
+};
+function normalizeComparison(c,key){
+ const ids=stableIds[key];
+ c.leftNodes=c.leftEvents.map((ev,i)=>({id:ids.left[i],title:ev[0],detail:ev[1],reference:ev[2],side:'left',order:i}));
+ c.rightNodes=c.rightEvents.map((ev,i)=>({id:ids.right[i],title:ev[0],detail:ev[1],reference:ev[2],side:'right',order:i}));
+ const leftById=new Map(c.leftNodes.map(ev=>[ev.id,ev]));
+ const rightById=new Map(c.rightNodes.map(ev=>[ev.id,ev]));
+ const linkIds=new Set();c.validLinks=[];c.rejectedLinks=[];c.linksByEventId=new Map();
+ c.links.forEach((rel,i)=>{
+   const edge={...rel,id:key+'-edge-'+i,sourceId:ids.left[rel.a],targetId:ids.right[rel.b]};
+   const source=leftById.get(edge.sourceId),target=rightById.get(edge.targetId);
+   if(!source||!target||linkIds.has(edge.id)){c.rejectedLinks.push(edge);return;}
+   linkIds.add(edge.id);c.validLinks.push(edge);
+   for(const id of [edge.sourceId,edge.targetId]){
+     if(!c.linksByEventId.has(id))c.linksByEventId.set(id,[]);
+     c.linksByEventId.get(id).push(edge);
+   }
+ });
+}
+Object.entries(cases).forEach(([key,c])=>normalizeComparison(c,key));
+let current='fig', view='alignment';
+function passage(ref){const a=E('a','',ref+' · Read KJV');a.href=link(ref);a.target='_blank';a.rel='noopener noreferrer';return a}
+function eventCard(ev,i){const art=E('article');art.append(E('h4','',String(i+1)+'. '+ev[0]),E('p','',ev[1]),passage(ev[2]));return art}
+function details(rel,c){const d=E('details');const summary=E('summary','',rel.type+' · '+rel.level+' · Show evidence');d.append(summary,E('p','',rel.reason));const refs=[c.leftEvents[rel.a],c.rightEvents[rel.b]].filter(Boolean);const p=E('p','sra-inline-links');refs.forEach(e=>p.append(passage(e[2])));d.append(p);return d}
+function showAlignment(c){
+ host.append(E('p','sra-hint','Every event remains visible, including events with no proposed correspondence. Select a relationship below to inspect its evidence.'));
+ const layout=E('div','sra-complete-alignment');
+ const left=E('div','sra-event-column'),right=E('div','sra-event-column');
+ left.append(E('h4','',c.left));right.append(E('h4','',c.right));
+ const graph=E('div','sra-graph-gap');
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','sra-edges');svg.setAttribute('aria-hidden','true');graph.append(svg);
+ function addCard(node,column){
+   const card=E('article','sra-event-card');card.dataset.eventId=node.id;
+   card.append(E('h4','',String(node.order+1)+'. '+node.title),E('p','',node.detail),passage(node.reference));
+   const edges=c.linksByEventId.get(node.id)||[];
+   card.append(E('p','sra-event-count',edges.length?edges.length+' proposed connection(s)':'No proposed connection'));
+   column.append(card);
+ }
+ c.leftNodes.forEach(n=>addCard(n,left));c.rightNodes.forEach(n=>addCard(n,right));
+ layout.append(left,graph,right);host.append(layout);
+ const evidence=E('div','sra-edge-evidence');evidence.append(E('h4','','Proposed relationships and evidence'));
+ c.validLinks.forEach(rel=>{
+   const a=c.leftNodes.find(n=>n.id===rel.sourceId),b=c.rightNodes.find(n=>n.id===rel.targetId);
+   const d=E('details','sra-relationship-detail');d.dataset.relationshipId=rel.id;
+   d.append(E('summary','',a.title+' ↔ '+b.title+' · '+rel.type+' · '+rel.level),E('p','',rel.reason));
+   const refs=E('p','sra-inline-links');refs.append(passage(a.reference),document.createTextNode(' · '),passage(b.reference));d.append(refs);evidence.append(d);
+ });
+ host.append(evidence,E('p','sra-legend',c.caution));
+ // Each evidence disclosure selects exactly its declared source, target and SVG path.
+ function clearSelection(){
+   layout.querySelectorAll('.sra-selected-event').forEach(el=>el.classList.remove('sra-selected-event'));
+   svg.querySelectorAll('.sra-selected-edge').forEach(el=>el.classList.remove('sra-selected-edge'));
+   evidence.querySelectorAll('.sra-selected-relationship').forEach(el=>el.classList.remove('sra-selected-relationship'));
+ }
+ function applySelection(){
+   clearSelection();
+   const active=evidence.querySelector('details[open][data-relationship-id]');
+   if(!active)return;
+   const rel=c.validLinks.find(item=>item.id===active.dataset.relationshipId);
+   if(!rel)return;
+   active.classList.add('sra-selected-relationship');
+   for(const id of [rel.sourceId,rel.targetId]){
+     const card=layout.querySelector('[data-event-id="'+id+'"]');
+     if(card)card.classList.add('sra-selected-event');
+   }
+   const edge=Array.from(svg.querySelectorAll('path')).find(path=>path.dataset.relationshipId===rel.id);
+   if(edge)edge.classList.add('sra-selected-edge');
+ }
+ evidence.addEventListener('toggle',e=>{
+   const item=e.target;
+   if(!item.matches||!item.matches('details[data-relationship-id]'))return;
+   if(item.open)evidence.querySelectorAll('details[open]').forEach(other=>{if(other!==item)other.open=false});
+   applySelection();
+ },true);
+ const draw=()=>{
+   if(panel.hidden||!layout.isConnected)return;
+   svg.replaceChildren();const box=graph.getBoundingClientRect();
+   if(!box.width||!box.height)return;
+   svg.setAttribute('viewBox','0 0 '+box.width+' '+box.height);
+   for(const rel of c.validLinks){
+     const a=left.querySelector('[data-event-id="'+rel.sourceId+'"]');
+     const b=right.querySelector('[data-event-id="'+rel.targetId+'"]');
+     if(!a||!b)continue;
+     const ar=a.getBoundingClientRect(),br=b.getBoundingClientRect();
+     const y1=ar.top+ar.height/2-box.top,y2=br.top+br.height/2-box.top;
+     const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+     path.setAttribute('d','M 0 '+y1+' C '+(box.width*.4)+' '+y1+', '+(box.width*.6)+' '+y2+', '+box.width+' '+y2);
+     path.setAttribute('fill','none');path.setAttribute('stroke','#8b5bb8');path.setAttribute('stroke-width','2');
+     path.dataset.relationshipId=rel.id;svg.append(path);
+   }
+   applySelection();
+ };
+ requestAnimationFrame(draw);
+ if(window.ResizeObserver){if(window.__sraGraphObserver)window.__sraGraphObserver.disconnect();window.__sraGraphObserver=new ResizeObserver(draw);window.__sraGraphObserver.observe(layout)}
+}
+function showVenn(c){const grid=E('div','sra-venn');[[c.left,c.leftOnly],['Shared observations',c.both],[c.right,c.rightOnly]].forEach(([name,t])=>{const d=E('div');d.append(E('h4','',name),E('p','',t));grid.append(d)});host.append(grid,E('p','sra-hint','This is a conceptual overlap diagram; the three regions are summaries, not a statistical Venn diagram.'))}
+function showStructure(c){host.append(E('h3','',c.structure));if(current==='fig'||current==='mark'){const d=E('div','sra-diagram');[['A','Fig tree · Mark 11:12–14'],['B','Temple · Mark 11:15–19'],['A′','Fig tree · Mark 11:20–25']].forEach(([letter,desc])=>{const a=E('div','sra-diagram-item');a.append(E('strong','',letter),E('p','',desc));d.append(a)});host.append(d);host.append(E('p','', 'The interrupted episode resumes after the temple episode. Luke 13 is a separate parable.'))}else{host.append(E('p','', 'This example does not establish a chiastic or sandwich structure. Its relationships are evaluated individually below.'))}showEvidence(c)}
+function showEvidence(c){host.append(E('h3','','Relationship evidence'));c.validLinks.forEach((rel,i)=>{const card=E('section','sra-evidence');card.append(E('h4','',(i+1)+'. '+rel.type),E('span','sra-confidence',rel.level),E('p','',rel.reason));const p=E('p','sra-inline-links');[...c.leftNodes,...c.rightNodes].filter(ev=>ev.id===rel.sourceId||ev.id===rel.targetId).forEach(ev=>p.append(passage(ev.reference)));card.append(p);host.append(card)});host.append(E('p','sra-hint',c.caution))}
+const draftKey='scripture-ripples-literary-draft-v1';
+function showBuilder(){const form=E('form','sra-builder');form.noValidate=true;form.append(E('h3','','Build your own comparison'),E('p','', 'Write a proposed connection between two passages. This saves only in your current browser; it does not publish to the app or Neo4j.'));
+ const fields=[['Passage A','referenceA','text','e.g. Ruth 1:16-17'],['Passage B','referenceB','text','e.g. John 15:12-17'],['Connection type','type','select',''],['Textual evidence and your interpretation','notes','textarea','Explain what each passage says and why you think they relate']];
+ let saved={};try{saved=JSON.parse(localStorage.getItem(draftKey)||'{}')}catch(e){}
+ fields.forEach(([label,name,kind,placeholder])=>{const l=E('label','',label);l.htmlFor='sra-field-'+name;let input;if(kind==='textarea')input=E('textarea');else if(kind==='select'){input=E('select');['Parallel','Contrast / foil','Intercalation','Chiasmus','Recurring motif','Explicit reference','Other'].forEach(v=>{const opt=E('option','',v);opt.value=v;input.append(opt)})}else{input=E('input');input.type='text'}input.id='sra-field-'+name;input.name=name;input.placeholder=placeholder;input.value=saved[name]||'';input.maxLength=name==='notes'?3000:120;form.append(l,input)});
+ const save=E('button','sra-save','Save draft in this browser');save.type='submit';const exportBtn=E('button','sra-export','Copy comparison as JSON');exportBtn.type='button';const status=E('p','sra-status');status.setAttribute('role','status');
+ function read(){const d={};['referenceA','referenceB','type','notes'].forEach(k=>d[k]=form.elements.namedItem(k).value.trim());return d}
+ form.addEventListener('submit',e=>{e.preventDefault();const d=read();if(!d.referenceA||!d.referenceB){status.textContent='Please enter both Scripture references.';return}try{localStorage.setItem(draftKey,JSON.stringify(d));status.textContent='Draft saved in this browser.'}catch(err){status.textContent='Browser storage is unavailable. Use Copy JSON instead.'}});
+ exportBtn.addEventListener('click',async()=>{const data=JSON.stringify({...read(),evidenceStatus:'user-proposed; unverified'},null,2);try{await navigator.clipboard.writeText(data);status.textContent='Comparison copied as JSON.'}catch(e){status.textContent='Clipboard access unavailable. Select and copy the JSON shown below.';let output=$('#sra-json-fallback');if(!output){output=E('textarea');output.id='sra-json-fallback';output.readOnly=true;form.append(output)}output.value=data;output.focus();output.select()}});
+ form.append(save,document.createTextNode(' '),exportBtn,status);host.append(form)}
+function render(){const c=cases[current];host.replaceChildren();const heading=E('h3','',c.name);host.append(heading);if(view==='alignment')showAlignment(c);else if(view==='venn')showVenn(c);else if(view==='structure')showStructure(c);else if(view==='evidence')showEvidence(c);else showBuilder();$$('.sra-view').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===view)));$$('.sra-extra-tab,.sra-tab').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.case===current)))}
+$$('.sra-view').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;render()}));
+$$('.sra-extra-tab').forEach(b=>b.addEventListener('click',()=>{current=b.dataset.case;view='alignment';render()}));
+$$('.sra-tab').forEach(b=>b.addEventListener('click',()=>{current=b.dataset.case;view='alignment';render()}));
+// The existing modal opener renders the older view first; replace it with the enhanced view.
+window.ScriptureRipplesLiterary=Object.freeze({open(caseId='fig'){current=cases[caseId]?caseId:'fig';view='alignment';render()},render,setView(nextView){view=nextView;render()}});
+// Keep keyboard focus inside the modal while open. Escape and focus restoration remain in original implementation.
+panel.addEventListener('keydown',e=>{if(e.key!=='Tab'||panel.hidden)return;const focusables=$$('button:not([disabled]),a[href],input:not([disabled]),textarea:not([disabled]),select:not([disabled]),summary').filter(el=>el.getClientRects().length>0);if(!focusables.length)return;const first=focusables[0],last=focusables[focusables.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}});
 })();
 </script>
 </body>
