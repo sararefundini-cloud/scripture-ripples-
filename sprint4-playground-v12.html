@@ -41,14 +41,7 @@ function srClearEmptyViews(){
 }
 reset.addEventListener('click',()=>{try{srClearEmptyViews()}catch(e){console.warn('Pond view reset:',e)}});
 try{srClearEmptyViews()}catch(e){console.warn('Pond initial view:',e)}
-// A selected rock remains in the pond. Guard against an unrelated click handler
-// interpreting a stone-selection click as a remove/move action.
-if(srPond)srPond.addEventListener('click',ev=>{
- const rock=ev.target.closest('.personal-rock');
- if(!rock)return;
- ev.stopPropagation();
-},true);
-
+// Preserve native stone-click handlers; selection must not be intercepted.
 const bank=d.createElement('section');bank.id='sr-saved-bank';bank.style.cssText='margin:14px 0;padding:15px;border:2px solid #7d93a4;border-radius:12px;background:#fff8eb;color:#283a48';bank.innerHTML='<h3 style="margin:0 0 6px">Your saved stone bank</h3><p style="margin:0 0 12px">Reset returns stones here. Select any stone to add it back to your pond.</p><div id="sr-bank-buttons" style="display:flex;flex-wrap:wrap;gap:8px"></div>';const graph=d.getElementById('pond-graph-frame');graph.parentNode.insertBefore(bank,graph);
 const bankButtons=bank.querySelector('#sr-bank-buttons'),savedList=d.getElementById('personal-stone-list'),input=d.getElementById('stone-name'),form=d.getElementById('create-stone');
 function addExisting(label){const details=[...savedList.querySelectorAll('details')].find(el=>el.dataset.stone===label);const button=details&&[...details.querySelectorAll('button')].find(el=>el.textContent.trim()==='Add to pond');if(button){button.click();refreshBank();return true;}return false;}
