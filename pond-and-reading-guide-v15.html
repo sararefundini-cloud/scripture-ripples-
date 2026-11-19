@@ -19,7 +19,7 @@ if(applied<3)throw Error('Pond code differs from expected baseline ('+applied+' 
 // Keep original interface, but ensure the reading guide is accessible from the dashboard.
 const guide='<section id="sr-how-to-read-restored" style="margin:14px 0;padding:15px 20px;border:2px solid #a88858;border-radius:12px;background:#f8ebcd;color:#283d53"><h3 style="margin:0 0 8px;font-family:Georgia,serif">How to Read the Pond</h3><p>Choose a stone from the bank to place it in the pond. Add a second stone to explore shared passages and connections. Click a stone to read its Scripture evidence. Click its bank button again to return it to the bank. Use Clear Pond to start over.</p></section>';
 if(!html.includes('sr-how-to-read-restored'))html=html.replace('<div id="dash-throw-status"',guide+'<div id="dash-throw-status"');
-frame.srcdoc=html;
+frame.dataset.ready='yes';frame.srcdoc=html;
 }catch(e){notice.textContent='Repair test unavailable: '+e.message;frame.style.visibility='visible';console.error(e)}
 })();
 </script>
@@ -27,6 +27,7 @@ frame.srcdoc=html;
 (function(){
 const frame=document.getElementById('app'),notice=document.getElementById('notice');
 frame.addEventListener('load',function(){
+if(frame.dataset.ready!=='yes')return;
 try{
 const d=frame.contentDocument,w=frame.contentWindow;
 if(!d||!d.getElementById('start-pond'))throw Error('Application did not render');
