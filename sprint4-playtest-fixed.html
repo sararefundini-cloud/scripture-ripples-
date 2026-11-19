@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Scripture Ripples · Sprint 4 Test</title><meta name="viewport" content="width=device-width,initial-scale=1"><body><p id="loading">Loading the Scripture Ripples test build…</p><script>
+(async()=>{
+const fail=msg=>document.getElementById("loading").textContent=msg;
+try{
+const res=await fetch("./Scripture-Ripples-RC1-Stone-Safety-Candidate.html",{cache:"no-store"});
+if(!res.ok)throw Error("Source file HTTP "+res.status);
+let s=await res.text();
+const replace=(a,b)=>{if(!s.includes(a))throw Error("Expected source not found: "+a.slice(0,55));s=s.replace(a,b)};
+replace('<h1 id="start-pond-title" tabindex="-1">Scripture Ripples · Interactive Pond Demo</h1>','<p class="sr-demo-eyebrow">INTERACTIVE TUTORIAL · START HERE</p><h1 id="start-pond-title" tabindex="-1">Try the Pond — Then Explore the Full Scripture Graph</h1>');
+replace('<section class="start-scroll start-origin-scroll"','<section class="sr-demo-guide" aria-label="How to use the demo"><div class="sr-demo-steps"><div><strong>1. Choose a stone</strong><span>Pick a theme from the bank.</span></div><div><strong>2. Add another</strong><span>Look for evidence-based connections.</span></div><div><strong>3. Inspect the evidence</strong><span>Select a stone or line to read Scripture.</span></div></div><button type="button" id="sr-demo-full-cta">Explore the Full Scripture Graph →</button></section><section class="start-scroll start-origin-scroll"');
+replace('<h2 class="dash-panel-title" id="pond-graph-title">Scripture Ripples</h2>','<div class="sr-personal-pond-header"><h2 class="dash-panel-title" id="pond-graph-title">Scripture Ripples</h2><button type="button" id="sr-personal-reset" class="sr-personal-reset">Reset pond</button></div>');
+replace('if (!a || !b) return;','if (!a || !b || !connection.verses.length || !connection.first.verses.length || !connection.second.verses.length) return;');
+replace('    document.getElementById("pond-line-key").hidden = !connections.length;','    document.getElementById("pond-line-key").hidden = !connections.length;\n    requestAnimationFrame(function(){ if (!page.hidden) drawConnections(); });');
+replace('  function drawConnections() {','  document.getElementById("sr-personal-reset").addEventListener("click",function(){const next=stones.map(function(stone){return {...stone,inPond:false}});if(save(next,"Pond cleared. Your stones are still saved.")){compared=[];activeVerseId="";renderSelection()}});\n  function drawConnections() {');
+replace('<h3 id="srl-title">Literary Discovery Lab</h3>','<p class="srl-eyebrow">INTERACTIVE LEARNING · LITERARY DISCOVERY LAB</p><h3 id="srl-title">Discover How the Bible Uses Literary Patterns</h3><div class="srl-preview"><span>Foils</span><span>Chiasmus</span><span>Literary sandwiches</span><span>Recurring motifs</span></div>');
+replace('>Explore lessons +</button>','>Start Exploring</button>');
+replace("'Explore lessons +'","'Start Exploring'");
+s=s.replace('</head>',`<style>
+.sr-demo-guide{border:2px solid #9b83bd;background:#f8f3ff;border-radius:18px;padding:18px;margin:14px 0 20px}.sr-demo-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.sr-demo-steps>div{background:white;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:5px}#sr-demo-full-cta{background:#34214d;color:white;padding:13px 18px;border-radius:12px;border:0;font-weight:800;margin-top:12px;cursor:pointer}.sr-demo-eyebrow,.srl-eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em}.sr-personal-pond-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.sr-personal-reset{padding:10px 14px;border:1px solid #58738a;border-radius:10px;background:#f7eddb;font-weight:700;cursor:pointer}.srl-lab{border:2px solid #9a80ba!important;background:#f5effb!important}.srl-preview{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}.srl-preview span{background:white;padding:10px;border-radius:8px;font-weight:700}#srl-toggle{background:#4d3864;color:white;padding:12px 18px}@media(max-width:700px){.sr-demo-steps{grid-template-columns:1fr}}
+</style></head>`);
+s=s.replace('</body>',`<script>document.getElementById("sr-demo-full-cta").addEventListener("click",function(){document.getElementById("start-full-pond").click()});<\/script></body>`);
+document.open();document.write(s);document.close();
+}catch(e){fail("Preview could not load: "+e.message);console.error(e)}
+})();
+</script></body></html>
