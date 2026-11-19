@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Scripture Ripples · Sprint 4 Playground</title><style>body{font:16px system-ui;background:#eaf4f7;color:#17344a;padding:28px}main{max-width:680px;margin:8vh auto;background:white;padding:28px;border-radius:18px}progress{width:100%}a{color:#275c84}</style><main id="loading"><h1>Opening Scripture Ripples…</h1><p id="stage">Loading the original pond and Scripture data (about 11 MB). This may take a moment.</p><progress></progress><p id="fallback"></p></main><script>
+(async function(){
+const stage=document.getElementById("stage"),fallback=document.getElementById("fallback");
+const source="Scripture-Ripples-RC1-Stone-Safety-Candidate.html";
+const abort=new AbortController();const timeout=setTimeout(()=>abort.abort(),45000);
+try{
+const response=await fetch(source,{signal:abort.signal});
+if(!response.ok)throw Error("GitHub returned "+response.status);
+stage.textContent="Applying the Sprint 4 fixes…";
+let s=await response.text();clearTimeout(timeout);
+function change(from,to){if(!s.includes(from))throw Error("Source version mismatch: "+from.slice(0,45));s=s.replace(from,to)}
+change('<h1 id="start-pond-title" tabindex="-1">Scripture Ripples · Interactive Pond Demo</h1>','<p class="sr-eyebrow">INTERACTIVE TUTORIAL · START HERE</p><h1 id="start-pond-title" tabindex="-1">Try the Pond — Then Explore the Full Scripture Graph</h1>');
+change('<section class="start-scroll start-origin-scroll"','<section class="sr-guide"><div class="sr-steps"><div><b>1. Choose a stone</b><p>Pick a theme from the bank.</p></div><div><b>2. Add another</b><p>Look for connections supported by Scripture.</p></div><div><b>3. Inspect evidence</b><p>Click a stone or line to read verses.</p></div></div><button type="button" id="sr-go-full">Explore the Full Scripture Graph →</button></section><section class="start-scroll start-origin-scroll"');
+change('<h2 class="dash-panel-title" id="pond-graph-title">Scripture Ripples</h2>','<div class="sr-pond-head"><h2 class="dash-panel-title" id="pond-graph-title">Scripture Ripples</h2><button type="button" id="sr-reset-pond">Reset Pond</button></div>');
+change('  function drawConnections() {',`  document.getElementById("sr-reset-pond").addEventListener("click", function() {
+    if (!stones.some(function(stone){return stone.inPond;})){status.textContent="Your pond is already empty.";return;}
+    const next=stones.map(function(stone){return {...stone,inPond:false};});
+    if(save(next,"Pond cleared. Custom stones and reading progress are preserved.")){compared=[];activeVerseId="";renderSelection();}
+  });
+  function drawConnections() {`);
+change('if (!a || !b) return;','if (!a || !b || !connection.verses.length) return;');
+change('    renderSelection();\n  }\n\n  function drawConnections()', '    renderSelection();\n    requestAnimationFrame(function(){if(!page.hidden)drawConnections();});\n  }\n\n  function drawConnections()');
+change('<h3 id="srl-title">Literary Discovery Lab</h3>','<p class="sr-eyebrow">INTERACTIVE LEARNING</p><h3 id="srl-title">Discover How the Bible Uses Literary Patterns</h3><div class="sr-lessons"><span>Foils</span><span>Chiasmus</span><span>Literary sandwiches</span><span>Recurring motifs</span></div>');
+change('>Explore lessons +</button>','>Start Exploring</button>');
+s=s.replaceAll("'Explore lessons +'","'Start Exploring'");
+change('</head>',`<style>
+.sr-guide{border:2px solid #9b83bd;background:#f8f3ff;border-radius:18px;padding:16px;margin:14px 0 22px}.sr-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.sr-steps>div{padding:12px;background:white;border-radius:12px}.sr-steps p{margin:5px 0}.sr-guide button{background:#34214d;color:white;padding:14px 20px;border:0;border-radius:10px;font-weight:800;cursor:pointer;margin-top:12px}.sr-eyebrow{font-size:12px;letter-spacing:.1em;font-weight:800}.sr-pond-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}#sr-reset-pond{padding:10px 15px;border-radius:10px;background:#f7eddb;border:1px solid #58738a;font-weight:700;cursor:pointer}.sr-lessons{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}.sr-lessons span{background:white;padding:10px;border-radius:8px;font-weight:700}.srl-lab{border:2px solid #9b83bd!important;background:#f8f3ff!important}#srl-toggle{background:#4d3864;color:white}@media(max-width:700px){.sr-steps{grid-template-columns:1fr}}
+</style></head>`);
+change('</body>',`<script>document.getElementById("sr-go-full").addEventListener("click",function(){document.getElementById("start-full-pond").click()});</script></body>`);
+stage.textContent="Opening the interactive pond…";
+document.open();document.write(s);document.close();
+}catch(err){clearTimeout(timeout);stage.textContent="This test build could not open: "+err.message;fallback.innerHTML='<a href="'+source+'">Open the previous working test version</a>';console.error(err);}
+})();
+</script></html>
