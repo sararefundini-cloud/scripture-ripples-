@@ -1,0 +1,29 @@
+--- a/index.html
++++ b/index.html
+@@ -3103,22 +3103,25 @@
+     if (!compared.length && placed.length) compared = [placed[0].name];
+     renderSelection();
+   }
+ 
+   function drawConnections() {
++    // Clear obsolete lines even if the pond is hidden or has no layout width.
++    edges.replaceChildren();
+     const bounds = rocks.getBoundingClientRect();
+     if (!bounds.width) return;
+     const namespace = "http://www.w3.org/2000/svg";
+-    edges.replaceChildren();
+     const focused = compared.at(-1);
+     const positions = new Map(Array.from(rockButtons, function([label, button]) {
+       const rect = button.getBoundingClientRect();
+       return [label, { x: rect.left + rect.width / 2 - bounds.left, y: rect.top + rect.height / 2 - bounds.top }];
+     }));
+     connections.forEach(function(connection) {
+       const a = positions.get(connection.first.name);
+       const b = positions.get(connection.second.name);
++      // Never draw an edge when either stone is absent from the current pond.
++      if (!a || !b) return;
+       const group = document.createElementNS(namespace, "g");
+       group.classList.toggle("is-active", focused === connection.first.name || focused === connection.second.name);
+       const title = document.createElementNS(namespace, "title");
+       title.textContent = connection.first.name + " and " + connection.second.name + " share " + connection.verses.length + (connection.verses.length === 1 ? " verse" : " verses");
+       const line = document.createElementNS(namespace, "line");
