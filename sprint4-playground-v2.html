@@ -19,7 +19,7 @@ change('  function drawConnections() {',`  document.getElementById("sr-reset-pon
   });
   function drawConnections() {`);
 change('if (!a || !b) return;','if (!a || !b || !connection.verses.length) return;');
-change('    renderSelection();\n  }\n\n  function drawConnections()', '    renderSelection();\n    requestAnimationFrame(function(){if(!page.hidden)drawConnections();});\n  }\n\n  function drawConnections()');
+change('    renderSelection();\n  }\n\n  function drawConnections()', '    renderSelection();\n  }\n\n  function drawConnections()');
 change('<h3 id="srl-title">Literary Discovery Lab</h3>','<p class="sr-eyebrow">INTERACTIVE LEARNING</p><h3 id="srl-title">Discover How the Bible Uses Literary Patterns</h3><div class="sr-lessons"><span>Foils</span><span>Chiasmus</span><span>Literary sandwiches</span><span>Recurring motifs</span></div>');
 change('>Explore lessons +</button>','>Start Exploring</button>');
 s=s.replaceAll("'Explore lessons +'","'Start Exploring'");
