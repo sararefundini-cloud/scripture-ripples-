@@ -363,7 +363,24 @@
   body.dashboard-mode .toolbar-graph { display: none; }
   body.dashboard-mode #companion { display: none; }
   #graph-home { display: contents; }
-  body.dashboard-mode #graph-home { display: none; }
+  /* Keep the pond's previous height when the timeline sits above it; the page may scroll. */
+  body:not(.start-pond-mode):not(.dashboard-mode):not(.pond-mode):not(.companion-mode):not(.helix-mode) {
+    overflow: auto;
+    height: auto;
+    min-height: 100%;
+  }
+  body:not(.start-pond-mode):not(.dashboard-mode):not(.pond-mode) .layout.layout-graph {
+    /* Same pond height as before the timeline was moved above it. */
+    height: calc(100dvh - var(--sr-chrome, 4.6rem));
+    min-height: calc(100dvh - var(--sr-chrome, 4.6rem));
+    flex: 0 0 auto;
+  }
+  body.dashboard-demand #graph-home > .dash-bottom,
+  body.companion-mode #graph-home > .dash-bottom,
+  body.helix-mode #graph-home > .dash-bottom {
+    display: none !important;
+  }
+  .dash-bottom .dash-timeline-hint { margin: 0 0 8px; color: #1a1916; }
   #dashboard {
     display: none;
     position: relative;
@@ -442,6 +459,24 @@
   .dash-center .dash-panel-title { background: #1e3a5f; color: #f4ead8; margin: 0; padding: 6px 10px; }
   .dash-center .layout-graph { flex: 1 1 auto; height: 420px; min-height: 420px; width: 100%; }
   body.dashboard-mode .dash-center #graph { flex: 1 1 auto; min-height: 360px; }
+  body.dashboard-demand #dash-graph-slot { display: none !important; }
+  body.dashboard-mode #dash-graph-slot {
+    width: 100%; flex: 0 0 auto; margin: 0; padding: 0;
+    display: flex; flex-direction: column; min-height: 0;
+    background: transparent; box-shadow: none; border: none; overflow: hidden;
+  }
+  body.dashboard-mode #dash-graph-slot .layout-graph {
+    height: calc(100dvh - var(--sr-chrome, 4.6rem));
+    min-height: calc(100dvh - var(--sr-chrome, 4.6rem));
+    width: 100%; max-width: none; flex: 0 0 auto;
+  }
+  body.dashboard-mode #dash-graph-slot #graph {
+    width: 100%; max-width: none;
+  }
+  body.dashboard-mode #dash-stones-view > .dash-right {
+    flex: 0 0 auto; width: auto; max-width: none; padding: 0 16px 12px;
+  }
+  .dash-head .dash-clear-focus { float: none; flex: 0 0 auto; }
   body.dashboard-mode aside#panel { display: none !important; }
   body.dashboard-mode #graph { flex: 1 1 auto; width: 100%; max-width: none; }
   .dash-right {
@@ -574,6 +609,10 @@
     .dash-center { min-height: 400px; }
     body.dashboard-mode .dash-center .layout-graph { height: 400px; min-height: 400px; }
     body.dashboard-mode .dash-center #graph { min-height: 320px; }
+    body.dashboard-mode #dash-graph-slot .layout-graph {
+      height: calc(100dvh - var(--sr-chrome, 4.6rem));
+      min-height: calc(100dvh - var(--sr-chrome, 4.6rem));
+    }
     .dash-bottom { margin: 0 10px 10px; }
     .dash-selected { min-height: 200px; }
     #dash-selected-body { max-height: 50vh; }
@@ -814,6 +853,45 @@
       font-size: 0.68rem;
     }
     .edge-key .edge-key-title { font-size: 0.72rem; margin-bottom: 3px; }
+  }
+
+  #pond-zoom {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    pointer-events: auto;
+    touch-action: manipulation;
+  }
+  #pond-zoom button {
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #1a1916;
+    background: #f4ead8;
+    color: #1a1916;
+    box-shadow: 2px 3px 0 rgba(30, 28, 24, 0.12);
+    font: italic 1.35rem/1 Georgia, "Times New Roman", serif;
+    cursor: pointer;
+  }
+  #pond-zoom button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  #pond-zoom button:focus-visible {
+    outline: 3px solid #2367a4;
+    outline-offset: 2px;
+  }
+  body.helix-mode #pond-zoom,
+  body.pond-mode #pond-zoom { display: none; }
+  @media (max-width: 720px) {
+    #pond-zoom { right: 6px; top: 6px; }
+    #pond-zoom button { width: 36px; height: 36px; font-size: 1.2rem; }
   }
 
 /* Main dashboard stone throwing; the separate Start Pond remains an optional demo. */
@@ -1311,6 +1389,33 @@ header .verse-tools button::after, #menu-why-built::after, #menu-close::after, .
   <a href="privacy.html" id="privacy-link">Privacy</a><a href="support.html" id="support-link">Support</a>
 </div>
 <div id="graph-home" role="region" aria-label="Explore Full Pond — complete Scripture connections graph">
+  <div class="dash-bottom">
+    <h2 class="dash-panel-title">Across the canon · Genesis to Revelation</h2>
+    <p class="hint dash-timeline-hint">Tap stones in the pond to fill this chart.</p>
+    <div id="timeline-tools" class="verse-tools" hidden>
+      <span>Choose a dot to read its verse.</span>
+      <button type="button" id="timeline-demo" hidden>Example</button>
+      <label for="browse-verses">Browse verses</label>
+      <select id="browse-verses"><option value="">Choose a reference</option></select>
+      <button type="button" id="bread-example" hidden>Compare manna and the Bread of Life</button>
+    </div>
+    <canvas id="dash-arc" width="960" height="200" aria-label="Timeline of Bible verses. Choose a dot to read its verse."></canvas>
+    <p class="dash-legend">Dots are verses in that motif. Light arcs join consecutive verses of the same motif. Darker arcs are theme-level cross-reference links (OpenBible.info data).</p>
+    <section id="dash-verse-preview" aria-label="Timeline verse" hidden>
+      <div id="dash-verse-options" hidden>
+        <label for="dash-verse-choice">Verses near this dot</label>
+        <select id="dash-verse-choice"></select>
+      </div>
+      <div class="kjv" id="dash-verse-text" aria-live="polite"></div>
+      <div class="verse-tools"><button type="button" id="pin-verse">Pin verse for comparison</button><button type="button" id="collect-verse">Make a stone from this verse</button><span id="pin-status" role="status"></span></div>
+    </section>
+    <section id="verse-comparison" aria-labelledby="compare-title" hidden>
+      <h3 id="compare-title">Compare passages</h3>
+      <div id="compare-body" class="compare-grid"></div>
+      <p id="compare-note"></p>
+      <div class="verse-tools"><button type="button" id="clear-comparison">Clear comparison</button></div>
+    </section>
+  </div>
 <div class="layout layout-graph">
   <div id="graph" class="pond-surface"></div>
   <div class="edge-key" id="edge-key" aria-label="Line key">
@@ -1345,24 +1450,17 @@ header .verse-tools button::after, #menu-why-built::after, #menu-close::after, .
 </div>
 
 <div id="dashboard" hidden>
+  <div class="dash-center" id="dash-graph-slot"></div>
   <div class="dash-head">
     <h1 id="dash-title" tabindex="-1">Scripture Ripples — Stones Dashboard</h1>
+    <button type="button" id="dash-clear-focus" class="dash-clear-focus" hidden>Clear focus</button>
     <div class="dash-tabs" role="tablist" aria-label="Dashboard view">
       <button type="button" id="dash-tab-stones" class="dash-tab on" role="tab" aria-selected="true">Stones</button>
       <button type="button" id="dash-tab-demand" class="dash-tab" role="tab" aria-selected="false">Why I built this</button>
     </div>
   </div>
   <div id="dash-stones-view" class="dash-view">
-  <section id="dash-throw" aria-label="Throw Scripture stones into the dashboard pond">
-  <div class="dash-throw-intro"><div><h2>Trace a Connection</h2><p>How can patterns across Scripture help us understand difficult passages?</p><small>Choose a stone to send its ripples through the graph. Add more to reveal overlapping connections. Select a graph point to read its Scripture.</small></div><button type="button" id="dash-throw-clear">Clear stones</button></div>
-  <div class="dash-throw-banks"><div class="dash-throw-bank"><h3>Jesus · I Am</h3><div id="dash-jesus-bank" class="dash-throw-list"></div></div><div class="dash-throw-bank"><h3>Scripture Themes</h3><div id="dash-theme-bank" class="dash-throw-list"></div></div></div>
-  <p id="dash-throw-status" role="status" aria-live="polite">Choose your first stone from either bank.</p>
-</section>
   <div class="dash-kpis" id="dash-kpis"></div>
-  <div class="dash-main">
-    <div class="dash-center" id="dash-graph-slot">
-      <h2 class="dash-panel-title">Scripture Ripples <button type="button" id="dash-clear-focus" class="dash-clear-focus" hidden>Clear focus</button></h2>
-    </div>
     <div class="dash-right">
       <div class="dash-bars-wrap" id="dash-bars-wrap">
         <h2 class="dash-panel-title">Verses per stone motif</h2>
@@ -1375,33 +1473,11 @@ header .verse-tools button::after, #menu-why-built::after, #menu-close::after, .
         <p id="dash-share-status" role="status" class="hint"></p>
       </div>
     </div>
-  </div>
-  <div class="dash-bottom">
-    <h2 class="dash-panel-title">Across the canon · Genesis to Revelation</h2>
-    <div id="timeline-tools" class="verse-tools" hidden>
-      <span>Choose a dot to read its verse.</span>
-      <button type="button" id="timeline-demo" hidden>Example</button>
-      <label for="browse-verses">Browse verses</label>
-      <select id="browse-verses"><option value="">Choose a reference</option></select>
-      <button type="button" id="bread-example" hidden>Compare manna and the Bread of Life</button>
-    </div>
-    <canvas id="dash-arc" width="960" height="200" aria-label="Timeline of Bible verses. Choose a dot to read its verse."></canvas>
-    <p class="dash-legend">Dots are verses in that motif. Light arcs join consecutive verses of the same motif. Darker arcs are theme-level cross-reference links (OpenBible.info data).</p>
-    <section id="dash-verse-preview" aria-label="Timeline verse" hidden>
-      <div id="dash-verse-options" hidden>
-        <label for="dash-verse-choice">Verses near this dot</label>
-        <select id="dash-verse-choice"></select>
-      </div>
-      <div class="kjv" id="dash-verse-text" aria-live="polite"></div>
-      <div class="verse-tools"><button type="button" id="pin-verse">Pin verse for comparison</button><button type="button" id="collect-verse">Make a stone from this verse</button><span id="pin-status" role="status"></span></div>
-    </section>
-    <section id="verse-comparison" aria-labelledby="compare-title" hidden>
-      <h3 id="compare-title">Compare passages</h3>
-      <div id="compare-body" class="compare-grid"></div>
-      <p id="compare-note"></p>
-      <div class="verse-tools"><button type="button" id="clear-comparison">Clear comparison</button></div>
-    </section>
-  </div>
+<section id="dash-throw" aria-label="Throw Scripture stones into the dashboard pond">
+  <div class="dash-throw-intro"><div><h2>Trace a Connection</h2><p>How can patterns across Scripture help us understand difficult passages?</p><small>Choose a stone to send its ripples through the graph. Add more to reveal overlapping connections. Select a graph point to read its Scripture.</small></div><button type="button" id="dash-throw-clear">Clear stones</button></div>
+  <div class="dash-throw-banks"><div class="dash-throw-bank"><h3>Jesus · I Am</h3><div id="dash-jesus-bank" class="dash-throw-list"></div></div><div class="dash-throw-bank"><h3>Scripture Themes</h3><div id="dash-theme-bank" class="dash-throw-list"></div></div></div>
+  <p id="dash-throw-status" role="status" aria-live="polite">Choose your first stone from either bank.</p>
+</section>
   </div>
   <div id="dash-demand-view" class="dash-view" hidden>
     <div class="dash-origin-tabs verse-tools" role="tablist" aria-label="Project origins">
@@ -1917,7 +1993,7 @@ const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, {
     },
     stabilization: { enabled: false, iterations: 0, fit: false }
   },
-  interaction: { hover: true, tooltipDelay: 80, navigationButtons: !isNarrow(), keyboard: !isNarrow(), zoomView: true, dragView: true, dragNodes: false, zoomSpeed: 0.6 },
+  interaction: { hover: true, tooltipDelay: 80, navigationButtons: false, keyboard: false, zoomView: false, dragView: false, dragNodes: false, zoomSpeed: 0 },
   edges: { smooth: LOW_POWER ? false : { type: "continuous", roundness: 0.25 }, shadow: false, color: { color: "rgba(186, 216, 224, 0.55)", highlight: "rgba(230, 246, 252, 0.9)", hover: "rgba(220, 240, 248, 0.8)" }, arrows: { to: { enabled: true, scaleFactor: 0.35 } }, selectionWidth: 2 },
   nodes: { shape: "image", shadow: false, borderWidth: 0, font: { size: 0, color: "rgba(0,0,0,0)", strokeWidth: 0, background: "transparent" } }
 });
@@ -1941,6 +2017,81 @@ function addPondPlants(target) {
   const key = document.getElementById("edge-key");
   const graph = document.getElementById("graph");
   if (key && graph && key.parentNode !== graph) graph.appendChild(key);
+})();
+
+(function placePondZoom() {
+  const graph = document.getElementById("graph");
+  if (!graph) return;
+  let wrap = document.getElementById("pond-zoom");
+  if (!wrap) {
+    wrap = document.createElement("div");
+    wrap.id = "pond-zoom";
+    wrap.setAttribute("role", "group");
+    wrap.setAttribute("aria-label", "Pond zoom");
+    wrap.innerHTML = '<button type="button" id="pond-zoom-in" aria-label="Zoom in">+</button>' +
+      '<button type="button" id="pond-zoom-out" aria-label="Zoom out" disabled>\u2212</button>';
+    graph.appendChild(wrap);
+  }
+  const MAX_MULT = 2.5;
+  const STEP = 1.25;
+  if (window.__iamZoomMult == null) window.__iamZoomMult = 1;
+  function homeScale() {
+    return (window.__iamHomeView && window.__iamHomeView.scale) || window.__iamFitScale || (network && network.getScale()) || 1;
+  }
+  function zoomMult() {
+    if (window.__iamZoomMult != null) return window.__iamZoomMult;
+    const hs = homeScale();
+    if (!network || !hs) return 1;
+    return (network.getScale() || hs) / hs;
+  }
+  function syncPondZoomButtons() {
+    const m = zoomMult();
+    const inn = document.getElementById("pond-zoom-in");
+    const out = document.getElementById("pond-zoom-out");
+    if (inn) inn.disabled = m >= MAX_MULT - 0.02;
+    if (out) out.disabled = m <= 1 + 0.02;
+  }
+  function applyPondZoom(nextMult, opts) {
+    if (!network) return;
+    if (!window.__iamHomeView) {
+      try { if (typeof captureHomeView === "function") captureHomeView(true); } catch (err) {}
+    }
+    if (!window.__iamHomeView) return;
+    const m = Math.max(1, Math.min(MAX_MULT, nextMult));
+    window.__iamZoomMult = m;
+    const scale = window.__iamHomeView.scale * m;
+    const motion = (opts && opts.animate === false) || (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    try {
+      network.moveTo({
+        position: { x: window.__iamHomeView.position.x, y: window.__iamHomeView.position.y },
+        scale: scale,
+        animation: motion ? false : { duration: 180, easingFunction: "easeInOutQuad" }
+      });
+    } catch (err) {
+      try { network.moveTo({ position: window.__iamHomeView.position, scale: scale, animation: false }); } catch (e2) {}
+    }
+    window.__iamFitScale = scale;
+    window.__iamFontScreen = (window.__iamLabelFontSize || 16) * scale;
+    syncPondZoomButtons();
+    try { network.redraw(); } catch (err) {}
+  }
+  window.__iamApplyPondZoom = applyPondZoom;
+  window.__iamSyncPondZoomButtons = syncPondZoomButtons;
+  window.__iamPondZoomMult = zoomMult;
+  wrap.addEventListener("click", function(ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const btn = ev.target.closest("button");
+    if (!btn || btn.disabled) return;
+    const cur = zoomMult();
+    if (btn.id === "pond-zoom-in") applyPondZoom(cur * STEP >= MAX_MULT - 0.02 ? MAX_MULT : cur * STEP);
+    else if (btn.id === "pond-zoom-out") applyPondZoom(cur / STEP <= 1.02 ? 1 : cur / STEP);
+  });
+  ["mousedown", "pointerdown", "touchstart"].forEach(function(type) {
+    wrap.addEventListener(type, function(ev) { ev.stopPropagation(); }, { passive: true });
+  });
+  graph.addEventListener("wheel", function(ev) { ev.preventDefault(); }, { passive: false });
+  syncPondZoomButtons();
 })();
 
 const SLATE_EDGE = { color: "rgba(70, 96, 122, 0.7)", highlight: "rgba(40, 62, 88, 0.95)", hover: "rgba(40, 62, 88, 0.85)" };
@@ -2216,7 +2367,7 @@ function freezeLayout() {
 function runPhysicsThenFreeze() {
   if (window.__iamPositionsPinned) {
     try { if (network.stopSimulation) network.stopSimulation(); } catch (err) {}
-    try { network.setOptions({ physics: { enabled: false }, interaction: { dragNodes: false } }); } catch (err) {}
+    try { network.setOptions({ physics: { enabled: false }, interaction: { dragNodes: false, dragView: false, zoomView: false, navigationButtons: false, keyboard: false } }); } catch (err) {}
     freezeLayout();
     fitGraph();
     return;
@@ -2431,6 +2582,7 @@ function applyFocus(id) {
   const btn = document.getElementById("dash-clear-focus");
   if (btn) btn.hidden = !id;
   try { network.redraw(); } catch (err) {}
+  if (!id && typeof restorePondFrame === "function") restorePondFrame();
 }
 window.__iamFocusState = function() {
   return { on: !!window.__iamFocusOn, origin: window.__iamFocusOrigin || null, keep: window.__iamFocusOrigin ? neighborSet(window.__iamFocusOrigin) : {} };
@@ -2544,14 +2696,84 @@ function refixNodePositions() {
   });
   if (updates.length) nodesDS.update(updates);
 }
+function pondViewReady() {
+  return !document.body.classList.contains("start-pond-mode")
+    && !document.body.classList.contains("pond-mode")
+    && !document.body.classList.contains("helix-mode");
+}
+function captureHomePositions() {
+  if (window.__iamHomePositions || !network || !nodesDS) return;
+  try {
+    const ids = nodesDS.getIds();
+    const pos = network.getPositions(ids);
+    const map = {};
+    ids.forEach(function(id) {
+      if (pos[id]) map[id] = { x: pos[id].x, y: pos[id].y };
+    });
+    if (Object.keys(map).length) window.__iamHomePositions = map;
+  } catch (err) {}
+}
+function captureHomeView(force) {
+  if (!network) return;
+  if (!force && window.__iamHomeView) return;
+  if (!pondViewReady()) return;
+  const el = document.getElementById("graph");
+  if (!el || el.clientWidth < 50 || el.clientHeight < 50) return;
+  try {
+    const scale = network.getScale() || 1;
+    const position = network.getViewPosition ? network.getViewPosition() : { x: 0, y: 0 };
+    if (!scale) return;
+    window.__iamHomeView = { scale: scale, position: { x: position.x, y: position.y } };
+    window.__iamFitScale = scale;
+    window.__iamFontScreen = (window.__iamLabelFontSize || 16) * scale;
+  } catch (err) {}
+  captureHomePositions();
+  if (typeof window.__iamSyncPondZoomButtons === "function") window.__iamSyncPondZoomButtons();
+}
+function restoreHomePositions() {
+  if (!network || !nodesDS || !window.__iamHomePositions) return;
+  const updates = [];
+  Object.keys(window.__iamHomePositions).forEach(function(id) {
+    const p = window.__iamHomePositions[id];
+    if (!p) return;
+    updates.push({ id: id, x: p.x, y: p.y, fixed: { x: true, y: true }, physics: false });
+  });
+  if (updates.length) nodesDS.update(updates);
+}
+function restorePondFrame() {
+  if (!network || !window.__iamHomeView) return false;
+  try {
+    window.__iamZoomMult = 1;
+    network.moveTo({
+      position: window.__iamHomeView.position,
+      scale: window.__iamHomeView.scale,
+      animation: false
+    });
+    window.__iamFitScale = window.__iamHomeView.scale;
+    window.__iamFontScreen = (window.__iamLabelFontSize || 16) * window.__iamFitScale;
+    try { network.redraw(); } catch (err) {}
+    if (typeof window.__iamSyncPondZoomButtons === "function") window.__iamSyncPondZoomButtons();
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+window.__iamRestorePondFrame = restorePondFrame;
+window.__iamRestoreHomePositions = restoreHomePositions;
 function fitGraph() {
   if (!network) return;
   const padding = isNarrow() ? 20 : 24;
   try {
+    captureHomePositions();
     if (window.__iamPositionsPinned) {
-      network.fit({ animation: false, padding: padding });
-      window.__iamFitScale = network.getScale() || 1;
-      window.__iamFontScreen = (window.__iamLabelFontSize || 16) * window.__iamFitScale;
+      if (window.__iamHomeView && typeof window.__iamApplyPondZoom === "function") {
+        window.__iamApplyPondZoom(window.__iamZoomMult || 1, { animate: false });
+      } else if (!restorePondFrame()) {
+        network.fit({ animation: false, padding: padding });
+        captureHomeView(true);
+        window.__iamFitScale = network.getScale() || 1;
+        window.__iamFontScreen = (window.__iamLabelFontSize || 16) * window.__iamFitScale;
+      }
       return;
     }
     if (!window.__iamLabelsSettled && !window.__iamRefining) {
@@ -2968,7 +3190,7 @@ document.getElementById("companion-results").addEventListener("click", function(
   try { network.selectNodes([id]); } catch (err) {}
   renderPanel(id, document.getElementById("search").value);
   setTimeout(function() {
-    try { network.focus(id, { scale: 1.15, animation: true }); } catch (err) { fitGraph(); }
+    try { if (typeof restorePondFrame === "function") restorePondFrame(); else if (typeof fitGraph === "function") fitGraph(); } catch (err) {}
   }, 80);
 });
 const DEFAULT_HINT = "<p class='hint'>Tap a stone to see its verses. Tap an edge for overlap, typological, or OpenBible.info cross-reference counts.</p>";
@@ -4335,6 +4557,8 @@ const openPersonalStones = (function () {
     }).filter(function(motif) { return motif.verses.length; });
     const hasVerses = motifs.length > 0;
     document.getElementById("timeline-tools").hidden = !hasVerses;
+    const hintEl = document.querySelector(".dash-timeline-hint");
+    if (hintEl) hintEl.hidden = hasVerses;
     document.getElementById("bread-example").hidden = dashFocusId !== "Bread";
     document.getElementById("timeline-demo").hidden = dashFocusId !== "Bread" || !hasVerses;
     if (browseFocus !== dashFocusId || browseSource !== DATA.verses) {
@@ -4350,13 +4574,14 @@ const openPersonalStones = (function () {
         browse.add(new Option(entry.verse.ref || entry.verse.verse_id, entry.verse.verse_id));
       });
     }
-    if (canvas) canvas.hidden = !hasVerses;
+    if (canvas) canvas.hidden = false;
     if (wrap) {
       const legend = wrap.querySelector(".dash-legend");
       if (legend) legend.hidden = !motifs.length;
+      const nodata = wrap.querySelector(".dash-nodata");
+      if (nodata) nodata.parentNode.removeChild(nodata);
     }
-    setWidget(wrap, !!motifs.length, "no data");
-    if (!motifs.length || !canvas) return;
+    if (!canvas) return;
     const fit = fitCanvas(canvas, isNarrow() ? 210 : 200);
     timelineSize = { w: fit.w, h: fit.h };
     const ctx = fit.ctx, w = fit.w, h = fit.h;
@@ -4506,7 +4731,7 @@ const openPersonalStones = (function () {
   }
   window.__iamInkFrame = inkFrame;
   function inkFrames() {
-    inkFrame(document.querySelector(".dash-center"), 3);
+    inkFrame(document.querySelector(".dash-center:not(#dash-graph-slot)"), 3);
     inkFrame(document.querySelector(".dash-bars-wrap"), 8);
     inkFrame(document.querySelector(".dash-selected"), 11);
     inkFrame(document.querySelector(".dash-bottom"), 14);
@@ -4659,6 +4884,43 @@ const openPersonalStones = (function () {
     renderArc();
     inkFrames();
   }
+  window.__iamResetPondAndChart = function() {
+    dashFocusId = null;
+    highlightId = null;
+    try { selected = null; } catch (err) {}
+    try { if (typeof stopDrop === "function") stopDrop(); } catch (err) {}
+    try { if (network) network.unselectAll(); } catch (err) {}
+    if (typeof closePanel === "function") { try { closePanel(); } catch (err) {} }
+    else if (typeof window.__iamClosePanel === "function") { try { window.__iamClosePanel(); } catch (err) {} }
+    if (typeof applyFocus === "function") applyFocus(null);
+    if (typeof restoreHomePositions === "function") restoreHomePositions();
+    if (typeof restorePondFrame === "function") restorePondFrame();
+    else if (typeof fitGraph === "function") fitGraph();
+    if (versePreview) versePreview.hidden = true;
+    if (connectionReader) connectionReader.hidden = true;
+    readingVerse = null;
+    if (browse) browse.value = "";
+    if (typeof renderSelected === "function") renderSelected(null);
+    if (typeof renderCharts === "function") renderCharts();
+    if (typeof window.__iamRedrawTimeline === "function") window.__iamRedrawTimeline();
+    setDashTitle();
+    window.__iamFocusOn = false;
+    window.__iamFocusOrigin = null;
+    try { if (network) network.redraw(); } catch (err) {}
+  };
+  if (!window.__iamClearBound) {
+    window.__iamClearBound = true;
+    document.addEventListener("click", function(ev) {
+      const btn = ev.target && ev.target.closest && ev.target.closest("#dash-throw-clear");
+      if (!btn) return;
+      if (typeof window.__iamClearThrownStones === "function") {
+        try { window.__iamClearThrownStones(); } catch (err) {}
+      }
+      if (typeof window.__iamResetPondAndChart === "function") {
+        try { window.__iamResetPondAndChart(); } catch (err) {}
+      }
+    }, true);
+  }
   function setDashTitle() {
     const title = document.getElementById("dash-title");
     if (!title) return;
@@ -4744,7 +5006,10 @@ const openPersonalStones = (function () {
       if (selected && typeof renderPanel === "function") {
         renderPanel(selected, document.getElementById("search").value);
       }
-      setTimeout(function() { if (typeof fitGraph === "function") fitGraph(); }, 80);
+      setTimeout(function() {
+        if (typeof window.__iamRedrawTimeline === "function") window.__iamRedrawTimeline();
+        if (typeof fitGraph === "function") fitGraph();
+      }, 80);
     }
   }
 
@@ -4807,12 +5072,15 @@ const openPersonalStones = (function () {
   }
   function setDashView(which) {
     dashView = (which === "demand") ? "demand" : "stones";
+    document.body.classList.toggle("dashboard-demand", dashView === "demand");
     const stones = document.getElementById("dash-stones-view");
     const demand = document.getElementById("dash-demand-view");
+    const slot = document.getElementById("dash-graph-slot");
     const tabS = document.getElementById("dash-tab-stones");
     const tabD = document.getElementById("dash-tab-demand");
     if (stones) stones.hidden = dashView !== "stones";
     if (demand) demand.hidden = dashView !== "demand";
+    if (slot) slot.hidden = dashView !== "stones";
     if (tabS) { tabS.classList.toggle("on", dashView === "stones"); tabS.setAttribute("aria-selected", dashView === "stones" ? "true" : "false"); }
     if (tabD) { tabD.classList.toggle("on", dashView === "demand"); tabD.setAttribute("aria-selected", dashView === "demand" ? "true" : "false"); }
     setDashTitle();
@@ -4851,7 +5119,8 @@ const openPersonalStones = (function () {
   if (clearF) clearF.addEventListener("click", function(ev) {
     ev.preventDefault();
     ev.stopPropagation();
-    applyFocus(null);
+    if (typeof window.__iamResetPondAndChart === "function") window.__iamResetPondAndChart();
+    else applyFocus(null);
   });
 
   const originTabs = Array.from(document.querySelectorAll(".dash-origin-tabs [role=tab]"));
@@ -4907,6 +5176,26 @@ const openPersonalStones = (function () {
   });
   document.getElementById("mode-dashboard").addEventListener("click", function() { setDashboardMode(true, selected); });
   window.__iamSetDashboard = setDashboardMode;
+  window.__iamSyncPondChrome = function() {
+    const header = document.querySelector("header");
+    const toolbar = document.getElementById("toolbar");
+    let h = 0;
+    if (header) {
+      const cs = getComputedStyle(header);
+      if (cs.display !== "none" && cs.visibility !== "hidden") h += header.getBoundingClientRect().height;
+    }
+    if (toolbar) {
+      const cs = getComputedStyle(toolbar);
+      if (cs.display !== "none" && cs.visibility !== "hidden") h += toolbar.getBoundingClientRect().height;
+    }
+    document.documentElement.style.setProperty("--sr-chrome", h + "px");
+  };
+  window.__iamRedrawTimeline = function() {
+    if (typeof window.__iamSyncPondChrome === "function") window.__iamSyncPondChrome();
+    if (!document.body.classList.contains("start-pond-mode") && !document.body.classList.contains("pond-mode")) {
+      renderCharts();
+    }
+  };
   window.__iamDashHighlight = dashHighlight;
   window.__iamDashRender = function() {
     if (!document.body.classList.contains("dashboard-mode") || dashView === "demand") return;
@@ -4940,11 +5229,13 @@ const openPersonalStones = (function () {
   }
   openDashFromHash();
   window.addEventListener("resize", function() {
-    if (!document.body.classList.contains("dashboard-mode")) return;
+    if (document.body.classList.contains("start-pond-mode") || document.body.classList.contains("pond-mode")) return;
     if (window.__iamDashResize) clearTimeout(window.__iamDashResize);
     window.__iamDashResize = setTimeout(function() {
-      if (dashView === "demand") { renderDemandKpis(); renderDemandBars(); inkFrames(); }
-      else {
+      if (typeof window.__iamRedrawTimeline === "function") window.__iamRedrawTimeline();
+      if (document.body.classList.contains("dashboard-mode") && dashView === "demand") {
+        renderDemandKpis(); renderDemandBars(); inkFrames();
+      } else {
         renderCharts();
         if (typeof fitGraph === "function") fitGraph();
       }
@@ -6207,7 +6498,15 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
 
   function openFullPond() {
     document.body.classList.remove("start-pond-mode");
-    requestAnimationFrame(fitGraph);
+    if (typeof window.__iamSyncPondChrome === "function") window.__iamSyncPondChrome();
+    requestAnimationFrame(function() {
+      if (typeof window.__iamRedrawTimeline === "function") window.__iamRedrawTimeline();
+      if (typeof fitGraph === "function") fitGraph();
+    });
+    setTimeout(function() {
+      if (typeof window.__iamRedrawTimeline === "function") window.__iamRedrawTimeline();
+      if (typeof fitGraph === "function") fitGraph();
+    }, 80);
   }
   dashboardButton.addEventListener("click", function() {
     if (!dashboardStone) return;
@@ -6284,14 +6583,14 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
   renderBank(jesus,jesusBank);renderBank(themes,themeBank);
   function update(){
     const inDashboard=document.body.classList.contains('dashboard-mode');
-    document.body.classList.toggle('dashboard-no-stones', inDashboard && active.size === 0);
+    const useThrow=inDashboard && active.size > 0;
+    document.body.classList.toggle('dashboard-no-stones', false);
     const keep=new Set();
     active.forEach(id=>{keep.add(id);(connected.get(id)||[]).forEach(other=>keep.add(other));});
-    // An empty Dashboard must show empty water, not the entire preloaded graph.
-    // Outside Dashboard, restore the graph exactly as it was originally.
+    // Empty throw / Clear: restore the pinned home pond. While stones are thrown, show the connected set.
     const nChanges=[],eChanges=[];
-    nodesDS.forEach(n=>nChanges.push({id:n.id,hidden:inDashboard ? (originalNodeHidden.get(n.id)||!keep.has(n.id)) : originalNodeHidden.get(n.id)}));
-    edgesDS.forEach(e=>eChanges.push({id:e.id,hidden:inDashboard ? (originalEdgeHidden.get(e.id)||!active.size||!(keep.has(e.from)&&keep.has(e.to))||!(active.has(e.from)||active.has(e.to))) : originalEdgeHidden.get(e.id)}));
+    nodesDS.forEach(n=>nChanges.push({id:n.id,hidden:useThrow ? (originalNodeHidden.get(n.id)||!keep.has(n.id)) : originalNodeHidden.get(n.id)}));
+    edgesDS.forEach(e=>eChanges.push({id:e.id,hidden:useThrow ? (originalEdgeHidden.get(e.id)||!(keep.has(e.from)&&keep.has(e.to))||!(active.has(e.from)||active.has(e.to))) : originalEdgeHidden.get(e.id)}));
     if(nChanges.length)nodesDS.update(nChanges);
     if(eChanges.length)edgesDS.update(eChanges);
     document.querySelectorAll('.dash-throw-stone').forEach(b=>b.setAttribute('aria-pressed',String(active.has(b.dataset.stoneId))));
@@ -6308,7 +6607,8 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
     // Original ripple animation updates the graph while playing; restore the combined selection afterward.
     window.setTimeout(update,1100);
   }
-  clear.addEventListener('click',()=>{active.clear();try{if(typeof stopDrop==='function')stopDrop();}catch(e){}update();});
+  window.__iamClearThrownStones=function(){active.clear();try{if(typeof stopDrop==='function')stopDrop();}catch(e){}update();};
+  if(clear){clear.dataset.bound='1';clear.addEventListener('click',()=>{window.__iamClearThrownStones();try{if(typeof window.__iamResetPondAndChart==='function')window.__iamResetPondAndChart();}catch(e){}});}
   // Preserve the dashboard selection when its existing chart re-renders.
   window.__dashboardThrowRefresh=update;
   // Refresh when the existing Dashboard opens or closes.
