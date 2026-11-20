@@ -1,5 +1,5 @@
 /* Scripture Ripples service worker: cache the app files for offline use. */
-const CACHE = "scripture-ripples-v2";
+const CACHE = "scripture-ripples-v3";
 const PRECACHE = [
   "./Scripture-Ripples-RC1-Stone-Safety-Candidate.html",
   "./pond-static-click-recovery-v23.html",

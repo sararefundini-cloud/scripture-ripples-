@@ -1078,6 +1078,34 @@ function zu(){return zu=Object.assign||function(g){for(var t=1;t<arguments.lengt
   #dash-share-status { min-height: 1.2em; }
   #privacy-link { display: inline-block; margin: 12px 0 4px; color: inherit; }
 </style>
+<style id="sra-banner-fix">
+  /* The panel uses <header class="sra-top">, so the app's glass header
+     (background: rgba(8,28,36,.72) + backdrop-filter) was painting a slate banner. */
+  #sr-align-panel header.sra-top {
+    background: #f4ead8;
+    background-image: none;
+    color: #17314b;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 1px solid #d4c3a3;
+  }
+  #sr-align-panel header.sra-top h2,
+  #sr-align-panel header.sra-top p {
+    color: #17314b;
+    text-shadow: none;
+  }
+  #sr-align-panel .sra-close {
+    background: #fff8eb;
+    color: #17314b;
+    border: 1px solid #52708e;
+  }
+  body.start-pond-mode #sr-align-launch,
+  body.start-pond-mode #start-align {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+</style>
 </head>
 <body class="start-pond-mode">
 <script>
@@ -2325,7 +2353,7 @@ function relayoutLabels(ctx, fontSize) {
     if (!pos) return;
     const size = rec.baseLabelSize || rec.size || n.size || 24;
     const maxW = Math.max(24, size * 1.32);
-    const lines = wrapLabel(ctx, n.label || "", maxW);
+    const lines = wrapLabel(ctx, n.label || n.title || n.id || "", maxW);
     let tw = 0;
     lines.forEach(function(ln) { tw = Math.max(tw, ctx.measureText(ln).width); });
     const w = tw;
@@ -2382,7 +2410,12 @@ network.on("afterDrawing", function(ctx) {
   const fontSize = window.__iamLabelFontSize || (isNarrow() ? 13 : 16);
   const lineH = Math.round(fontSize * 1.2);
   ctx.font = "600 " + fontSize + "px Georgia, 'Times New Roman', serif";
-  if (labelDirty || labelCache.fontSize !== fontSize) {
+  let visibleIds = [];
+  nodesDS.forEach(function(n) { if (n && !n.hidden) visibleIds.push(String(n.id)); });
+  visibleIds.sort();
+  const cachedIds = Object.keys(labelCache.offsets).sort();
+  const visibleSetChanged = visibleIds.length !== cachedIds.length || visibleIds.some(function(id, i) { return id !== cachedIds[i]; });
+  if (labelDirty || labelCache.fontSize !== fontSize || visibleSetChanged) {
     relayoutLabels(ctx, fontSize);
     labelDirty = false;
   }
@@ -4059,25 +4092,41 @@ const openPersonalStones = (function () {
     if (canvas) canvas.hidden = !motifs.length;
     setWidget(wrap, !!motifs.length, "no data");
     if (!motifs.length || !canvas) return;
-    const hNeed = Math.max(180, motifs.length * 28 + 16);
+    const rowH = 28;
+    const hNeed = motifs.length * rowH + 16;
     const fit = fitCanvas(canvas, hNeed);
     const ctx = fit.ctx, w = fit.w, h = fit.h;
     ctx.clearRect(0, 0, w, h);
-    const labelSpace = 36;
-    const left = 118, right = 8 + labelSpace, top = 4, row = (h - top) / Math.max(1, motifs.length);
+    ctx.font = "italic 12px Georgia, 'Times New Roman', serif";
+    const labels = motifs.map(function(n) { return shortLabel(n); });
+    let maxLabelW = 0;
+    labels.forEach(function(s) { maxLabelW = Math.max(maxLabelW, ctx.measureText(s).width); });
+    const countSpace = 36;
+    const left = Math.min(Math.max(100, Math.ceil(maxLabelW) + 10), Math.floor(w * 0.48));
+    const right = 8 + countSpace;
+    const top = 4, row = (h - top) / Math.max(1, motifs.length);
     const maxC = Math.max(1, motifs.reduce(function(m, n) { return Math.max(m, n.count || 0); }, 0));
     const barW = Math.max(20, w - left - right);
+    const pebbleH = Math.min(18, Math.max(10, row - 10));
     motifs.forEach(function(n, i) {
       const y = top + i * row;
       const bw = barW * ((n.count || 0) / maxC);
       const on = !n.id || !highlightId || highlightId === dashFocusId || highlightId === n.id;
       const col = on ? PALETTE[i % PALETTE.length] : "rgba(140,150,160,0.4)";
-      pebbleBar(ctx, left, y + 4, Math.max(8, bw), row - 8, col, i * 11);
-      ctx.fillStyle = on ? "#1a1916" : "#8a847c";
-      ctx.font = "italic 12px Georgia, 'Times New Roman', serif";
+      const py = y + (row - pebbleH) / 2;
+      pebbleBar(ctx, left, py, Math.max(8, bw), pebbleH, col, i * 11);
+      ctx.fillStyle = on ? "#17314b" : "#8a847c";
+      let fs = 12;
+      const text = labels[i];
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
-      ctx.fillText(shortLabel(n), left - 8, y + row / 2);
+      ctx.font = "italic " + fs + "px Georgia, 'Times New Roman', serif";
+      while (fs > 9 && ctx.measureText(text).width > left - 10) {
+        fs -= 1;
+        ctx.font = "italic " + fs + "px Georgia, 'Times New Roman', serif";
+      }
+      ctx.fillText(text, left - 8, y + row / 2, Math.max(20, left - 10));
+      ctx.font = "italic 12px Georgia, 'Times New Roman', serif";
       ctx.textAlign = "left";
       ctx.fillText(String(n.count || 0), left + Math.max(8, bw) + 6, y + row / 2);
     });
@@ -6083,9 +6132,9 @@ labToggle.addEventListener('click',()=>{const opening=labContent.hidden;labConte
 
 function render(which){const d=data[which];host.replaceChildren();const wrap=el('div','sra-layout');wrap.append(column(d.left,d.a,'sra-left'),column(d.right,d.b,'sra-right'));const side=el('aside','sra-insights');side.append(el('h3','','What corresponds?'));const ul=el('ul');d.relations.forEach(t=>ul.append(el('li','',t)));side.append(ul,el('div','sra-note',d.caution));wrap.append(side);host.append(wrap);document.querySelectorAll('.sra-tab').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.case===which)))}
 const launch=document.getElementById('sr-align-launch');const close=document.getElementById('sra-close');let previous=null;
-function openAlignment(){if(!panel||!launch)return;previous=document.activeElement;panel.hidden=false;panel.removeAttribute('hidden');panel.scrollTop=0;try{if(window.ScriptureRipplesLiterary&&window.ScriptureRipplesLiterary.open)window.ScriptureRipplesLiterary.open('fig')}catch(e){}try{const t=document.getElementById('sra-title');if(t&&t.scrollIntoView)t.scrollIntoView({block:'start'});}catch(e){}setTimeout(function(){try{panel.scrollTop=0;const t=document.getElementById('sra-title');if(t&&t.scrollIntoView)t.scrollIntoView({block:'start'});}catch(e){}},0);if(close)close.focus();document.body.style.overflow='hidden'}
+function openAlignment(){if(document.body.classList.contains('start-pond-mode'))return;if(!panel||!launch)return;previous=document.activeElement;panel.hidden=false;panel.removeAttribute('hidden');panel.scrollTop=0;try{if(window.ScriptureRipplesLiterary&&window.ScriptureRipplesLiterary.open)window.ScriptureRipplesLiterary.open('fig')}catch(e){}try{const t=document.getElementById('sra-title');if(t&&t.scrollIntoView)t.scrollIntoView({block:'start'});}catch(e){}setTimeout(function(){try{panel.scrollTop=0;const t=document.getElementById('sra-title');if(t&&t.scrollIntoView)t.scrollIntoView({block:'start'});}catch(e){}},0);if(close)close.focus();document.body.style.overflow='hidden'}
 if(launch)launch.addEventListener('click',openAlignment);
-const startAlign=document.getElementById('start-align');if(startAlign)startAlign.addEventListener('click',function(){if(launch)launch.click();else openAlignment();});
+const startAlign=document.getElementById('start-align');if(startAlign)startAlign.addEventListener('click',function(){if(document.body.classList.contains('start-pond-mode'))return;if(launch)launch.click();else openAlignment();});
 function shut(){panel.hidden=true;document.body.style.overflow='';if(previous&&previous.focus)previous.focus()}
 close.addEventListener('click',shut);panel.addEventListener('click',e=>{if(e.target===panel)shut()});panel.addEventListener('keydown',e=>{if(e.key==='Escape')shut()});/* Case tabs are managed by the enhanced renderer. */
 })();
