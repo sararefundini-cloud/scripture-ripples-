@@ -363,7 +363,24 @@
   body.dashboard-mode .toolbar-graph { display: none; }
   body.dashboard-mode #companion { display: none; }
   #graph-home { display: contents; }
-  body.dashboard-mode #graph-home { display: none; }
+  /* Keep the pond's previous height when the timeline sits above it; the page may scroll. */
+  body:not(.start-pond-mode):not(.dashboard-mode):not(.pond-mode):not(.companion-mode):not(.helix-mode) {
+    overflow: auto;
+    height: auto;
+    min-height: 100%;
+  }
+  body:not(.start-pond-mode):not(.dashboard-mode):not(.pond-mode) .layout.layout-graph {
+    /* Same pond height as before the timeline was moved above it. */
+    height: calc(100dvh - var(--sr-chrome, 4.6rem));
+    min-height: calc(100dvh - var(--sr-chrome, 4.6rem));
+    flex: 0 0 auto;
+  }
+  body.dashboard-demand #graph-home > .dash-bottom,
+  body.companion-mode #graph-home > .dash-bottom,
+  body.helix-mode #graph-home > .dash-bottom {
+    display: none !important;
+  }
+  .dash-bottom .dash-timeline-hint { margin: 0 0 8px; color: #1a1916; }
   #dashboard {
     display: none;
     position: relative;
@@ -508,7 +525,7 @@
   #my-stones a { color:#1e3a5f; }
   .pond-timeline-axis { position:relative; min-height:126px; margin:12px 14px 0; padding-bottom:24px; }
   .pond-timeline-tick { position:absolute; inset-block:0; border-left:1px solid #1e3a5f50; pointer-events:none; }
-  .pond-timeline-tick span { position:absolute; bottom:0; white-space:nowrap; font-size:12px; transform:translateX(-50%); }
+  .pond-timeline-tick span { position:absolute; bottom:0; white-space:nowrap; font: small-caps 11px Georgia, "Times New Roman", serif; transform:none; }
   .pond-timeline-tick:first-child span { transform:none; }
   .pond-timeline-tick:last-of-type span { transform:translateX(-100%); }
   .pond-verse-dot { position:absolute; width:18px; height:18px; transform:translateX(-50%); border:0; background:none; cursor:pointer; padding:0; }
@@ -1311,6 +1328,33 @@ header .verse-tools button::after, #menu-why-built::after, #menu-close::after, .
   <a href="privacy.html" id="privacy-link">Privacy</a><a href="support.html" id="support-link">Support</a>
 </div>
 <div id="graph-home" role="region" aria-label="Explore Full Pond — complete Scripture connections graph">
+  <div class="dash-bottom">
+    <h2 class="dash-panel-title">Across the canon · Genesis to Revelation</h2>
+    <p class="hint dash-timeline-hint">Tap stones in the pond to fill this chart.</p>
+    <div id="timeline-tools" class="verse-tools" hidden>
+      <span>Choose a dot to read its verse.</span>
+      <button type="button" id="timeline-demo" hidden>Example</button>
+      <label for="browse-verses">Browse verses</label>
+      <select id="browse-verses"><option value="">Choose a reference</option></select>
+      <button type="button" id="bread-example" hidden>Compare manna and the Bread of Life</button>
+    </div>
+    <canvas id="dash-arc" width="960" height="200" aria-label="Timeline of Bible verses. Choose a dot to read its verse."></canvas>
+    <p class="dash-legend">Dots are verses in that motif. Light arcs join consecutive verses of the same motif. Darker arcs are theme-level cross-reference links (OpenBible.info data).</p>
+    <section id="dash-verse-preview" aria-label="Timeline verse" hidden>
+      <div id="dash-verse-options" hidden>
+        <label for="dash-verse-choice">Verses near this dot</label>
+        <select id="dash-verse-choice"></select>
+      </div>
+      <div class="kjv" id="dash-verse-text" aria-live="polite"></div>
+      <div class="verse-tools"><button type="button" id="pin-verse">Pin verse for comparison</button><button type="button" id="collect-verse">Make a stone from this verse</button><span id="pin-status" role="status"></span></div>
+    </section>
+    <section id="verse-comparison" aria-labelledby="compare-title" hidden>
+      <h3 id="compare-title">Compare passages</h3>
+      <div id="compare-body" class="compare-grid"></div>
+      <p id="compare-note"></p>
+      <div class="verse-tools"><button type="button" id="clear-comparison">Clear comparison</button></div>
+    </section>
+  </div>
 <div class="layout layout-graph">
   <div id="graph" class="pond-surface"></div>
   <div class="edge-key" id="edge-key" aria-label="Line key">
@@ -1375,32 +1419,6 @@ header .verse-tools button::after, #menu-why-built::after, #menu-close::after, .
         <p id="dash-share-status" role="status" class="hint"></p>
       </div>
     </div>
-  </div>
-  <div class="dash-bottom">
-    <h2 class="dash-panel-title">Across the canon · Genesis to Revelation</h2>
-    <div id="timeline-tools" class="verse-tools" hidden>
-      <span>Choose a dot to read its verse.</span>
-      <button type="button" id="timeline-demo" hidden>Example</button>
-      <label for="browse-verses">Browse verses</label>
-      <select id="browse-verses"><option value="">Choose a reference</option></select>
-      <button type="button" id="bread-example" hidden>Compare manna and the Bread of Life</button>
-    </div>
-    <canvas id="dash-arc" width="960" height="200" aria-label="Timeline of Bible verses. Choose a dot to read its verse."></canvas>
-    <p class="dash-legend">Dots are verses in that motif. Light arcs join consecutive verses of the same motif. Darker arcs are OpenBible.info cross-references.</p>
-    <section id="dash-verse-preview" aria-label="Timeline verse" hidden>
-      <div id="dash-verse-options" hidden>
-        <label for="dash-verse-choice">Verses near this dot</label>
-        <select id="dash-verse-choice"></select>
-      </div>
-      <div class="kjv" id="dash-verse-text" aria-live="polite"></div>
-      <div class="verse-tools"><button type="button" id="pin-verse">Pin verse for comparison</button><button type="button" id="collect-verse">Make a stone from this verse</button><span id="pin-status" role="status"></span></div>
-    </section>
-    <section id="verse-comparison" aria-labelledby="compare-title" hidden>
-      <h3 id="compare-title">Compare passages</h3>
-      <div id="compare-body" class="compare-grid"></div>
-      <p id="compare-note"></p>
-      <div class="verse-tools"><button type="button" id="clear-comparison">Clear comparison</button></div>
-    </section>
   </div>
   </div>
   <div id="dash-demand-view" class="dash-view" hidden>
@@ -1544,6 +1562,7 @@ header .verse-tools button::after, #menu-why-built::after, #menu-close::after, .
     <label><input type="checkbox" id="pond-check-all"> Check all matches</label>
     <span id="pond-search-count" role="status"></span>
   </div>
+  <p class="hint" id="pond-search-suggest" hidden></p>
   <div id="pond-search-results"></div>
   <div id="pond-search-actions" class="verse-tools" hidden>
     <label for="pond-search-stone">Save checked verses to</label>
@@ -3076,6 +3095,69 @@ function canonPosition(bi, ch, vs) {
   return bi + (CANON_CHAPTER_START[bi][c] - CANON_VERSE_START[bi] + v) / bookVerses;
 }
 function bookStartPosition(bi) { return bi; }
+/* Landmark labels for the Genesis–Revelation axis. Packed to one row:
+   shorten a name if needed, then drop a label rather than overlap. */
+const CANON_AXIS_BOOKS = [0, 18, 22, 39, 43, 57, 65];
+const CANON_AXIS_SHORT = { 0: "Gen.", 18: "Ps.", 22: "Isa.", 39: "Matt.", 43: "Acts", 57: "Heb.", 65: "Rev." };
+function layoutCanonAxis(xOf, measureText, minGap) {
+  minGap = minGap == null ? 6 : minGap;
+  const lastI = 65;
+  const lastX = xOf(bookStartPosition(lastI));
+  const core = [0, 18, 39, 65];
+  const extras = [22, 43, 57];
+  function item(i, label, x, w) {
+    return { i: i, book: CANON[i], label: label, x: x, textEnd: x + w };
+  }
+  function pickForm(i, x, prevEnd, nextX) {
+    const full = CANON[i];
+    const short = CANON_AXIS_SHORT[i] || full;
+    const fw = measureText(full);
+    const sw = measureText(short);
+    if (x >= prevEnd + minGap && x + fw <= nextX - minGap) return { label: full, w: fw };
+    if (x >= prevEnd + minGap && x + sw <= nextX - minGap) return { label: short, w: sw };
+    return null;
+  }
+  const placed = [];
+  core.forEach(function(i, k) {
+    const x = xOf(bookStartPosition(i));
+    if (i === lastI) {
+      placed.push(item(i, CANON[i], x, measureText(CANON[i])));
+      return;
+    }
+    const nextX = xOf(bookStartPosition(core[k + 1]));
+    const prevEnd = placed.length ? placed[placed.length - 1].textEnd : -Infinity;
+    const form = pickForm(i, x, prevEnd, nextX);
+    if (form) placed.push(item(i, form.label, x, form.w));
+  });
+  extras.forEach(function(i) {
+    const x = xOf(bookStartPosition(i));
+    let insertAt = 0, prev = null, next = null;
+    for (let p = 0; p < placed.length; p++) {
+      if (placed[p].x <= x) { prev = placed[p]; insertAt = p + 1; }
+      else if (!next) next = placed[p];
+    }
+    const nextX = next ? next.x : lastX;
+    function tryFit(prevEnd) { return pickForm(i, x, prevEnd, nextX); }
+    let form = tryFit(prev ? prev.textEnd : -Infinity);
+    if (!form && prev) {
+      const shortPrev = CANON_AXIS_SHORT[prev.i] || prev.book;
+      if (prev.label !== shortPrev) {
+        const savedLabel = prev.label;
+        const savedEnd = prev.textEnd;
+        const shortW = measureText(shortPrev);
+        prev.label = shortPrev;
+        prev.textEnd = prev.x + shortW;
+        form = tryFit(prev.textEnd);
+        if (!form) {
+          prev.label = savedLabel;
+          prev.textEnd = savedEnd;
+        }
+      }
+    }
+    if (form) placed.splice(insertAt, 0, item(i, form.label, x, form.w));
+  });
+  return placed;
+}
 
 let kjvRowsRequest;
 function loadKjvRows() {
@@ -3164,6 +3246,43 @@ const openPersonalStones = (function () {
       cachedMatches.set(key, verseIndex.filter(entry => phrases.some(phrase => entry.words.includes(phrase))).map(entry => entry.verse));
     }
     return cachedMatches.get(key);
+  }
+
+
+  function kjvSpellingVariants(term) {
+    const t = term;
+    const out = [];
+    function add(v) { if (v && v !== t && out.indexOf(v) < 0) out.push(v); }
+    if (/s$/i.test(t) && t.length > 2) add(t.slice(0, -1));
+    else add(t + "s");
+    if (/eth$/i.test(t) && t.length > 4) {
+      const stem = t.slice(0, -3);
+      add(stem);
+      add(stem + "est");
+      add(stem + "s");
+    } else if (/est$/i.test(t) && t.length > 4) {
+      const stem = t.slice(0, -3);
+      add(stem);
+      add(stem + "eth");
+      add(stem + "s");
+    } else {
+      add(t + "eth");
+      add(t + "est");
+    }
+    return out;
+  }
+  function suggestedKjvSpelling(terms) {
+    if (!terms.length || !verseIndex) return null;
+    let best = null, bestN = 0;
+    terms.forEach(function(term, index) {
+      kjvSpellingVariants(term).forEach(function(variant) {
+        const trial = terms.slice();
+        trial[index] = variant;
+        const n = matchingVerses(trial.join(",")).length;
+        if (n > bestN) { bestN = n; best = trial.join(", "); }
+      });
+    });
+    return best;
   }
 
   function stoneVerses(stone) {
@@ -3479,24 +3598,25 @@ const openPersonalStones = (function () {
     timeline.replaceChildren();
     if (timeline.hidden) return;
     const fullWidth = timeline.clientWidth;
-    const ticks = isNarrow() ? [0, 18, 39, 65] : [0, 18, 22, 39, 43, 65];
-    // Labels start at each book's first verse; shrink the scale so the last label fits.
-    const lastTick = ticks[ticks.length - 1];
+    const lastTick = 65;
     const probe = document.createElement("span");
-    probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap;font-size:12px";
+    probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap;font:small-caps 11px Georgia, 'Times New Roman', serif";
     probe.textContent = CANON[lastTick];
     timeline.append(probe);
     const lastLabelW = probe.offsetWidth;
-    probe.remove();
+    const measureAxis = function(s) { probe.textContent = s; return probe.offsetWidth; };
     const lastFrac = bookStartPosition(lastTick) / CANON.length;
     const scale = fullWidth > 0 ? Math.max(0.5, Math.min(1, (fullWidth - lastLabelW - 2) / (fullWidth * lastFrac))) : 1;
     const timelineWidth = fullWidth * scale;
-    ticks.forEach(function(index) {
+    const axisXOf = function(canonX) { return timelineWidth * canonX / CANON.length; };
+    const axis = layoutCanonAxis(axisXOf, measureAxis);
+    probe.remove();
+    axis.forEach(function(item) {
       const tick = document.createElement("div");
       tick.className = "pond-timeline-tick";
-      tick.style.left = 100 * scale * bookStartPosition(index) / CANON.length + "%";
+      tick.style.left = 100 * scale * bookStartPosition(item.i) / CANON.length + "%";
       const title = document.createElement("span");
-      title.textContent = CANON[index];
+      title.textContent = item.label;
       title.style.transform = "none";
       tick.append(title);
       timeline.append(tick);
@@ -3586,6 +3706,8 @@ const openPersonalStones = (function () {
     results.replaceChildren();
     searchControls.hidden = searchActions.hidden = true;
     searchCount.textContent = "";
+    const suggestClear = document.getElementById("pond-search-suggest");
+    if (suggestClear) { suggestClear.replaceChildren(); suggestClear.hidden = true; }
     try {
       await loadVerseIndex();
     } catch (error) {
@@ -3612,6 +3734,24 @@ const openPersonalStones = (function () {
     searchCount.textContent = matches.length + " matching KJV " + (matches.length === 1 ? "verse." : "verses.");
     searchControls.hidden = false;
     searchActions.hidden = !matches.length || !stones.length;
+    const suggest = document.getElementById("pond-search-suggest");
+    suggest.replaceChildren();
+    suggest.hidden = true;
+    if (!matches.length) {
+      const spelling = suggestedKjvSpelling(terms);
+      if (spelling) {
+        const tryBtn = document.createElement("button");
+        tryBtn.type = "button";
+        tryBtn.textContent = "Try " + spelling;
+        tryBtn.addEventListener("click", function() {
+          document.getElementById("pond-word").value = spelling;
+          if (typeof searchForm.requestSubmit === "function") searchForm.requestSubmit();
+          else searchForm.dispatchEvent(new Event("submit", { cancelable: true }));
+        });
+        suggest.append(tryBtn);
+        suggest.hidden = false;
+      }
+    }
   });
 
   document.getElementById("pond-save-results").addEventListener("click", function() {
@@ -4228,13 +4368,14 @@ const openPersonalStones = (function () {
         browse.add(new Option(entry.verse.ref || entry.verse.verse_id, entry.verse.verse_id));
       });
     }
-    if (canvas) canvas.hidden = !hasVerses;
+    if (canvas) canvas.hidden = false;
     if (wrap) {
       const legend = wrap.querySelector(".dash-legend");
       if (legend) legend.hidden = !motifs.length;
+      const nodata = wrap.querySelector(".dash-nodata");
+      if (nodata) nodata.parentNode.removeChild(nodata);
     }
-    setWidget(wrap, !!motifs.length, "no data");
-    if (!motifs.length || !canvas) return;
+    if (!canvas) return;
     const fit = fitCanvas(canvas, isNarrow() ? 210 : 200);
     timelineSize = { w: fit.w, h: fit.h };
     const ctx = fit.ctx, w = fit.w, h = fit.h;
@@ -4246,30 +4387,21 @@ const openPersonalStones = (function () {
     ctx.font = "small-caps 11px Georgia, 'Times New Roman', serif";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    const ticks = isNarrow() ? [0, 18, 39, 65] : [0, 18, 22, 39, 43, 65];
-    // Each label starts at its book's first verse. Narrow the axis just enough
-    // that the last label ("Revelation") still fits to the right of its tick.
-    const lastTick = ticks[ticks.length - 1];
+    const lastTick = 65;
     const lastFrac = bookStartPosition(lastTick) / nBook;
     const lastLabelW = ctx.measureText(CANON[lastTick]).width;
     const innerW = Math.max(40, Math.min(w - left - 10, (w - 2 - left - lastLabelW) / lastFrac));
     function xOf(canonX) { return left + (canonX / nBook) * innerW; }
-    const axis = [];
-    let labelEnd = -Infinity;
-    ticks.forEach(function(i) {
-      const x = xOf(bookStartPosition(i));
+    const axis = layoutCanonAxis(xOf, function(s) { return ctx.measureText(s).width; });
+    axis.forEach(function(tick) {
+      const x = tick.x;
       ctx.strokeStyle = "rgba(30, 28, 24, 0.2)";
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, h - bottom + 2); ctx.stroke();
       ctx.fillStyle = "#1a1916";
-      const label = CANON[i];
-      const lw = ctx.measureText(label).width;
-      if (x < labelEnd + 6) return;
-      ctx.fillText(label, x, h - bottom + 4);
-      labelEnd = x + lw;
-      axis.push({ book: label, x: +x.toFixed(1), textEnd: +(x + lw).toFixed(1) });
+      ctx.fillText(tick.label, x, h - bottom + 4);
     });
-    window.__srTimelineAxis = { ticks: axis, xOf: { left: left, innerW: +innerW.toFixed(1), width: w } };
+    window.__srTimelineAxis = { ticks: axis.map(function(t) { return { book: t.book, label: t.label, x: +t.x.toFixed(1), textEnd: +t.textEnd.toFixed(1) }; }), xOf: { left: left, innerW: +innerW.toFixed(1), width: w } };
     const rowH = (h - top - bottom) / Math.max(1, motifs.length);
     const rows = motifs.map(function(motif, i) {
       return { n: motif.node, verses: motif.verses, color: PALETTE[i % PALETTE.length], y: top + i * rowH + rowH * 0.55 };
@@ -4631,7 +4763,10 @@ const openPersonalStones = (function () {
       if (selected && typeof renderPanel === "function") {
         renderPanel(selected, document.getElementById("search").value);
       }
-      setTimeout(function() { if (typeof fitGraph === "function") fitGraph(); }, 80);
+      setTimeout(function() {
+        if (typeof window.__iamRedrawTimeline === "function") window.__iamRedrawTimeline();
+        if (typeof fitGraph === "function") fitGraph();
+      }, 80);
     }
   }
 
@@ -4694,6 +4829,7 @@ const openPersonalStones = (function () {
   }
   function setDashView(which) {
     dashView = (which === "demand") ? "demand" : "stones";
+    document.body.classList.toggle("dashboard-demand", dashView === "demand");
     const stones = document.getElementById("dash-stones-view");
     const demand = document.getElementById("dash-demand-view");
     const tabS = document.getElementById("dash-tab-stones");
@@ -4794,6 +4930,26 @@ const openPersonalStones = (function () {
   });
   document.getElementById("mode-dashboard").addEventListener("click", function() { setDashboardMode(true, selected); });
   window.__iamSetDashboard = setDashboardMode;
+  window.__iamSyncPondChrome = function() {
+    const header = document.querySelector("header");
+    const toolbar = document.getElementById("toolbar");
+    let h = 0;
+    if (header) {
+      const cs = getComputedStyle(header);
+      if (cs.display !== "none" && cs.visibility !== "hidden") h += header.getBoundingClientRect().height;
+    }
+    if (toolbar) {
+      const cs = getComputedStyle(toolbar);
+      if (cs.display !== "none" && cs.visibility !== "hidden") h += toolbar.getBoundingClientRect().height;
+    }
+    document.documentElement.style.setProperty("--sr-chrome", h + "px");
+  };
+  window.__iamRedrawTimeline = function() {
+    if (typeof window.__iamSyncPondChrome === "function") window.__iamSyncPondChrome();
+    if (!document.body.classList.contains("start-pond-mode") && !document.body.classList.contains("pond-mode")) {
+      renderCharts();
+    }
+  };
   window.__iamDashHighlight = dashHighlight;
   window.__iamDashRender = function() {
     if (!document.body.classList.contains("dashboard-mode") || dashView === "demand") return;
@@ -4827,11 +4983,13 @@ const openPersonalStones = (function () {
   }
   openDashFromHash();
   window.addEventListener("resize", function() {
-    if (!document.body.classList.contains("dashboard-mode")) return;
+    if (document.body.classList.contains("start-pond-mode") || document.body.classList.contains("pond-mode")) return;
     if (window.__iamDashResize) clearTimeout(window.__iamDashResize);
     window.__iamDashResize = setTimeout(function() {
-      if (dashView === "demand") { renderDemandKpis(); renderDemandBars(); inkFrames(); }
-      else {
+      if (typeof window.__iamRedrawTimeline === "function") window.__iamRedrawTimeline();
+      if (document.body.classList.contains("dashboard-mode") && dashView === "demand") {
+        renderDemandKpis(); renderDemandBars(); inkFrames();
+      } else {
         renderCharts();
         if (typeof fitGraph === "function") fitGraph();
       }
@@ -6094,7 +6252,15 @@ const HELIX = {"title":"Helix: Samson → David","blurb":"The Bible is drawn her
 
   function openFullPond() {
     document.body.classList.remove("start-pond-mode");
-    requestAnimationFrame(fitGraph);
+    if (typeof window.__iamSyncPondChrome === "function") window.__iamSyncPondChrome();
+    requestAnimationFrame(function() {
+      if (typeof window.__iamRedrawTimeline === "function") window.__iamRedrawTimeline();
+      if (typeof fitGraph === "function") fitGraph();
+    });
+    setTimeout(function() {
+      if (typeof window.__iamRedrawTimeline === "function") window.__iamRedrawTimeline();
+      if (typeof fitGraph === "function") fitGraph();
+    }, 80);
   }
   dashboardButton.addEventListener("click", function() {
     if (!dashboardStone) return;

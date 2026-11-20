@@ -2,7 +2,7 @@
   "name": "Scripture Ripples",
   "short_name": "Scripture Ripples",
   "description": "An interactive graph of themes throughout Scripture.",
-  "start_url": "./app.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f4ead8",
