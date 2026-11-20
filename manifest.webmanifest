@@ -2,7 +2,7 @@
   "name": "Scripture Ripples",
   "short_name": "Scripture Ripples",
   "description": "An interactive graph of themes throughout Scripture.",
-  "start_url": "./Scripture-Ripples-RC1-Stone-Safety-Candidate.html",
+  "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f4ead8",
