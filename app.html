@@ -2346,6 +2346,8 @@ function compactLayout() {
     if (!(next.area < box.area * 0.997)) break;
     box = next;
   }
+  // Positions may have changed; 1x camera must be recomputed on the next fit.
+  window.__iamHomeDirty = true;
 }
 function freezeLayout() {
   physicsOn = false;
@@ -2760,16 +2762,95 @@ function restorePondFrame() {
 }
 window.__iamRestorePondFrame = restorePondFrame;
 window.__iamRestoreHomePositions = restoreHomePositions;
+function pondFitPadding() {
+  // Single CSS-pixel inset from the pond's outer edge so the outermost
+  // stone (image + label) sits just inside the decorative frame. Do not
+  // stack this on vis-network fit padding or on an inflated node radius.
+  return 12;
+}
+function fitPondToFrame() {
+  if (!network || !nodesDS) return false;
+  const el = document.getElementById("graph");
+  if (!el || el.clientWidth < 50 || el.clientHeight < 50) return false;
+  const ids = [];
+  nodesDS.forEach(function(n) { if (n && !n.hidden) ids.push(n.id); });
+  if (!ids.length) return false;
+  const pos = network.getPositions(ids);
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  ids.forEach(function(id) {
+    const p = pos[id];
+    if (!p) return;
+    const rec = nodesDS.get(id);
+    const size = (rec && (rec.baseLabelSize || rec.size)) || 24;
+    // vis-network image `size` is the radius. Use it once; labels are unioned below.
+    const rx = size;
+    const ry = size;
+    minX = Math.min(minX, p.x - rx);
+    minY = Math.min(minY, p.y - ry);
+    maxX = Math.max(maxX, p.x + rx);
+    maxY = Math.max(maxY, p.y + ry);
+  });
+  const boxes = window.__iamLabelBoxes || [];
+  boxes.forEach(function(b) {
+    if (!b) return;
+    minX = Math.min(minX, b.x);
+    minY = Math.min(minY, b.y);
+    maxX = Math.max(maxX, b.x + (b.w || 0));
+    maxY = Math.max(maxY, b.y + (b.h || 0));
+  });
+  if (!isFinite(minX) || !isFinite(maxX) || maxX <= minX || maxY <= minY) return false;
+  const pad = pondFitPadding();
+  const scale = Math.min((el.clientWidth - 2 * pad) / (maxX - minX), (el.clientHeight - 2 * pad) / (maxY - minY));
+  if (!(scale > 0) || !isFinite(scale)) return false;
+  try {
+    network.moveTo({
+      position: { x: (minX + maxX) / 2, y: (minY + maxY) / 2 },
+      scale: scale,
+      animation: false
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+function pondHomeStamp() {
+  const el = document.getElementById("graph");
+  const sizeKey = el ? (el.clientWidth + "x" + el.clientHeight) : "";
+  const ids = [];
+  if (nodesDS) nodesDS.forEach(function(n) { if (n && !n.hidden) ids.push(String(n.id)); });
+  ids.sort();
+  return { sizeKey: sizeKey, visKey: ids.join("\u0001") };
+}
 function fitGraph() {
   if (!network) return;
   const padding = isNarrow() ? 20 : 24;
   try {
     captureHomePositions();
     if (window.__iamPositionsPinned) {
-      if (window.__iamHomeView && typeof window.__iamApplyPondZoom === "function") {
+      const el = document.getElementById("graph");
+      const ready = typeof pondViewReady === "function" && pondViewReady() && el && el.clientWidth >= 50 && el.clientHeight >= 50;
+      const stamp = pondHomeStamp();
+      const stale = !window.__iamHomeView || window.__iamHomeDirty || window.__iamHomeSize !== stamp.sizeKey || window.__iamHomeNodes !== stamp.visKey;
+      if (ready && stale) {
+        const savedMult = window.__iamZoomMult || 1;
+        if (!fitPondToFrame()) {
+          network.fit({ animation: false, padding: pondFitPadding() });
+        }
+        captureHomeView(true);
+        window.__iamHomeSize = stamp.sizeKey;
+        window.__iamHomeNodes = stamp.visKey;
+        window.__iamHomeDirty = false;
+        window.__iamFitScale = network.getScale() || 1;
+        window.__iamFontScreen = (window.__iamLabelFontSize || 16) * window.__iamFitScale;
+        if (savedMult !== 1 && typeof window.__iamApplyPondZoom === "function") {
+          window.__iamApplyPondZoom(savedMult, { animate: false });
+        } else if (typeof window.__iamSyncPondZoomButtons === "function") {
+          window.__iamSyncPondZoomButtons();
+        }
+      } else if (window.__iamHomeView && typeof window.__iamApplyPondZoom === "function") {
         window.__iamApplyPondZoom(window.__iamZoomMult || 1, { animate: false });
       } else if (!restorePondFrame()) {
-        network.fit({ animation: false, padding: padding });
+        if (!fitPondToFrame()) network.fit({ animation: false, padding: pondFitPadding() });
         captureHomeView(true);
         window.__iamFitScale = network.getScale() || 1;
         window.__iamFontScreen = (window.__iamLabelFontSize || 16) * window.__iamFitScale;
