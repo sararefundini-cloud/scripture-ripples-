@@ -1,7 +1,7 @@
 {
   "name": "Scripture Ripples",
   "short_name": "Scripture Ripples",
-  "description": "An interactive graph of themes throughout Scripture.",
+  "description": "Offline KJV knowledge graph: drop motif stones into the pond and follow ripples to connected themes, stonings companion, and narrative alignment.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
