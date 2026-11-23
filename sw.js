@@ -1,6 +1,6 @@
 /* Scripture Ripples service worker: cache the app files for offline use. */
 const CACHE_PREFIX = "scripture-ripples-";
-const CACHE = CACHE_PREFIX + "v14";
+const CACHE = CACHE_PREFIX + "v15";
 const PRECACHE = [
   "./app.html",
   "./fun.css",

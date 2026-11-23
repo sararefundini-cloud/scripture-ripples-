@@ -504,8 +504,8 @@
   }
   .graph-section #pond-zoom button:hover:not(:disabled) { background: #dff0e9; }
   body:not(.start-pond-mode) #fx-slips {
-    inset: auto max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) auto;
-    translate: none;
+    inset: calc(env(safe-area-inset-top, 0px) + 5.75rem) auto auto 50%;
+    translate: -50% 0;
   }
   body:not(.panel-open) #graph-home .graph-section aside#panel { display: none; }
   body.dashboard-mode #menu-btn { display: none; }
@@ -541,6 +541,7 @@
       height: clamp(430px, 58svh, 600px);
     }
     .graph-section #pond-zoom { top: 8px; right: 8px; }
+    .graph-section #pond-zoom button { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
     body:not(.start-pond-mode) #fx-slips { width: min(19rem, calc(100% - 24px)); }
     body:not(.start-pond-mode) #fx-slips .fx-slip { gap: 8px; padding: 7px 12px; }
     body:not(.start-pond-mode) #fx-slips .fx-slip-meta { display: none; }
@@ -1092,8 +1093,8 @@
   body.helix-mode #pond-zoom,
   body.pond-mode #pond-zoom { display: none; }
   @media (max-width: 720px) {
-    #pond-zoom { right: 6px; top: 6px; }
-    #pond-zoom button { width: 36px; height: 36px; font-size: 1.2rem; }
+    #pond-zoom { right: 8px; top: 8px; }
+    #pond-zoom button { width: 44px; height: 44px; min-width: 44px; min-height: 44px; font-size: 1.2rem; }
   }
 
 /* Main dashboard stone throwing; the separate Start Pond remains an optional demo. */

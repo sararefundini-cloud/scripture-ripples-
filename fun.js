@@ -247,6 +247,11 @@
   // ---------- slips: short notices pinned at the top ----------
   const slipHost = el("div", { id: "fx-slips", role: "status", "aria-live": "polite" });
   doc.body.append(slipHost);
+  function dismissSlip(s) {
+    if (!s || !s.isConnected || s.classList.contains("fx-out")) return;
+    s.classList.add("fx-out");
+    setTimeout(() => s.remove(), 320);
+  }
   function slip(opts) {
     const s = el("button", { type: "button", class: "fx-slip" }, [
       opts.seals ? el("span", { class: "fx-seal-stack" }, opts.seals.slice(0, 3).map(seal => sealSVG(seal, true)))
@@ -257,10 +262,10 @@
         opts.meta ? el("span", { class: "fx-slip-meta", text: opts.meta }) : null
       ])
     ]);
-    s.addEventListener("click", () => openBook());
+    s.addEventListener("click", () => dismissSlip(s));
     slipHost.append(s);
     while (slipHost.children.length > 3) slipHost.firstElementChild.remove();
-    setTimeout(() => { s.classList.add("fx-out"); setTimeout(() => s.remove(), 320); }, opts.seals ? 5600 : 3400);
+    setTimeout(() => dismissSlip(s), opts.seals ? 3000 : 2800);
   }
 
   // ---------- milestones ----------
