@@ -25,3 +25,47 @@ workflows:
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
     artifacts:
       - build/Build/Products/Release-iphonesimulator/*.app
+
+  ios-testflight:
+    name: Scripture Ripples - signed TestFlight build
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    integrations:
+      app_store_connect: Codemagic
+    environment:
+      node: 22
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.sararefundini.scriptureripples
+    scripts:
+      - name: Install Capacitor
+        script: npm install --no-audit --no-fund
+      - name: Bundle existing web app
+        script: |
+          mkdir -p www
+          cp index.html app.html fun.css fun.js cross_references.json load_xref.js scripture_ripples_xref.js manifest.webmanifest sw.js privacy.html support.html favicon.ico www/
+          cp -R data icons www/
+      - name: Generate native iOS project
+        script: |
+          npx cap add ios
+          npx cap sync ios
+          ICON_DIR=ios/App/App/Assets.xcassets/AppIcon.appiconset
+          sips -z 1024 1024 icons/icon-512.png --out "$ICON_DIR/AppIcon-512@2x.png"
+      - name: Configure signing
+        script: xcode-project use-profiles
+      - name: Set unique build number
+        script: |
+          cd ios/App
+          agvtool new-version -all "$(date +%s)"
+      - name: Build signed IPA
+        script: |
+          xcode-project build-ipa --project ios/App/App.xcodeproj --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
+        submit_to_app_store: false
