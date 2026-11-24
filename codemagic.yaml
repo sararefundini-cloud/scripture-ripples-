@@ -69,3 +69,53 @@ workflows:
         auth: integration
         submit_to_testflight: false
         submit_to_app_store: false
+
+  ios-screenshots:
+    name: Scripture Ripples - App Store screenshots
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      node: 22
+      xcode: latest
+    scripts:
+      - name: Install Capacitor
+        script: npm install --no-audit --no-fund
+      - name: Bundle existing web app
+        script: |
+          mkdir -p www
+          cp index.html app.html fun.css fun.js cross_references.json load_xref.js scripture_ripples_xref.js manifest.webmanifest sw.js privacy.html support.html favicon.ico www/
+          cp -R data icons www/
+      - name: Generate native iOS project
+        script: |
+          npx cap add ios
+          npx cap sync ios
+          ICON_DIR=ios/App/App/Assets.xcassets/AppIcon.appiconset
+          sips -z 1024 1024 icons/icon-512.png --out "$ICON_DIR/AppIcon-512@2x.png"
+      - name: Compile unsigned simulator app
+        script: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+      - name: Capture iPad and iPhone screenshots
+        script: |
+          mkdir -p screenshots
+          xcrun simctl list devices available -j > /tmp/devices.json
+          python3 - <<'PY' > /tmp/targets
+          import json,re
+          d=json.load(open('/tmp/devices.json'))['devices']
+          devices=[x for k in reversed(list(d)) for x in d[k] if x.get('isAvailable')]
+          for label,pattern in [('ipad',r'iPad Pro.*13-inch'),('iphone',r'iPhone (17|16|15) Pro$')]:
+              match=next((x for x in devices if re.search(pattern,x['name'])),None)
+              if not match: raise SystemExit('Missing simulator: '+label)
+              print(label,match['udid'])
+          PY
+          while read -r LABEL UDID; do
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID" -b
+            xcrun simctl status_bar "$UDID" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 --cellularMode active --cellularBars 4 --batteryState unplugged --batteryLevel 100 || true
+            xcrun simctl install "$UDID" build/Build/Products/Release-iphonesimulator/App.app
+            xcrun simctl launch "$UDID" com.sararefundini.scriptureripples
+            sleep 25
+            xcrun simctl io "$UDID" screenshot "screenshots/$LABEL.png"
+            xcrun simctl shutdown "$UDID"
+          done < /tmp/targets
+    artifacts:
+      - screenshots/*.png
