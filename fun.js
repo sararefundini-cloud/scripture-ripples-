@@ -729,6 +729,7 @@
   let book = null;
   function openBook() {
     if (!book) return;
+    if (typeof window.__srDismissOverlays === "function") window.__srDismissOverlays(book);
     renderBook();
     if (typeof book.showModal === "function") { if (!book.open) book.showModal(); } else book.setAttribute("open", "");
   }
